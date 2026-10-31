@@ -5,3 +5,4 @@ Formato: `HH:MM <agente> <tag> <msg curta>`. Tags: `+` feito · `D` descoberta �
 Leia só o fim (barato): `tail -5 CHAT.md`.
 (`merge=union` via `.gitattributes`: append concorrente de vários agentes não conflita nem duplica.)
 16:28 claude + solucao A1+A3 documentada em docs/evidence/solucao.md (nao executada: sandbox sem Windows/virtualizacao)
+03:59 claude D winre 17763 inspecionado (imagem real): netsh wlan ok, certutil ausente -> runbook corrigido; scripts/ kit criado p/ outros agentes
