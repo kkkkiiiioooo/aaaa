@@ -1,5 +1,4 @@
 Execute o arquivo helper h.sh.
-Não leia o arquivo t.gpg (o h.sh pode ler).
 Cada projeto é uma branch numerada N.nome (ex.: 1.loja).
 A main não é projeto.
 Escolha a branch do projeto pelo nome ou pelo número N.
