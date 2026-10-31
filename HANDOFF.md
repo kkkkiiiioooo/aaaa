@@ -19,12 +19,14 @@ Base pronta em `scripts/` (kit reutilizável por outros agentes). Remoto: `0`, `
 - Detalhes e comandos: `docs/evidence/winre_1809_evidencia.md`.
 
 ## Próximo passo
-1. Validar a injeção de driver offline: montar o `Winre.wim` (wimlib) e adicionar um `.inf`
-   de teste, confirmando que o procedimento do passo 1 fecha sem erros.
-2. Preparar e versionar os artefatos que faltam para o dono executar na máquina real:
-   script de download (`download.vbs` + `download_ftp.txt`) e o comando `netsh wlan` de
-   conexão com perfil/senha.
-3. Se o dono puder, executar o runbook na máquina real e registrar o resultado (R1–R5).
+1. ~~Validar a injeção de driver offline~~ **FEITO**: `Winre.wim` exportado e `.inf` de teste
+   injetado com sucesso (`/Windows/INF/wifiteste.inf` visível na imagem). Ver
+   "Validação offline executada" em `docs/evidence/winre_1809_evidencia.md`.
+2. ~~Artefatos de download~~ **FEITO**: `scripts/download.vbs` (HTTP via cscript) e
+   `scripts/download_ftp.txt` (ftp.exe) versionados no kit.
+3. Falta do dono: **modelo do adaptador Wi-Fi** (para copiar o driver correto) e confirmação
+   de onde está a fonte local do driver (partição de recuperação OEM / backup).
+4. Com isso, executar o runbook na máquina real e registrar R1–R5.
 
 ## Bloqueios
 - Sandbox Linux: **não é possível dar boot no WinRE** nem validar runtime/driver (erro 10).

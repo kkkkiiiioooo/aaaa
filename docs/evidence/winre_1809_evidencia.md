@@ -73,6 +73,25 @@ wimlib-imagex dir  .work/uup/files/Core_en-us.esd 2 | grep -i wlan
    depois do OOBE:      pnputil /add-driver R:\DriversOEM\*.inf /subdirs /install
 ```
 
+## Validação offline executada (passo 1 do runbook)
+
+A imagem WinRE foi exportada do ESD e um driver `.inf` de teste foi injetado **offline**,
+confirmando que o procedimento do passo 1 (montar → adicionar driver → commit) fecha sem erro:
+
+```sh
+wimlib-imagex export Core_en-us.esd 2 .work/wim/Winre.wim --compress=none
+# imagem: "Microsoft Windows Recovery Environment (x64)", Edition ID WindowsPE, Build 17763
+wimlib-imagex update .work/wim/Winre.wim 1 \
+  --command="add .work/drvtest/wifiteste.inf /Windows/INF/wifiteste.inf"
+wimlib-imagex dir .work/wim/Winre.wim 1 | grep wifiteste
+# => /Windows/INF/wifiteste.inf   (SUCESSO)
+```
+
+Equivalência: no Windows o mesmo passo é `dism /Mount-Image` + `dism /Add-Driver` +
+`dism /Unmount-Image /Commit`. Aqui foi feito com `wimlib` (Linux), que grava os arquivos
+na imagem; o DISM faz além disso o registro no DriverStore/hive — parte que só executa
+na máquina real.
+
 ## Limite desta evidência
 
 Inspeção do **conteúdo da imagem** (arquivos presentes/ausentes), não boot do WinRE.

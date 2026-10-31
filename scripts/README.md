@@ -23,6 +23,8 @@ sh scripts/converter_iso.sh            # 5) opcional: monta a ISO completa a par
 | `baixar_uup.sh` | Baixa os arquivos com retomada (`-c`); usa `aria2c` paralelo se existir. Aceita **filtro regex** para baixar só o necessário |
 | `inspecionar_winre.sh` | Acha o `Winre.wim` (inclusive aninhado em `install.wim`/ESD/ISO) e verifica `netsh.exe`, `wlanapi.dll`, `wlanmsm.dll`, `certutil.exe`, drivers `Net*.inf` |
 | `converter_iso.sh` | Usa o conversor oficial uup-dump (wimlib, multiplataforma) para gerar a ISO |
+| `download.vbs` | **Roda no WinRE** (não no Linux): baixa arquivo por HTTP(S) via `cscript` — supre a ausência de `certutil`/PowerShell |
+| `download_ftp.txt` | Modelo de comandos para `ftp.exe -s:` no WinRE (alternativa de download) |
 
 ## Como adaptar ao seu ambiente
 
