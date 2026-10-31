@@ -29,7 +29,12 @@ Regras padrão do repositório. Valem para tudo.
 - `HANDOFF.md` é snapshot: reescreva-o ao **fim de cada rodada** (fase, próximo passo, bloqueios); não faça append.
 - Mantenha o repo mínimo: sempre que der para economizar contexto **sem perder qualidade nem fluxo**, enxugue e proponha a melhoria.
 
+## Isolamento (não se contaminar)
+- Trabalhe só neste diretório e nesta branch. Ignore outras branches e outros clones.
+- Não leia `_archived/` nem arquivos compactados (`.bundle`, `.tar.gz`).
+- Se o clone trouxer branches antigas, não as leia: use apenas a branch do projeto.
+
 ## Registro
 - Nada só no chat: registre descobertas, decisões, estado e dúvidas nos docs do repo; sempre no fim, sem reescrever nem duplicar (máx. 500 caracteres por entrada).
-- Mudou a base (este repo-template)? Espelhe em `backupsrepo` (ver skill `iniciar-projeto`).
+- Mudou a base (este repo-template)? Espelhe na branch `backup` (ver skill `iniciar-projeto`).
 - Responda em português. Commits pequenos e imediatos.
