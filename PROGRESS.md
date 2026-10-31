@@ -8,3 +8,4 @@
 - 2026-10-31: desafio analisado; caminho A1+A3 (DISM no WinRE + certutil/setup.exe), R5 via export-driver, R4 Bluetooth so pos-OOBE. `docs/evidence/solucao.md` criado. Nao executado: sandbox sem Windows/virtualizacao.
 
 - 2026-10-31: scripts/ (kit reutilizavel: ambiente, uup_links, baixar_uup, inspecionar_winre, converter_iso; adaptaveis por ambiente). WinRE Home 1809 (17763.9376) baixado via uupdump e inspecionado: netsh+wlancfg+wlanapi PRESENTES (derruba mito do WinPE-WiFi-Package), certutil/powershell AUSENTES -> runbook corrigido (SMB/net use, VBScript+WinHTTP, ftp). Evidencia em docs/evidence/winre_1809_evidencia.md
+- 2026-10-31: ambiente de teste QEMU criado (`scripts/`: env-setup, fetch-base, build-initramfs, run-vm + `tests/`); suite 6/6 PASS em TCG (sem KVM); NET=1 liga a rede ao injetar virtio_net. Evidencia em `docs/evidence/ambiente-teste.md`.

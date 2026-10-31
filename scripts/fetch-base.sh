@@ -1,0 +1,37 @@
+#!/bin/sh
+# fetch-base.sh — baixa a base minima de boot (kernel Linux) para os testes.
+# Idempotente: nao rebaixa se o arquivo ja existe. Uso: sh scripts/fetch-base.sh
+set -u
+ROOT=$(cd "$(dirname "$0")/.." && pwd)
+DL="$ROOT/.work/downloads"
+ALPINE_VER=${ALPINE_VER:-v3.20}
+BASE_URL=${BASE_URL:-https://dl-cdn.alpinelinux.org/alpine/$ALPINE_VER/releases/x86_64/netboot}
+KERNEL="$DL/vmlinuz-virt"
+
+mkdir -p "$DL"
+if [ -s "$KERNEL" ]; then
+  echo "[fetch-base] kernel ja baixado: $KERNEL ($(wc -c <"$KERNEL") bytes)"
+else
+  echo "[fetch-base] baixando kernel de $BASE_URL/vmlinuz-virt ..."
+  if curl -fSL --retry 3 -o "$KERNEL.part" "$BASE_URL/vmlinuz-virt"; then
+    mv "$KERNEL.part" "$KERNEL"
+    echo "[fetch-base] kernel ok ($(wc -c <"$KERNEL") bytes)"
+  else
+    echo "[fetch-base] falha no download do kernel (rede/proxy?)"; rm -f "$KERNEL.part"; exit 1
+  fi
+fi
+
+# modloop = imagem squashfs com os modulos do kernel (sd_mod etc.)
+MODLOOP="$DL/modloop-virt"
+if [ -s "$MODLOOP" ]; then
+  echo "[fetch-base] modloop ja baixado: $MODLOOP ($(wc -c <"$MODLOOP") bytes)"
+else
+  echo "[fetch-base] baixando modloop de $BASE_URL/modloop-virt ..."
+  if curl -fSL --retry 3 -o "$MODLOOP.part" "$BASE_URL/modloop-virt"; then
+    mv "$MODLOOP.part" "$MODLOOP"
+    echo "[fetch-base] modloop ok ($(wc -c <"$MODLOOP") bytes)"
+  else
+    echo "[fetch-base] aviso: modloop indisponivel (disco da VM pode nao aparecer)"
+    rm -f "$MODLOOP.part"
+  fi
+fi
