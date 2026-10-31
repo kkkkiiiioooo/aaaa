@@ -1,9 +1,9 @@
 # HANDOFF
 
-Estado atual do projeto (snapshot; reescreva ao fim de cada rodada — não append).
+Estado atual do projeto (snapshot; reescreva ao fim de cada rodada - nao append).
 
 ## Fase
 
-## Próximo passo
+## Proximo passo
 
 ## Bloqueios
