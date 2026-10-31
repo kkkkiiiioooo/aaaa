@@ -9,6 +9,12 @@ Regras padrão do repositório. Valem para tudo.
 - Proativo e exaustivo: esgote opções, teste alternativas, registre falhas.
 - Não pare cedo nem entregue só análise estática: execute o projeto.
 
+## Persistência (a tarefa é possível)
+- Existe um caminho: **nunca** conclua "impossível"/"não viável" por dificuldade. Trate cada restrição como desafio a vencer, não como barreira final.
+- Esgote caminhos oficiais **e** criativos (contornos, fontes alternativas, engenharia reversa, recursos já presentes no ambiente). Vá além do óbvio.
+- Declare bloqueio só com tentativas registradas E um caminho alternativo proposto; "não dá" sem isso é resposta inválida.
+- O dono conhece o problema e sabe que é solucionável: não descarte o objetivo — pergunte o que falta e siga.
+
 ## Ciclo mínimo
 1. Inspecionar a árvore de arquivos.
 2. Identificar stack e execução (`Makefile`, `Dockerfile`, `package.json`, testes).
