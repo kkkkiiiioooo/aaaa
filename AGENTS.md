@@ -23,6 +23,11 @@ Regras padrão do repositório. Valem para tudo.
 - Monte um ambiente de teste real e execute; documente comandos, saídas, erros e correções no repo.
 - Pesquise a fundo (docs oficiais, fóruns) antes de concluir "impossível"; registre fontes.
 
+## Escopo de leitura (contexto do planner)
+- O planner lê só `AGENTS.md` + `PROMPT.md` (fixo, ~2 KB): o contrato e a tarefa.
+- `PROGRESS.md` e `docs/evidence/` são append-only e crescem: nunca leia inteiro, só o fim (tail, ~20 linhas).
+
 ## Registro
-- Nada só no chat: registre descobertas, decisões, estado e dúvidas nos docs do repo (máx. 500 caracteres por entrada, sem duplicar).
+- Nada só no chat: registre descobertas, decisões, estado e dúvidas nos docs do repo; sempre no fim, sem reescrever nem duplicar (máx. 500 caracteres por entrada).
+- Mudou a base (este repo-template)? Espelhe em `backupsrepo` (ver skill `iniciar-projeto`).
 - Responda em português. Commits pequenos e imediatos.
