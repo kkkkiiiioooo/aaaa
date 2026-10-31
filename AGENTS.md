@@ -5,6 +5,7 @@ Escolha a branch do projeto pelo nome ou pelo número N.
 Commit na main é bloqueado.
 OK=1 só se o usuário pedir.
 Se precisar da senha, peça ao usuário e guarde em S.
+Se faltar o projeto, peça o nome (ex.: loja) e guarde em P; sem P o h.sh não entra na branch do projeto.
 Exemplo: S=senha P=loja sh h.sh
 
 ## Regras da branch 0 (configuração)
