@@ -13,12 +13,19 @@ Regras padrão do repositório. Valem para tudo.
 - Existe um caminho: **nunca** conclua "impossível"/"não viável" por dificuldade. Trate cada restrição como desafio a vencer, não como barreira final.
 - Esgote caminhos oficiais **e** criativos (contornos, fontes alternativas, engenharia reversa, recursos já presentes no ambiente). Vá além do óbvio.
 - Declare bloqueio só com tentativas registradas E um caminho alternativo proposto; "não dá" sem isso é resposta inválida.
+- Documente as barreiras, mas **nunca pare**: sempre siga para o próximo caminho.
 - O dono conhece o problema e sabe que é solucionável: não descarte o objetivo — pergunte o que falta e siga.
 
 ## Ciclo mínimo
 1. Inspecionar a árvore de arquivos.
 2. Identificar stack e execução (`Makefile`, `Dockerfile`, `package.json`, testes).
 3. Instalar, rodar, corrigir erros e repetir até validar.
+
+## Ambiente de teste (novo a cada conversa)
+- Cada rodada nasce num ambiente limpo: prepare-o com `sh setup.sh` (idempotente) antes de testar; não assuma estado herdado.
+- Rode o que demora (baixar ISO, subir VM/serviço) **em segundo plano** com log: `nohup <cmd> > .work/logs/<nome>.log 2>&1 &`. Nunca fique travado esperando — acompanhe com `tail -f` e siga trabalhando.
+- Detecte o que existe (qemu, kvm, docker, virtualbox) e adapte; se faltar, instale ou proponha alternativa.
+- Se não der para simular o cenário real (ex.: driver Wi-Fi), simule o mais próximo possível e documente a diferença.
 
 ## Concluir apenas quando
 - o problema estiver resolvido, OU
