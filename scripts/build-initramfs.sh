@@ -6,7 +6,7 @@ ROOT=$(cd "$(dirname "$0")/.." && pwd)
 VM="$ROOT/.work/vm"
 DL="$ROOT/.work/downloads"
 BB=$(command -v busybox || true)
-[ -x "$BB" ] || { echo "[build-initramfs] busybox ausente. Rode: sh scripts/env-setup.sh"; exit 1; }
+[ -x "$BB" ] || { echo "[build-initramfs] busybox ausente. Rode: sh scripts/ambiente.sh"; exit 1; }
 
 rm -rf "$VM/initrd"
 mkdir -p "$VM/initrd/bin" "$VM/initrd/dev" "$VM/initrd/proc" "$VM/initrd/sys" \

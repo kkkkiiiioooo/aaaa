@@ -5,8 +5,8 @@ set -u
 ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 LOG="$ROOT/.work/logs/vm.log"
 
-sh "$ROOT/scripts/env-setup.sh" >/dev/null 2>&1 || true
-command -v qemu-system-x86_64 >/dev/null 2>&1 || { echo "SKIP: qemu ausente (rode scripts/env-setup.sh)"; exit 2; }
+sh "$ROOT/scripts/ambiente.sh" >/dev/null 2>&1 || true
+command -v qemu-system-x86_64 >/dev/null 2>&1 || { echo "SKIP: qemu ausente (rode scripts/ambiente.sh)"; exit 2; }
 
 sh "$ROOT/scripts/fetch-base.sh"      || exit 1
 sh "$ROOT/scripts/build-initramfs.sh" || exit 1

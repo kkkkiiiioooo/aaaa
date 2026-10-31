@@ -26,6 +26,10 @@ pkg_name(){
         7z|7za) echo p7zip-full;;
         aria2c) echo aria2;;
         python3) echo python3;;
+        qemu-system-x86_64) echo qemu-system-x86;;
+        qemu-img) echo qemu-utils;;
+        busybox) echo busybox-static;;
+        unsquashfs) echo squashfs-tools;;
         *) echo "$1";;
       esac ;;
     dnf|yum|zypper)
@@ -68,10 +72,11 @@ instalar(){
   done
 }
 
-instalar curl wget wimlib-imagex 7z aria2c python3
+instalar curl wget wimlib-imagex 7z aria2c python3 \
+         qemu-system-x86_64 qemu-img busybox unsquashfs cpio gzip
 
 # --- diretórios de trabalho (ignorados pelo git) ---
-for d in .work .work/logs .work/uup .work/iso .work/mnt; do mkdir -p "$d"; done
+for d in .work .work/logs .work/uup .work/iso .work/mnt .work/vm .work/downloads; do mkdir -p "$d"; done
 
 # --- recursos do ambiente (útil para decidir o que da para rodar) ---
 say "disco livre: $(df -h . 2>/dev/null | awk 'NR==2{print $4}')"

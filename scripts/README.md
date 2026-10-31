@@ -12,19 +12,35 @@ sh scripts/uup_links.sh                # 2) resolve links diretos oficiais (nao 
 sh scripts/baixar_uup.sh '\.esd$'      # 3) baixa (filtro opcional; retomavel/paralelo)
 sh scripts/inspecionar_winre.sh <img>  # 4) examina o WinRE (netsh/WLAN/drivers)
 sh scripts/converter_iso.sh            # 5) opcional: monta a ISO completa a partir dos UUP
+sh scripts/tests/run-tests.sh          # 6) ambiente de teste: VM QEMU + suite (6/6 PASS)
 ```
 
 ## O que cada um faz
 
 | Script | Função |
 |---|---|
-| `ambiente.sh` | Detecta SO/gerenciador (apt/dnf/yum/apk/pacman/brew), instala `curl wget wimlib 7z aria2 python3`, cria `.work/` e reporta disco/memória/virtualização |
+| `ambiente.sh` | Detecta SO/gerenciador (apt/dnf/yum/apk/pacman/brew), instala `curl wget wimlib 7z aria2 python3 qemu busybox squashfs-tools`, cria `.work/` e reporta disco/memória/virtualização |
 | `uup_links.sh` | Consulta a API do uupdump e gera `.tsv` com **links diretos dos domínios oficiais Microsoft**. `--search 1809` lista builds |
 | `baixar_uup.sh` | Baixa os arquivos com retomada (`-c`); usa `aria2c` paralelo se existir. Aceita **filtro regex** para baixar só o necessário |
 | `inspecionar_winre.sh` | Acha o `Winre.wim` (inclusive aninhado em `install.wim`/ESD/ISO) e verifica `netsh.exe`, `wlanapi.dll`, `wlanmsm.dll`, `certutil.exe`, drivers `Net*.inf` |
 | `converter_iso.sh` | Usa o conversor oficial uup-dump (wimlib, multiplataforma) para gerar a ISO |
 | `download.vbs` | **Roda no WinRE** (não no Linux): baixa arquivo por HTTP(S) via `cscript` — supre a ausência de `certutil`/PowerShell |
 | `download_ftp.txt` | Modelo de comandos para `ftp.exe -s:` no WinRE (alternativa de download) |
+
+## Ambiente de teste (VM QEMU) — `tests/`
+
+Sobe uma VM Linux mínima headless e roda a suíte dentro dela, espelhando o fluxo do
+desafio: **injetar driver → dispositivo aparece → rede**. Sem KVM usa emulação TCG (boot ~3 s).
+
+| Script | Função |
+|---|---|
+| `tests/run-tests.sh` | Orquestra: deps (via `ambiente.sh`), baixa base, monta initramfs, roda a VM e valida o log → `SUITE: PASS/FAIL` |
+| `fetch-base.sh` | Baixa kernel `vmlinuz-virt` + módulos `modloop-virt` (Alpine) para `.work/downloads` |
+| `build-initramfs.sh` | Monta o initramfs (busybox + `sd_mod`/`virtio_net` + deps + `init`) |
+| `run-vm.sh` | Sobe a VM (`[segundos]`, `NET=1`, `DISK_MB=`) e despeja a serial em `.work/logs/vm.log` |
+| `tests/in-vm-tests.sh` | Suíte DENTRO da VM: disco, wipe de C:, imagem de recuperação, injeção de driver, rede |
+
+Evidência da última execução: `docs/evidence/ambiente-teste.md`.
 
 ## Como adaptar ao seu ambiente
 
