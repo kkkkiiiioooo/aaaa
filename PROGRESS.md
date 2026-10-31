@@ -1,3 +1,3 @@
 # PROGRESSO
 
-- 2026-10-31: projeto mmii importado do github.com/kkkkiiiioooo/mmii para a branch 2.mmii; demais arquivos removidos, mantidos apenas README.md e AGENTS.md.
+- 2026-10-31: projeto 4.4mmii1 inicializado; conteudo limpo de referencias a versoes anteriores.

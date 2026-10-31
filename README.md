@@ -1,2 +1,8 @@
-- autonomia real: montar ambiente de testes (ex.: VM QEMU/KVM com Windows 10 1809 + WinRE) e validar os comandos, coletando evidencias; nao entregar apenas analise estatica
-- pesquisar de forma exaustiva e registrar fontes; evidencia negativa tambem e evidencia
+# Projeto 4.4mmii1
+
+Esqueleto inicial do projeto.
+
+- Desafio e contexto: `PROMPT.md`
+- Regras de trabalho dos agentes: `AGENTS.md`
+- Progresso: `PROGRESS.md`
+- Handoff / pendencias: `HANDOFF.md`
