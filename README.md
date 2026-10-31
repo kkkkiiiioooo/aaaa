@@ -1,9 +1,2 @@
-# Comece pela branch `0` (configuração)
-
-`git switch 0` e leia o `AGENTS.md`.
-
-## Regras da main
-
-- A main nunca deve ser alterada. Não commite, não edite e não force nada nela.
-- Todo trabalho acontece em branches de projeto `N.nome`.
-- A branch `0` é a configuração inicial e a base de tudo: nunca apague e nunca a duplique.
+- autonomia real: montar ambiente de testes (ex.: VM QEMU/KVM com Windows 10 1809 + WinRE) e validar os comandos, coletando evidencias; nao entregar apenas analise estatica
+- pesquisar de forma exaustiva e registrar fontes; evidencia negativa tambem e evidencia
