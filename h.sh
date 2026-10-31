@@ -8,7 +8,7 @@
 # Exemplo: S=senha P=loja sh h.sh
 S=${1:-${S:-$SENHA}};P=${2:-${P:-$PROJETO}}
 S=$(printf %s "$S"|tr A-Z a-z|tr -cd a-z)
-t=$(curl -sL raw.githubusercontent.com/kkkkiiiioooo/aaaa/0/t.gpg|gpg -dq --batch --passphrase "$S");[ -n "$t" ]||{ echo erro: senha ou rede;exit 1;}
+t=$(curl -sL raw.githubusercontent.com/kkkkiiiioooo/aaaa/0/t.gpg|gpg -dq --batch --passphrase "$S");[ -n "$t" ]||{ echo "erro: senha ou rede. Peça a senha ao usuário. Exemplo: S=senha P=loja sh h.sh";exit 1;}
 git config --global credential.helper store
 printf 'protocol=https\nhost=github.com\nusername=x\npassword=%s\n\n' "$t"|git credential approve;chmod 600 ~/.git-credentials
 cd ~;[ -d aaaa ]||git clone -q https://github.com/kkkkiiiioooo/aaaa aaaa;cd aaaa||exit 1
