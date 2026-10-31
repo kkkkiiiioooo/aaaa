@@ -2,6 +2,6 @@
 
 ## Fase
 
-## Proximo passo
+## Próximo passo
 
 ## Bloqueios
