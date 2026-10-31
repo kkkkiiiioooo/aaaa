@@ -1,18 +1,17 @@
-# INSTRUÇÕES PARA O AGENTE
-# Repo: github.com/kkkkiiiioooo/aaaa. Cada projeto é uma branch numerada N.nome (ex.: 1.loja). A main não é projeto.
-# Uso: curl -sL raw.githubusercontent.com/kkkkiiiioooo/aaaa/0/h|bash -s -- SENHA PROJETO   (PROJETO é opcional: nome ou número; a senha pode ter maiúsculas, espaços e pontuação)
-# P=nome cria a próxima branch N.nome (ou abre se já existir). P=3 abre a branch 3.*
-# Trabalhe em ~/aaaa. Commite após cada alteração: o hook envia sozinho para a branch atual.
-# Commit na main é bloqueado (OK=1 só se o usuário pedir). Nunca mostre o token.
-K=${1:-$K};P=${2:-$P}
-K=$(printf %s "$K"|tr A-Z a-z|tr -cd a-z)
-t=$(curl -sL raw.githubusercontent.com/kkkkiiiioooo/aaaa/0/t.gpg|gpg -dq --batch --passphrase "$K");[ -n "$t" ]||{ echo erro: senha ou rede;exit 1;}
+# Helper: script já executado neste repositório. Ele configurou credencial, clone e hook de envio. Não precisa ler os arquivos h nem t.gpg.
+# Cada projeto é uma branch numerada N.nome (ex.: 1.loja). A main não é projeto.
+# A branch do projeto é escolhida pelo nome ou pelo número N.
+# Trabalhe na branch do projeto. Cada commit é enviado sozinho para ela.
+# Commit na main é bloqueado (OK=1 só se o usuário pedir).
+S=${1:-$S};P=${2:-$P}
+S=$(printf %s "$S"|tr A-Z a-z|tr -cd a-z)
+t=$(curl -sL raw.githubusercontent.com/kkkkiiiioooo/aaaa/0/t.gpg|gpg -dq --batch --passphrase "$S");[ -n "$t" ]||{ echo erro: senha ou rede;exit 1;}
 git config --global credential.helper store
 printf 'protocol=https\nhost=github.com\nusername=x\npassword=%s\n\n' "$t"|git credential approve;chmod 600 ~/.git-credentials
 cd ~;[ -d aaaa ]||git clone -q https://github.com/kkkkiiiioooo/aaaa aaaa;cd aaaa||exit 1
 git config user.name claude;git config user.email c@c;git config push.autoSetupRemote true
 echo t.gpg>.agentignore;git ls-files --error-unmatch .agentignore >/dev/null 2>&1||{ git add .agentignore;git commit -qm agentignore;}
-printf '#!/bin/sh\n[ -n "$S" ]&&exit 0;export S=1;b=$(git rev-parse --abbrev-ref HEAD);git pull -q --rebase origin $b||{ git rebase --abort 2>/dev/null;echo CONFLITO: resolva antes de enviar;exit 1;};git push -q origin $b\n' >.git/hooks/post-commit;chmod +x .git/hooks/post-commit
+printf '#!/bin/sh\n[ -n "$G" ]&&exit 0;export G=1;b=$(git rev-parse --abbrev-ref HEAD);git pull -q --rebase origin $b||{ git rebase --abort 2>/dev/null;echo CONFLITO: resolva antes de enviar;exit 1;};git push -q origin $b\n' >.git/hooks/post-commit;chmod +x .git/hooks/post-commit
 if [ -n "$P" ];then
  git fetch -q origin
  case $P in *[!0-9]*) pat="^([0-9]+\.)?$P$";; *) pat="^$P\.";; esac
