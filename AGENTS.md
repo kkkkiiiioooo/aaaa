@@ -24,8 +24,9 @@ Regras padrão do repositório. Valem para tudo.
 - Pesquise a fundo (docs oficiais, fóruns) antes de concluir "impossível"; registre fontes.
 
 ## Escopo de leitura (contexto do planner)
-- O planner lê só `AGENTS.md` + `PROMPT.md` (fixo, ~2 KB): o contrato e a tarefa.
+- Leia sempre: `AGENTS.md` (contrato) + `PROMPT.md` (tarefa) + `HANDOFF.md` (estado atual). Fixo, ~2,5 KB.
 - `PROGRESS.md` e `docs/evidence/` são append-only e crescem: nunca leia inteiro, só o fim (tail, ~20 linhas).
+- `HANDOFF.md` é snapshot: reescreva-o ao **fim de cada rodada** (fase, próximo passo, bloqueios); não faça append.
 
 ## Registro
 - Nada só no chat: registre descobertas, decisões, estado e dúvidas nos docs do repo; sempre no fim, sem reescrever nem duplicar (máx. 500 caracteres por entrada).
