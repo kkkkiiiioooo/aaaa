@@ -15,10 +15,18 @@ Duas frentes convergentes:
 ## Próximo passo
 1. Validar injeção de driver offline no `Winre.wim` → **FEITO** (`.inf` de teste visível na imagem).
 2. Artefatos de download (`scripts/download.vbs`, `scripts/download_ftp.txt`) → **FEITO**.
-3. Falta do dono: **modelo do adaptador Wi-Fi** + confirmação da fonte local do driver
-   (partição de recuperação OEM / backup), já que `C:` foi formatada.
-4. Executar o runbook na máquina real e registrar R1–R5.
-5. (simulação) evoluir a suíte: particionamento real (`fdisk`) e cenário de PAN simulado.
+3. **Dono roda `scripts/diag.cmd` no WinRE** (`diag`) e manda foto da tela: dá VEN_/DEV_ do
+   Wi-Fi/Bluetooth (sem depender de wmic/powershell). `diag.cmd` NÃO testado no Windows.
+   Também falta confirmar a fonte local do driver (partição OEM / backup), já que `C:` foi formatada.
+4. Com o ID: achar o driver (fabricante / Microsoft Update Catalog) e injetar com DISM.
+5. Executar o runbook na máquina real e registrar R1–R5.
+6. (simulação) teste negativo (driver errado deve falhar), `fdisk` real e PAN simulado.
+
+## Riscos abertos
+- A3 (Reset com nuvem) provavelmente exige Windows existente; `C:` formatada → tratar A1 + setup.exe
+  via rede como caminho principal. Validar antes de confiar em A3.
+- Perguntar ao dono se quer recuperar arquivos da `C:`; se sim, NÃO escrever nela até rodar
+  testdisk/photorec.
 
 ## Bloqueios
 - Sandbox Linux: **não dá boot no WinRE** nem validar runtime/driver (erro 10); a evidência é

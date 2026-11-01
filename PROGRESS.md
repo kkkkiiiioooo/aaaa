@@ -9,3 +9,4 @@
 
 - 2026-10-31: scripts/ (kit reutilizavel: ambiente, uup_links, baixar_uup, inspecionar_winre, converter_iso; adaptaveis por ambiente). WinRE Home 1809 (17763.9376) baixado via uupdump e inspecionado: netsh+wlancfg+wlanapi PRESENTES (derruba mito do WinPE-WiFi-Package), certutil/powershell AUSENTES -> runbook corrigido (SMB/net use, VBScript+WinHTTP, ftp). Evidencia em docs/evidence/winre_1809_evidencia.md
 - 2026-10-31: ambiente de teste QEMU criado (`scripts/`: env-setup, fetch-base, build-initramfs, run-vm + `tests/`); suite 6/6 PASS em TCG (sem KVM); NET=1 liga a rede ao injetar virtio_net. Evidencia em `docs/evidence/ambiente-teste.md`.
+- 2026-11-01: scripts/diag.cmd (IDs Wi-Fi/BT no WinRE, nao testado em Windows); .gitattributes CRLF p/ .cmd/.vbs; PROMPT esclarece Winre.wim; HANDOFF com riscos (A3 vs C: formatada, dados).

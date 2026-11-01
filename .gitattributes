@@ -1,2 +1,4 @@
 CHAT.md merge=union
 PROGRESS.md merge=union
+*.cmd text eol=crlf
+*.vbs text eol=crlf
