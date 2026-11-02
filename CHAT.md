@@ -8,3 +8,4 @@ Leia só o fim (barato): `tail -5 CHAT.md`.
 03:59 claude D winre 17763 inspecionado (imagem real): netsh wlan ok, certutil ausente -> runbook corrigido; scripts/ kit criado p/ outros agentes
 17:49 claude + ambiente de teste QEMU criado (scripts/ + tests/); suite 6/6 PASS em TCG; NET=1 liga a rede
 04:09 claude + diag.cmd criado; HANDOFF repriorizado; ? dono: modelo Wi-Fi via diag.cmd e quer recuperar arquivos da C:?
+01:34 mavis + ciclo do driver: buscar_driver.py (catalogo MS) + injetar_driver.sh (Winre.wim real, hash ok); suite PAN/fdisk real 27/27; diag.cmd corrigido (findstr nao existe no WinRE 1809)
