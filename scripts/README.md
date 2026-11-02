@@ -12,7 +12,16 @@ sh scripts/uup_links.sh                # 2) resolve links diretos oficiais (nao 
 sh scripts/baixar_uup.sh '\.esd$'      # 3) baixa (filtro opcional; retomavel/paralelo)
 sh scripts/inspecionar_winre.sh <img>  # 4) examina o WinRE (netsh/WLAN/drivers)
 sh scripts/converter_iso.sh            # 5) opcional: monta a ISO completa a partir dos UUP
-sh scripts/tests/run-tests.sh          # 6) ambiente de teste: VM QEMU + suite (6/6 PASS)
+sh scripts/tests/run-tests.sh          # 6) ambiente de teste: VM QEMU + suite (27/27 PASS)
+```
+
+## Driver: do hardware ID ao Winre.wim (ciclo fechado)
+
+```sh
+python3 scripts/buscar_driver.py busca 'PCI\VEN_14E4&DEV_4365'                  # 1) localiza no catalogo MS
+python3 scripts/buscar_driver.py baixa 'PCI\VEN_14E4&DEV_4365' --dir .work/drivers # 2) baixa o .cab oficial
+python3 scripts/buscar_driver.py inf   'PCI\VEN_14E4&DEV_4365' --dir .work/drivers/extracted  # 3) confere se o INF serve
+sh scripts/injetar_driver.sh --imagem .work/wim/Winre.wim --driver .work/drivers/extracted  # 4) injeta
 ```
 
 ## O que cada um faz
@@ -24,6 +33,9 @@ sh scripts/tests/run-tests.sh          # 6) ambiente de teste: VM QEMU + suite (
 | `baixar_uup.sh` | Baixa os arquivos com retomada (`-c`); usa `aria2c` paralelo se existir. Aceita **filtro regex** para baixar só o necessário |
 | `inspecionar_winre.sh` | Acha o `Winre.wim` (inclusive aninhado em `install.wim`/ESD/ISO) e verifica `netsh.exe`, `wlanapi.dll`, `wlanmsm.dll`, `certutil.exe`, drivers `Net*.inf` |
 | `converter_iso.sh` | Usa o conversor oficial uup-dump (wimlib, multiplataforma) para gerar a ISO |
+| `buscar_driver.py` | Acha o driver de um dispositivo no **Microsoft Update Catalog** pelo hardware ID (`VEN_/DEV_` ou `VID_/PID_`), baixa o `.cab` oficial e **confere se o INF cobre o dispositivo** (ignora `SUBSYS_`/`REV_`, como o Windows). `busca` / `baixa` / `inf` / `catalogo` |
+| `injetar_driver.sh` | Injeta um driver numa imagem Windows/WinRE (WIM/ESD) via `wimlib`, nos mesmos caminhos do `dism /Add-Driver`: `/Windows/INF`, `DriverStore/FileRepository`, `System32/drivers`. Faz backup e verifica. `--listar` mostra o que já está na imagem |
+| `diag.cmd` | **Roda no WinRE** (não no Linux): coleta os IDs de hardware (Wi-Fi/Bluetooth) e o inventário de drivers. Detalhes em `docs/evidence/driver_injecao.md` |
 | `download.vbs` | **Roda no WinRE** (não no Linux): baixa arquivo por HTTP(S) via `cscript` — supre a ausência de `certutil`/PowerShell |
 | `download_ftp.txt` | Modelo de comandos para `ftp.exe -s:` no WinRE (alternativa de download) |
 
@@ -39,6 +51,7 @@ desafio: **injetar driver → dispositivo aparece → rede**. Sem KVM usa emula�
 | `build-initramfs.sh` | Monta o initramfs (busybox + `sd_mod`/`virtio_net` + deps + `init`) |
 | `run-vm.sh` | Sobe a VM (`[segundos]`, `NET=1`, `DISK_MB=`) e despeja a serial em `.work/logs/vm.log` |
 | `tests/in-vm-tests.sh` | Suíte DENTRO da VM: disco, wipe de C:, imagem de recuperação, injeção de driver, rede |
+| `tests/in-vm-fdisk-pan.sh` | Suíte DENTRO da VM: `fdisk` **real** (C: + partição de recuperação; prova por md5 que formatar C: não apaga a recuperação) e **PAN** com network namespace + `veth` (celular como gateway, com teste negativo) |
 
 Evidência da última execução: `docs/evidence/ambiente-teste.md`.
 
