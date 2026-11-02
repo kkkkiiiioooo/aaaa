@@ -51,4 +51,7 @@ Todo o texto do site (telas, mensagens, erros) e este arquivo estão em portugu�
 - A CONFIRMAR: entregar também um script único de verificação rápida (por exemplo `npm test`) já na primeira entrega.
 
 ## 9. Entregáveis e repositório
-PENDENTE (depende da configuração do repositório no GH: pasta, branch, git push, README.md, comandos para rodar e publicar).
+- Repositório: https://github.com/kkkkiiiioooo/aaaa, branch do projeto 5.5.iaag. Nunca altere o branch main e nunca apague o branch 0.
+- Os arquivos do projeto ficam na raiz do repositório, junto do README.md.
+- Ao terminar cada etapa, faça commit e git push do branch do projeto.
+- PENDENTE: estrutura de pastas do código, conteúdo do README.md, comandos para rodar e publicar.
