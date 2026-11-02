@@ -16,7 +16,8 @@ cp "$BB" "$VM/initrd/bin/busybox"
 # applets usados pelos testes
 for a in sh mount umount cat echo ls mkdir dd tar gzip ip fdisk poweroff reboot \
          sleep dmesg mountpoint grep sed awk cut sync wc find ln head tail \
-         modprobe insmod; do
+         modprobe insmod unshare nsenter md5sum mknod blockdev chmod tr ping \
+         wget httpd dirname basename rm cp mv touch printf test seq env nc; do
   ln -sf busybox "$VM/initrd/bin/$a"
 done
 
@@ -53,6 +54,42 @@ fi
 
 cp "$ROOT/scripts/tests/in-vm-tests.sh" "$VM/initrd/run-tests.sh"
 chmod +x "$VM/initrd/run-tests.sh"
+
+# --- suite extra: fdisk real + PAN (netns/veth) ---
+cp "$ROOT/scripts/tests/in-vm-fdisk-pan.sh" "$VM/initrd/in-vm-fdisk-pan.sh"
+chmod +x "$VM/initrd/in-vm-fdisk-pan.sh"
+
+# --- veth.ko (necessario para a simulacao de PAN) ---
+MODVER="${MODVER:-$(ls "$MODSRC/modules" 2>/dev/null | head -n1)}"
+VETHKO=$(find "$MODSRC/modules" -name 'veth.ko*' 2>/dev/null | head -n1)
+if [ -n "$VETHKO" ] && [ -n "${MODVER:-}" ]; then
+  mkdir -p "$VM/initrd/lib/modules/$MODVER/kernel/drivers/net"
+  cp "$VETHKO" "$VM/initrd/lib/modules/$MODVER/kernel/drivers/net/"
+  echo "[build-initramfs] veth.ko incluido ($MODVER)"
+else
+  echo "[build-initramfs] aviso: veth.ko ausente -> a suite PAN vai reportar FAIL"
+fi
+
+# --- 'ip' do iproute2 (o busybox ip nao suporta 'ip link add type veth') ---
+HOST_IP=$(command -v ip 2>/dev/null)
+if [ -n "$HOST_IP" ]; then
+  mkdir -p "$VM/initrd/sbin" "$VM/initrd/usr/sbin"
+  cp -f "$HOST_IP" "$VM/initrd/sbin/ip.full"
+  ldd "$HOST_IP" 2>/dev/null | sed -n 's/.*=> \(\/[^ ]*\).*/\1/p' | sort -u | while read -r lib; do
+    [ -f "$lib" ] || continue
+    mkdir -p "$VM/initrd$(dirname "$lib")"
+    cp -Lf "$lib" "$VM/initrd$lib"
+  done
+  # libs de link dinamico (libbpf etc.) podem vir de caminho relativo
+  ldd "$HOST_IP" 2>/dev/null | awk '/=> \//{print $3} /^\t/{print $1}' | grep '^/' | sort -u | while read -r lib; do
+    [ -f "$lib" ] || continue
+    mkdir -p "$VM/initrd$(dirname "$lib")"
+    cp -Lf "$lib" "$VM/initrd$lib"
+  done
+  echo "[build-initramfs] iproute2 ip copiado -> sbin/ip.full"
+else
+  echo "[build-initramfs] aviso: iproute2 ausente no host -> a suite PAN vai reportar FAIL"
+fi
 
 cat > "$VM/initrd/init" <<'EOF'
 #!/bin/busybox sh

@@ -55,5 +55,17 @@ else
   ok "com interface de rede (NET=1): $ifaces ifaces"
 fi
 
+echo "-- T7 fdisk real + PAN (netns/veth)"
+if [ -f /in-vm-fdisk-pan.sh ]; then
+  sh /in-vm-fdisk-pan.sh
+  if [ $? -eq 0 ]; then
+    ok "suite fdisk/PAN (detalhes acima) sem falhas"
+  else
+    no "suite fdisk/PAN reportou falhas (detalhes acima)"
+  fi
+else
+  no "in-vm-fdisk-pan.sh ausente no initramfs"
+fi
+
 echo "RESULTADO: $([ $fail -eq 0 ] && echo PASS || echo FAIL) ($fail falhas)"
 [ "$fail" -eq 0 ]

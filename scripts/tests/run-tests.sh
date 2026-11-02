@@ -11,7 +11,7 @@ command -v qemu-system-x86_64 >/dev/null 2>&1 || { echo "SKIP: qemu ausente (rod
 sh "$ROOT/scripts/fetch-base.sh"      || exit 1
 sh "$ROOT/scripts/build-initramfs.sh" || exit 1
 
-sh "$ROOT/scripts/run-vm.sh" 120 >/dev/null 2>&1 || true
+sh "$ROOT/scripts/run-vm.sh" 300 >/dev/null 2>&1 || true
 
 echo "--- avaliacao ---"
 if ! grep -q "=== INITRAMFS-TESTE: fim" "$LOG" 2>/dev/null; then
