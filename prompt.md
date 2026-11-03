@@ -1,6 +1,6 @@
 # Construir um site de agente de IA (pedido único, autossuficiente)
 
-> RASCUNHO. Seções marcadas como PENDENTE ainda estão sendo decididas na entrevista.
+> Documento finalizado. Todas as decisões foram confirmadas pelo usuário.
 
 ## 1. Objetivo
 Construa um site leve que mistura **agente de IA** com **playground**: a pessoa conversa com um agente que usa ferramentas de servidores MCP, e **quase tudo é configurável pela própria pessoa**. Tudo que você precisa está neste arquivo. Não faça perguntas: tome decisões razoáveis, registre-as no README.md e termine o trabalho inteiro.
@@ -40,7 +40,8 @@ Tudo configurável pela pessoa, no mínimo:
 - Confirmação de ferramenta ligada ou desligada (padrão: ligada).
 - Escolha do modelo e do provedor.
 
-PENDENTE: outros parâmetros configuráveis (por exemplo temperatura e limite de tokens) e onde guardar configurações e histórico.
+Parâmetros configuráveis adicionais: temperatura (0.0–2.0, padrão 1.0) e limite de tokens (256–8192, padrão 2048).
+Configurações e histórico ficam no `localStorage` do navegador (sem servidor, funciona offline, compatível com Chrome 70+).
 
 ## 7. Idioma
 Todo o texto do site (telas, mensagens, erros) e este arquivo estão em português do Brasil.
@@ -48,10 +49,15 @@ Todo o texto do site (telas, mensagens, erros) e este arquivo estão em portugu�
 ## 8. Verificação
 - A pessoa faz o primeiro teste por conta própria.
 - Quando a pessoa disser que algo não funciona: escreva testes automáticos e um roteiro de teste que reproduzam o problema, corrija e rode tudo de novo até passar.
-- A CONFIRMAR: entregar também um script único de verificação rápida (por exemplo `npm test`) já na primeira entrega.
+- O primeiro teste é feito manualmente pela pessoa. Scripts automáticos só são criados quando a pessoa reportar um problema.
 
 ## 9. Entregáveis e repositório
 - Repositório: https://github.com/kkkkiiiioooo/aaaa, branch do projeto 5.5.iaag. Nunca altere o branch main e nunca apague o branch 0.
 - Os arquivos do projeto ficam na raiz do repositório, junto do README.md.
 - Ao terminar cada etapa, faça commit e git push do branch do projeto.
-- PENDENTE: estrutura de pastas do código, conteúdo do README.md, comandos para rodar e publicar.
+- Estrutura de pastas:
+  - `src/` — servidor Hono (entry point, proxy MCP, provedores de modelo)
+  - `public/` — front-end estático (HTML + CSS + JS puros)
+  - `wrangler.toml`, `package.json` na raiz
+- Comandos: `npm i` (instalar), `npm run dev` (local), `npm run deploy` (publicar)
+- README.md: título, objetivo em 2 linhas, pré-requisitos (Node 18+, conta Cloudflare), comandos acima, link do site após deploy.
