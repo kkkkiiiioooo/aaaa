@@ -42,7 +42,7 @@ bater, o que voce tem e bit a bit o que foi medido na E2/na geracao do dossier.
 ```sh
 zcat docs/imagem/winre-caminhos.txt.gz | grep -i <hwid-ou-binario>   # nao precisa de nada daqui
 # com o --fs baixado:
-grep -ril "<HWID>" .work/fs/Windows/INF/            # que INF cobre este hardware
+python3 scripts/listar_hwid.py .work/fs <VEN_xxxx>   # OS .INF SAO UTF-16: grep ASCII devolve zero mudo
 python3 scripts/ler_hive.py .work/fs/Windows/System32/config/SYSTEM   # servicos presentes/ausentes
 ```
 
