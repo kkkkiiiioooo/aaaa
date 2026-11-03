@@ -90,6 +90,12 @@ passo "4/4 relatório do lead"
 N=$(sh scripts/doctor.sh 2>/dev/null | sed -n "s/^EXECUTAVEL AGORA: //p" | head -1); [ -n "$N" ] || N="ver doctor.sh"
 sh scripts/relatorio.sh "$A | $MINHA | rodando | ambiente: $N | proximo: ver ETAPAS.md" || true
 
+# quem ainda esta na E1 nao precisa esperar ter a imagem para comecar a pensar
+if [ -f docs/imagem/DOSSIE.md ]; then
+  printf '\nDOSSIER da imagem ja publicado (leia antes de codar):\n'
+  sed -n '1,40p' docs/imagem/DOSSIE.md
+fi
+
 cat <<EOF
 
 PRONTO. Você está em $REPO, branch $(git rev-parse --abbrev-ref HEAD), etapa $MINHA.

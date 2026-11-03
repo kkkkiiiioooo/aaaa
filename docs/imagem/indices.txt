@@ -1,0 +1,15 @@
+# indices dos ESDs — wimlib-imagex info
+## Core_en-us.esd  (499M)
+  indice 1 |                   Windows Setup Media | arquivos=941 | bytes=272796336
+  indice 2 |                   Microsoft Windows Recovery Environment (x64) | arquivos=17669 | bytes=2169435125
+  indice 3 |                   Windows 10 Home | arquivos=86160 | bytes=14268982958
+
+## Microsoft-Windows-Client-LanguagePack-Package_en-US-AMD64-en-us.esd  (19M)
+  indice 1 |                   Edition Package | arquivos=12139 | bytes=165775950
+
+## Microsoft.ModernApps.Client.All.esd  (312M)
+  indice 1 |                   Edition Package | arquivos=7369 | bytes=1295247512
+
+## Microsoft.ModernApps.Client.core.esd  (28M)
+  indice 1 |                   Edition Package | arquivos=534 | bytes=98546066
+

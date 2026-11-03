@@ -1,0 +1,36 @@
+# manifest da imagem — gerado por scripts/dossie.sh
+# fonte: <uuid>_<edicao>.tsv do UUP dump; URL removida (token assinado, expira)
+nome|bytes|sha1
+Core_en-us.esd|522499063|8352af7661fb4808decc0253f6d516b7c2d88605
+Microsoft-OneCore-ApplicationModel-Sync-Desktop-FOD-Package-amd64.cab|3383111|c7b4a1a6f4e09797105fcc7b453e95e41367b877
+Microsoft-Windows-Client-Desktop-Required-Package.ESD|823854481|5aa3c3d9a8dec1709e67eb194c2607f372b6e634
+Microsoft-Windows-Client-Desktop-Required-WOW64-Package.ESD|219092547|2a73ae4c4bcc33622c90bbbca532aea4df91f3c0
+Microsoft-Windows-Client-Features-Package.ESD|296860127|185c114f6a6a5912a6df5e9165ff81c8600eeb1c
+Microsoft-Windows-Client-Features-WOW64-Package.ESD|100535432|b2342c7f15c9fae017683acc0a4e9bc5f68e35cf
+Microsoft-Windows-Client-LanguagePack-Package_en-US-AMD64-en-us.esd|19634200|297c90024483d51017784a2e00da85a570a14b57
+Microsoft-Windows-EditionPack-Core-Package.ESD|116307575|c4b8f480f5b535d85051457df7005047b1766995
+Microsoft-Windows-EditionPack-Core-WOW64-Package.ESD|11045429|cde7c97d647d34a3b82a5efcd94b200670194831
+Microsoft-Windows-EditionSpecific-Core-Package.ESD|380718|88e0839c01327bd1f38b80f7bac79b75b1999ff2
+Microsoft-Windows-Foundation-Package.ESD|2703583|3714e3373bfe9f76c44ed0d527c4607473b54f9e
+Microsoft-Windows-Hello-Face-Migration-Package-amd64.cab|35014567|a25740e799535ff9fc5173dc8485159c1a34fce5
+Microsoft-Windows-Hello-Face-Package-amd64.cab|38324228|2a6ab08608d2115a45f59b77ebb81650b9cc5044
+Microsoft-Windows-InternetExplorer-Optional-Package-amd64.cab|305497|cad3161bb2143a240cee79c0eb1abb67f9000f03
+Microsoft-Windows-LanguageFeatures-Basic-en-us-Package-amd64.cab|21424826|47380a08acfea5869494aca75a4acbfd9e9e5c48
+Microsoft-Windows-LanguageFeatures-Handwriting-en-us-Package-amd64.cab|5493399|08dba52d96687c45b1cff99e916c7f6db292f253
+Microsoft-Windows-LanguageFeatures-OCR-en-us-Package-amd64.cab|164833|54bf4eccadda72ff59c1c7cf6983fc1b96f1bb78
+Microsoft-Windows-LanguageFeatures-Speech-en-us-Package-amd64.cab|64389109|80b494eb408dc35a62d3a34c3d029e5bc3646d51
+Microsoft-Windows-LanguageFeatures-TextToSpeech-en-us-Package-amd64.cab|50007506|8038f95a4c5a6d0777e0bf5d0d210aba1efbadc2
+Microsoft-Windows-MediaPlayer-Package-amd64.cab|17573627|7cfa282844c7cafb7c3fff80fcb39348805d9eef
+Microsoft-Windows-Not-Supported-On-LTSB-Package.ESD|36132|bfb1191618938d1e082e89a4830d4b871eb889bf
+Microsoft-Windows-Not-Supported-On-LTSB-WOW64-Package.ESD|25563607|dfe7d818d2cb096b6e9905443e763800de20d076
+Microsoft-Windows-QuickAssist-Package-amd64.cab|415138|81555a1e8bab1fc1555e6d618102d27bf8eaacb2
+Microsoft-Windows-RegulatedPackages-Package.ESD|39365310|9a394c41ffd8acd484883eb39f040da22adbbc7d
+Microsoft-Windows-RegulatedPackages-WOW64-Package.ESD|20208304|21503682cd6322626cceda7e971a721127e05d7c
+Microsoft-Windows-TabletPCMath-Package-amd64.cab|6572245|d611bafa0d88ce6a6a5b6718514cdf90e764bd59
+Microsoft.ModernApps.Client.All.esd|326807117|980b18243d0df895c493279f1a052f682ad7f5df
+Microsoft.ModernApps.Client.core.esd|28940186|6376a4a62ac7edd94a9087eded4d83586c15be1b
+OpenSSH-Client-Package-amd64.cab|1323493|0074a50426c86b1be724fd3f37b12480dd1b4479
+SSU-17763.9354-x64.cab|15579539|f10edd8fde5b419f0803496f0a4562c631aa81eb
+Windows10.0-KB5068795-x64.cab|17171387|67da0fc93d22a556f420e489e90883ed03691c9f
+Windows10.0-KB5126651-x64.cab|868193391|1d84239e261c192b3dfd49dcba908299b270e24a
+Windows10.0-KB5126664-x64.cab|175564737|4e7da37621cb7e1da07bd83b559f5096ffae82ac
