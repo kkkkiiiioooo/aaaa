@@ -53,7 +53,11 @@ fi
 REPO="$AQUI/aaaa"
 if [ ! -d "$REPO/.git" ]; then
   passo "1/4 clone"
-  git clone "$R" "$REPO" >/dev/null 2>&1 || falha "clone"
+  # blob:none = traz commits e arvores, nao o conteudo. Sem isso, a branch `imagem`
+  # (317 MB de pacote offline) seria baixada por TODO agente, inclusive quem nao usa.
+  git clone --filter=blob:none "$R" "$REPO" >/dev/null 2>&1 \
+    || git clone "$R" "$REPO" >/dev/null 2>&1 \
+    || falha "clone" "nem clone parcial nem completo funcionaram — veja a mensagem acima"
 fi
 cd "$REPO"
 
