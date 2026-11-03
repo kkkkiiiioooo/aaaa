@@ -70,3 +70,21 @@ Regras padrão do repositório. Valem para tudo.
 - `PLANO.md` e do lead: o hook recusa edicao sem `LEAD=1`. Responda ao lead pelo relatorio.
 - Mudou a base (este repo-template)? Espelhe na branch `backup` (ver skill `iniciar-projeto`).
 - Responda em português. Commits pequenos e imediatos.
+
+## Ritual de rodada (obrigatorio — e o que torna a orquestracao real)
+
+```
+# entrada (o iniciar.sh faz 1-3 sozinho)
+sh iniciar.sh A=<nome> P=wwii S_ARQ=<arquivo-da-passphrase>
+sh scripts/etapa.sh status            # o que ja esta tomado por quem
+# trabalho: NUNCA edite etapa de outra pessoa nem PRESENCA.md a mao
+sh scripts/etapa.sh fechar E<n> "<evidencia: caminho + saida>"
+sh scripts/relatorio.sh "<nome> | E<n> | <status> | <obstaculo>"
+A=<nome> sh scripts/agente.sh saiu    # bate-ponto de saida
+```
+
+Regras de convivencia:
+- Etapa sem `fechar` com evidencia = nao concluida. O lead nao aceita "pronto".
+- Duas reclamações simultaneas: a primeira no log ganha (lease de 90 min).
+- `RELOGIO-SUSPEITO` no status = seu relogio esta adiantado/atrasado; ajuste antes de fechar.
+- Obstaculo novo que ninguém previu: registre em `ETAPAS.md` (append) e siga — nao congele.
