@@ -11,7 +11,7 @@
 #
 # Variáveis:
 #   A  obrigatória — nome do agente (bate-ponto, git, evidência)
-#   S  obrigatória — passphrase de t.gpg
+#   S  passphrase de t.gpg (ou S_ARQ=<arquivo>, ou lida do stdin: nunca em argv)
 #   P  projeto por nome (wwii, iaag); padrão: wwii
 #   D 1 = dry-run: mostra o plano e não executa nada
 #   E forçar uma etapa específica (padrão: primeira livre)
@@ -23,7 +23,10 @@ P=${P:-wwii}
 D=${D:-0}
 
 [ -n "${A:-}" ] || { echo "iniciar.sh: falta A=<nome do agente>"; exit 2; }
-[ -n "${S:-}" ] || { echo "iniciar.sh: falta S=<passphrase>"; exit 2; }
+if [ -z "${S:-}" ] && [ -n "${S_ARQ:-}" ] && [ -r "$S_ARQ" ]; then S=$(head -1 "$S_ARQ"); fi
+if [ -z "${S:-}" ] && [ ! -t 0 ]; then S=$(head -1); fi
+if [ -z "${S:-}" ]; then printf 'Passphrase de t.gpg: '; S=$(head -1); fi
+[ -n "$S" ] || { echo "iniciar.sh: sem passphrase"; exit 2; }
 
 passo() { printf '\n===== %s =====\n' "$1"; }
 falha() { printf '\nPARADO em %s: %s\n' "$1" "${2:-}"; exit 1; }
