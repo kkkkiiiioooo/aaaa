@@ -24,6 +24,41 @@ Detalhe verificável em `manifest.txt` (sha1), `indices.txt`, `winre-caminhos.tx
 | índice 3 | *Windows 10 Home* — 86 160 arquivos, 14,27 GB |
 | build | 17763 (1809). Carimbo interno dos componentes: `10.0.17763.1`, criado 2018-09-15 |
 
+---
+
+## 1b. O que pesa de verdade (retificando o susto dos 3,7 GB)
+
+Os 3,7 GB são o **download do UUP**, que entrega o Windows inteiro. O ambiente de
+recuperação vive **dentro** dele, como índice 2 de `Core_en-us.esd`, e separado ocupa
+muito menos. Medido agora, nesta máquina:
+
+```
+wimlib-imagex export .work/uup/files/Core_en-us.esd 2 .work/export/winre-1809.wim \
+  --compress=LZMS --boot
+# -> 25 s, 266.283.250 bytes (254 MB), Image Count 1, Boot Index 1
+# sha256 f9e30ca308aa23e83d852ccefcfe7bca09a23d7c5b759ae655557612487879b8
+```
+
+| peça | tamanho | precisamos? |
+|---|---|---|
+| download UUP completo | 3 695 MB | **não** — é o meio, não o fim |
+| `Core_en-us.esd` (3 índices) | 498 MB | só como fonte |
+| **WinRE exportado (índice 2)** | **254 MB** ← 959 MB únicos, 2,02 GB expandido | **sim, é isto que a E3/E4 manipulam** |
+| mídia de setup (índice 1: `bootmgr`, BCD, fontes) | 272 MB expandido | sim, para montar ISO inicializável |
+| apps modernos (`ModernApps.*`) | 312 MB + 28 MB | **não** |
+| acumulativo `KB5126651` | 828 MB | não para PE; só se quisermos WinRE atualizado |
+| wow64 / language / editionpack | ~585 MB | não |
+
+Detalhe que quase passou: exportar **sem** `--boot` gera um WIM com `Boot Index: 0`
+(não marcado inicializável). Aparentemente inofensivo porque o BCD aponta para o
+arquivo por caminho+índice, mas é `NÃO VERIFICADO` para o loader de WinRE — use
+sempre `--boot`.
+
+Conclusão operacional: **nenhum agente precisa dos 3,7 GB.** Precisa de 254 MB + o
+índice 1. E 254 MB não cabe num único arquivo no GitHub (limite rígido de 100 MiB por
+arquivo, verificado), então a escolha é: soltar como asset de Release, dividir em 3
+partes de ~90 MB, ou cada agente regenerar a partir do UUP (4 min de rede + 25 s de CPU).
+
 ## 2. O que o WinRE 1809 TEM — FATO (procura em `winre-caminhos.txt.gz`)
 
 `cmd` `reg` `dism` `pnputil` `bcdedit` `bcdboot` `bootsect` `diskpart` `chkdsk`
