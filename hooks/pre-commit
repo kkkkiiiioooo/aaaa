@@ -23,6 +23,13 @@ if [ -z "${LEAD:-}" ] && git diff --cached --name-only | grep -qx 'PLANO.md'; th
   exit 1
 fi
 
+# So ramal de projeto (comeca com letra/numero seguido de nome) gera linha de presenca.
+# Sem isto, commitar em 0 / main / backup / relatorio criaria PRESENCA.md nessas
+# branches e poluiria justamente a base que nao deve mudar.
+case "$b" in
+  main|0|backup|relatorio) exit 0 ;;
+esac
+
 # --- registro automatico de trabalho: 1 linha por commit, sem o agente lembrar ---
 A=$(cat "$R/.work/agente" 2>/dev/null || git config user.name 2>/dev/null || echo desconhecido)
 F="$R/PRESENCA.md"
