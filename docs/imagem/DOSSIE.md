@@ -150,6 +150,29 @@ mede na E4, não aqui.
 Isso é a parte que vale para quem está preso na E1: **o plano mais provável de
 funcionar não é o que o HANDOFF propunha.**
 
+## 6b. ARMADILHA: os .inf do WinRE sao UTF-16LE — grep ASCII mente
+
+Medido: 987 arquivos `.inf`, todos com BOM `FF FE`. `grep -r "VEN_8086" Windows/INF/`
+devolve **zero silenciosamente**, e a conclusao "o WinRE nao tem driver de fabricante
+nenhum" sai errada. Sempre:
+
+```sh
+python3 scripts/listar_hwid.py .work/fs            # decodiza antes de procurar
+python3 scripts/listar_hwid.py .work/fs 8086
+```
+
+Resultado correto, com controle positivo (o mesmo metodo acha 1 077 DEV_8086):
+
+| busca no WinRE 1809 | resultado |
+|---|---|
+| drivers **sem fio** (`netwlan*`, `iwlwifi`, `athwb`, `8821CE`, `DEV_24FD`) | **ZERO** em 987 INFs |
+| drivers de rede **com fio** (Broadcom/Intel/Realtek `net*.inf`) | presentes, 312 pastos no DriverStore |
+| HWIDs em `machine.inf` | milhares — mas isto **nao e driver**, e lista de compat de upgrade |
+
+Consequencia para a E2: o driver Wi-Fi **tem** de ser injetado; nao ha atalho in-box.
+Somando ao §4 (servico sem DLL), o caminho sem fio em WinRE 1809 tem **dois** blocos,
+um em cima do outro.
+
 ## 7. Reproduzir do zero (3 comandos, ~4 min a 15 MB/s)
 
 ```sh
