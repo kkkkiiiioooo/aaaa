@@ -11,11 +11,20 @@
 #
 # Variáveis:
 #   A  obrigatória — nome do agente (bate-ponto, git, evidência)
-#   S  passphrase de t.gpg (ou S_ARQ=<arquivo>, ou lida do stdin: nunca em argv)
+#   S  passphrase de t.gpg; ou S_ARQ=<arquivo>. Nunca passe S em argv num pipe.
 #   P  projeto por nome (wwii, iaag); padrão: wwii
 #   D 1 = dry-run: mostra o plano e não executa nada
 #   E forçar uma etapa específica (padrão: primeira livre)
 set -eu
+
+# aceita A=<nome> P=<projeto> tanto como ambiente quanto como argumento posicional
+# (com `curl ... | sh -s -- A=n P=p` o stdin ja esta tomado pelo proprio script)
+for kv in "$@"; do
+  case "$kv" in
+    *=*) export "$kv" ;;
+    *) echo "iniciar.sh: argumento nao-reconhecido: $kv"; exit 2 ;;
+  esac
+done
 
 AQUI=$(cd "$(dirname "$0")" && pwd)
 R=${R:-https://github.com/kkkkiiiioooo/aaaa.git}
