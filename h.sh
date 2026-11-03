@@ -16,7 +16,11 @@ S=${1:-${S:-${SENHA:-}}}
 P=${2:-${P:-${PROJETO:-}}}
 AQUI=$(cd "$(dirname "$0")" 2>/dev/null && pwd)
 URL=${URL:-https://github.com/kkkkiiiioooo/aaaa}
-DIR=${DIR:-$AQUI/aaaa}
+# Rodar de DENTRO de um clone ja existente deve usar esse clone, e nao criar
+# aaaa/aaaa (visto num agente que baixou o h.sh para dentro do repositorio).
+if [ -n "${DIR:-}" ]; then :
+elif [ -d "$AQUI/.git" ]; then DIR="$AQUI"
+else DIR="$AQUI/aaaa"; fi
 RAW=${RAW:-https://raw.githubusercontent.com/kkkkiiiioooo/aaaa/0/t.gpg}
 
 [ -n "$S" ] || { echo "erro: falta S=<passphrase>. Ex.: S=senha P=wwii sh h.sh"; exit 1; }
