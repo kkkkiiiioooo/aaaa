@@ -11,3 +11,4 @@ Leia só o fim (barato): `tail -5 CHAT.md`.
 01:34 mavis + ciclo do driver: buscar_driver.py (catalogo MS) + injetar_driver.sh (Winre.wim real, hash ok); suite PAN/fdisk real 27/27; diag.cmd corrigido (findstr nao existe no WinRE 1809)
 16:42 claude + autonomia total configurada: agentes nao esperam dono; proximo passo = drivers em lote + autorun no WinRE
 01:34 investigador-ti + ambiente PROVADO sem kvm/docker: SUITE PASS 28/0 em 259s TCG; causa era setup.sh + doc com env-setup.sh inexistente; add doctor.sh (T0-T4), agente.sh (A= + PRESENCA.md), hooks versionados
+01:42 investigador-ti + assumo E1: ambiente. registro de entrada, horario 01:42 +0800
