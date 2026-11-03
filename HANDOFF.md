@@ -4,6 +4,7 @@ Estado atual (snapshot; reescreva ao fim de cada rodada — não append).
 
 ## Fase
 Rodada de **autonomia do repositório** (2026-11-04), além do desafio em si:
+n- **PLANO.md agora e template do lead**: entrada minima (RELATORIO inteiro + tails), reescrito inteiro (<=4 KB) com passos exatos, armadilha, aceite e plano B por frente; instrucoes p/ agentes embutidas (executar passos exatos, seguir plano B, nunca esperar o lead).
 
 - **Ambiente de teste PROVADO executável num sandbox hostil**: sem `/dev/kvm`, sem
   docker, 2 núcleos, 4 GB. `sh scripts/ambiente.sh` + `sh scripts/tests/run-tests.sh`
