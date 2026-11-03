@@ -44,9 +44,13 @@ Regras padrão do repositório. Valem para tudo.
 - Pesquise a fundo (docs oficiais, fóruns) antes de concluir "impossível"; registre fontes.
 
 ## Escopo de leitura (contexto do planner)
-- Leia sempre: `AGENTS.md` (contrato) + `PROMPT.md` (tarefa) + `HANDOFF.md` (estado atual). Fixo, ~2,5 KB.
+- Leia sempre e nesta ordem: `PLANO.md` (direcao do lead) + `AGENTS.md` (contrato) +
+  `PROMPT.md` (tarefa) + `HANDOFF.md` (estado atual). Fixo, ~3 KB.
+- `PLANO.md` manda em caso de duvida de prioridade. Se estiver vazio/desatualizado, siga o `PROMPT.md` e registre a escolha no relatorio.
 - `PROGRESS.md`, `CHAT.md` e `docs/evidence/` são append-only e crescem: nunca leia inteiro, só o fim (tail, ~20 linhas).
 - `HANDOFF.md` é snapshot: reescreva-o ao **fim de cada rodada** (fase, próximo passo, bloqueios); não faça append.
+- **Nunca leia a branch `relatorio` nem `RELATORIO.md`**: e o inbox do lead, nao seu. Voce nao
+  precisa do que os outros relataram para trabalhar; ler custa contexto e contamina prioridade.
 - Mantenha o repo mínimo: sempre que der para economizar contexto **sem perder qualidade nem fluxo**, enxugue e proponha a melhoria.
 
 ## Isolamento (não se contaminar)
@@ -57,5 +61,12 @@ Regras padrão do repositório. Valem para tudo.
 ## Registro
 - Nada só no chat: registre descobertas, decisões, estado e dúvidas nos docs do repo; sempre no fim, sem reescrever nem duplicar (máx. 500 caracteres por entrada).
 - Chat vivo entre agentes (`CHAT.md`): escreva **1 linha só ao terminar a rodada** — `HH:MM <agente> <tag> msg` (tags `+` feito · `D` descoberta · `?` hipótese assumida · `!` bloqueio externo comprovado). Só append, nunca reescreva; leia só o fim (`tail -5 CHAT.md`). Vários agentes ao mesmo tempo não conflitam (`merge=union`). Se o push falhar, repita até passar.
+- **Fim de rodada = 1 linha de relatorio**, e nada mais:
+  `sh scripts/relatorio.sh "<PASS|FAIL|PARCIAL|BLOQUEIO-EVIDENCIADO>" "<prova>" "<proximo>"`
+  O script monta a linha com dados do git (hora UTC, agente, branch, commits), faz append na
+  branch orphan `relatorio` e envia. <=240 caracteres, sem prosa: o lead le o arquivo inteiro.
+- Identifique-se na entrada: `A=<nome> sh setup.sh` (sem isso o commit sai anonimo e o lead
+  nao atribui o trabalho a ninguem).
+- `PLANO.md` e do lead: o hook recusa edicao sem `LEAD=1`. Responda ao lead pelo relatorio.
 - Mudou a base (este repo-template)? Espelhe na branch `backup` (ver skill `iniciar-projeto`).
 - Responda em português. Commits pequenos e imediatos.
