@@ -1,0 +1,40 @@
+#!/bin/sh
+# post-commit - envia o commit e DA SINAL QUANDO FALHAR.
+#
+# A versao antiga fazia `git push -q` sem capturar o codigo: o commit ficava local,
+# ninguem ficava sabendo, e o AGENTS.md mandava "repita ate passar" sem mecanismo de
+# deteccao. Agora o resultado fica gravado e um marcador avisa no proximo comando.
+#
+# Guarda de recursao com nome proprio: a antiga era "$G", curta demais - se ja existisse
+# no ambiente, desligava o push automaticamente sem ninguem perceber.
+set -u
+if [ -n "${MM_GUARDA:-}" ]; then exit 0; fi
+MM_GUARDA=1; export MM_GUARDA
+
+R=$(git rev-parse --show-toplevel 2>/dev/null)
+LOG="$R/.work/logs"
+PEND="$R/.work/push-pendente"
+b=$(git branch --show-current 2>/dev/null)
+mkdir -p "$LOG"
+
+{
+  echo "--- $(date -u '+%Y-%m-%dT%H:%M:%SZ') branch=$b"
+  if ! git pull -q --rebase origin "$b"; then
+    git rebase --abort 2>/dev/null
+    echo "FALHA pull --rebase (conflito): resolva antes de enviar."
+    : > "$PEND"
+    exit 1
+  fi
+  if git push -q origin "$b"; then
+    echo "ok push $b"
+    rm -f "$PEND"
+  else
+    echo "FALHA push: commit local nao enviado. Diagnostique e repita."
+    : > "$PEND"
+  fi
+} >> "$LOG/push.log" 2>&1
+
+if [ -f "$PEND" ]; then
+  echo "ATENCAO: push pendente (ver .work/logs/push.log). Commit local != trabalho entregue."
+fi
+exit 0

@@ -1,0 +1,27 @@
+#!/bin/sh
+# pre-commit — (1) bloqueia commit na main  (2) registra "trabalhou" em PRESENCA.md
+#
+# Versao versionada: .git/hooks NAO e clonado pelo git, entao o hook so existe se
+# alguem rodar o setup. Este arquivo vive no repo e e ativado por
+#   git config core.hooksPath hooks
+# (feito por setup.sh / scripts/agente.sh).
+set -u
+R=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+b=$(git branch --show-current 2>/dev/null || echo "")
+
+if [ "$b" = main ] && [ -z "${OK:-}" ]; then
+  echo "main: use git switch -c PROJETO (ou OK=1)"
+  exit 1
+fi
+
+# --- registro automatico de trabalho: 1 linha por commit, sem o agente lembrar ---
+A=$(cat "$R/.work/agente" 2>/dev/null || git config user.name 2>/dev/null || echo desconhecido)
+F="$R/PRESENCA.md"
+if [ ! -f "$F" ]; then
+  printf '# PRESENCA\n\nQuem entrou e quem trabalhou. Append-only (merge=union): nao reescreva.\nUTC | agente | evento | branch | host | HEAD\n' > "$F"
+fi
+printf '%s | %s | commit | %s | %s | %s\n' \
+  "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" "$A" "$b" "$(hostname)" \
+  "$(git rev-parse --short HEAD 2>/dev/null || echo -)" >> "$F"
+git add -- PRESENCA.md || exit 1
+exit 0
