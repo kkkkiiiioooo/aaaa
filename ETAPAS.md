@@ -24,3 +24,5 @@
 Formato: `E<n> | <agente> | <inicioUTC> | <estado> | <evidencia>`
 estado: ativa | feita | liberada
 E1 | investigador-ti | 2026-11-03T17:43Z | ativa | -
+E3 | claude | 2026-11-03T22:00Z | ativa | -
+E1 | investigador-ti | 2026-11-03T17:43Z | feita | .work/logs/bootstrap-teste.log SUITE:PASS 28/0 em 259s TCG; doctor: T0 T1 T2
