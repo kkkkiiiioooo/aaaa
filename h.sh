@@ -11,7 +11,7 @@ S=$(printf %s "$S"|tr A-Z a-z|tr -cd a-z)
 t=$(curl -sL raw.githubusercontent.com/kkkkiiiioooo/aaaa/0/t.gpg|gpg -dq --batch --passphrase "$S");[ -n "$t" ]||{ echo "erro: senha ou rede. Peça a senha ao usuário. Exemplo: S=senha P=loja sh h.sh";exit 1;}
 git config --global credential.helper store
 printf 'protocol=https\nhost=github.com\nusername=x\npassword=%s\n\n' "$t"|git credential approve;chmod 600 ~/.git-credentials
-cd ~;[ -d aaaa ]||git clone -q https://github.com/kkkkiiiioooo/aaaa aaaa;cd aaaa||exit 1
+cd /home/claude;[ -d aaaa ]||git clone -q https://github.com/kkkkiiiioooo/aaaa aaaa;cd aaaa||exit 1
 git config user.name claude;git config user.email c@c;git config push.autoSetupRemote true
 echo t.gpg>.agentignore;git ls-files --error-unmatch .agentignore >/dev/null 2>&1||{ git add .agentignore;git commit -qm agentignore;}
 printf '#!/bin/sh\n[ -n "$G" ]&&exit 0;export G=1;b=$(git rev-parse --abbrev-ref HEAD);git pull -q --rebase origin $b||{ git rebase --abort 2>/dev/null;echo CONFLITO: resolva antes de enviar;exit 1;};git push -q origin $b\n' >.git/hooks/post-commit;chmod +x .git/hooks/post-commit
