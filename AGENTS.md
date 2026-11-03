@@ -49,7 +49,7 @@ Regras padrão do repositório. Valem para tudo.
 - `PLANO.md` manda em caso de duvida de prioridade. Se estiver vazio/desatualizado, siga o `PROMPT.md` e registre a escolha no relatorio.
 - `PROGRESS.md`, `CHAT.md` e `docs/evidence/` são append-only e crescem: nunca leia inteiro, só o fim (tail, ~20 linhas).
 - `HANDOFF.md` é snapshot: reescreva-o ao **fim de cada rodada** (fase, próximo passo, bloqueios); não faça append.
-- **Nunca leia a branch `relatorio` nem `RELATORIO.md`**: e o inbox do lead, nao seu. Voce nao
+- **Nunca leia a branch `relatorio` nem `RELATORIO.md`**: e o inbox do lead: escreva so pelo `relatorio.sh`, nunca leia. Voce nao
   precisa do que os outros relataram para trabalhar; ler custa contexto e contamina prioridade.
 - Mantenha o repo mínimo: sempre que der para economizar contexto **sem perder qualidade nem fluxo**, enxugue e proponha a melhoria.
 
@@ -61,10 +61,7 @@ Regras padrão do repositório. Valem para tudo.
 ## Registro
 - Nada só no chat: registre descobertas, decisões, estado e dúvidas nos docs do repo; sempre no fim, sem reescrever nem duplicar (máx. 500 caracteres por entrada).
 - Chat vivo entre agentes (`CHAT.md`): escreva **1 linha só ao terminar a rodada** — `HH:MM <agente> <tag> msg` (tags `+` feito · `D` descoberta · `?` hipótese assumida · `!` bloqueio externo comprovado). Só append, nunca reescreva; leia só o fim (`tail -5 CHAT.md`). Vários agentes ao mesmo tempo não conflitam (`merge=union`). Se o push falhar, repita até passar.
-- **Fim de rodada = 1 linha de relatorio**, e nada mais:
-  `sh scripts/relatorio.sh "<PASS|FAIL|PARCIAL|BLOQUEIO-EVIDENCIADO>" "<prova>" "<proximo>"`
-  O script monta a linha com dados do git (hora UTC, agente, branch, commits), faz append na
-  branch orphan `relatorio` e envia. <=240 caracteres, sem prosa: o lead le o arquivo inteiro.
+- **RELATORIO.md = resumo executivo** (branch `relatorio`, so o lead le): desafio + estado + problemas dificeis + perguntas, <=2 KB. Atualize CONFORME os problemas surgirem com `sh scripts/relatorio.sh problema|pergunta|estado`; o lead le so isso, inteiro, sem investigar o repo.
 - Identifique-se na entrada: `A=<nome> sh setup.sh` (sem isso o commit sai anonimo e o lead
   nao atribui o trabalho a ninguem).
 - `PLANO.md` e do lead: o hook recusa edicao sem `LEAD=1`. Responda ao lead pelo relatorio.
@@ -79,7 +76,7 @@ sh iniciar.sh A=<nome> P=wwii S_ARQ=<arquivo-da-passphrase>
 sh scripts/etapa.sh status            # o que ja esta tomado por quem
 # trabalho: NUNCA edite etapa de outra pessoa nem PRESENCA.md a mao
 sh scripts/etapa.sh fechar E<n> "<evidencia: caminho + saida>"
-sh scripts/relatorio.sh "<nome> | E<n> | <status> | <obstaculo>"
+sh scripts/relatorio.sh estado "<status> + <obstaculo> + <proximo>"
 A=<nome> sh scripts/agente.sh saiu    # bate-ponto de saida
 ```
 
