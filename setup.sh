@@ -19,6 +19,19 @@ if have apt-get && [ "$(id -u 2>/dev/null)" = 0 ]; then
   done
 fi
 
+# 2b. Acesso ao GitHub com credencial PROPRIA de cada colaborador (nunca a do dono, nunca no git)
+#     Ordem: GITHUB_TOKEN no ambiente > gh ja logado > credencial git ja salva.
+if [ -n "${GITHUB_TOKEN:-}" ]; then
+  git config --local credential.helper "!f() { echo username=x-access-token; echo password=\\$GITHUB_TOKEN; }; f"
+  echo "[setup] git: usando GITHUB_TOKEN do ambiente."
+elif have gh && gh auth status >/dev/null 2>&1; then
+  gh auth setup-git >/dev/null 2>&1 && echo "[setup] git: usando gh (ja logado)."
+elif git ls-remote origin HEAD >/dev/null 2>&1; then
+  echo "[setup] git: acesso ao remoto ok."
+else
+  echo "[setup] AVISO: sem credencial GitHub. Opcoes: export GITHUB_TOKEN=<seu_token> | gh auth login | git config --global credential.helper store"
+fi
+
 # 3. Virtualizacao disponivel (detecta, nao assume)
 virt=""
 have qemu-system-x86_64 && virt="$virt qemu"
