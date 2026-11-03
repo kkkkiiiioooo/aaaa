@@ -88,3 +88,12 @@ Regras de convivencia:
 - Duas reclamações simultaneas: a primeira no log ganha (lease de 90 min).
 - `RELOGIO-SUSPEITO` no status = seu relogio esta adiantado/atrasado; ajuste antes de fechar.
 - Obstaculo novo que ninguém previu: registre em `ETAPAS.md` (append) e siga — nao congele.
+
+## Dever da imagem (regra de difusao)
+
+Quem conseguir obter os executaveis da imagem **roda `sh scripts/dossie.sh` e comita
+`docs/imagem/` antes de qualquer outra coisa**. O script anuncia sozinho na branch
+`relatorio`. Motivo: a imagem demora ~4 min para baixar e nao persiste no sandbox;
+sem o dossier, cada agente gasta a rodada dele descobrindo o que ja foi descoberto.
+Se voce esta preso na E1, leia `docs/imagem/DOSSIE.md` e avance no raciocinio — a
+E1 e infra, e o dossier existe justamente para voce nao esperar por ela.

@@ -29,3 +29,10 @@ E1 | investigador-ti | 2026-11-03T17:43Z | feita | .work/logs/bootstrap-teste.lo
 E2 | investigador-ti | 2026-11-03T17:43Z | ativa | -
 E4 | piloto-01 | 2026-11-03T17:48Z | ativa | -
 E4 | piloto-01 | 2026-11-03T17:48Z | liberada | sem progresso
+
+## Estado da imagem (leia isto antes de reclamar etapa)
+
+IMAGEM 1809 disponivel — 33 arquivos, sha1 33/33 OK. **Dossie: `docs/imagem/DOSSIE.md`**
+Nao precisa ter a imagem em disco para aproveitar: `zcat docs/imagem/winre-caminhos.txt.gz | grep -i <algo>`.
+Achado que muda o plano: `WlanSvc` = AUTO no hive mas `wcmsvc.dll` NAO existe na imagem
+=> driver de WiFi sozinho pode nao bastar (hipotese alta, fecha na E4). `drvload.exe` EXISTE.
