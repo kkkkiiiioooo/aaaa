@@ -5,7 +5,7 @@ Regras padrão do repositório. Valem para tudo.
 ## Como agir
 - Receber o link do repo já é instrução suficiente: não espere mais nada.
 - Trabalhe na branch do projeto; nunca altere `main` nem `0`.
-- AUTORIZAÇÃO TOTAL: use terminal, instale dependências, crie/edite arquivos, commit e push sem pedir permissão. Pergunte apenas o que depende do dono (hardware, preferências, dados reais).
+- AUTORIZAÇÃO TOTAL: use terminal, instale dependências, crie/edite arquivos, commit e push sem pedir permissão. **Não pergunte nada a ninguém** (ver "Autonomia total").
 - Proativo e exaustivo: esgote opções, teste alternativas, registre falhas.
 - Não pare cedo nem entregue só análise estática: execute o projeto.
 
@@ -14,7 +14,14 @@ Regras padrão do repositório. Valem para tudo.
 - Esgote caminhos oficiais **e** criativos (contornos, fontes alternativas, engenharia reversa, recursos já presentes no ambiente). Vá além do óbvio.
 - Declare bloqueio só com tentativas registradas E um caminho alternativo proposto; "não dá" sem isso é resposta inválida.
 - Documente as barreiras, mas **nunca pare**: sempre siga para o próximo caminho.
-- O dono conhece o problema e sabe que é solucionável: não descarte o objetivo — pergunte o que falta e siga.
+- O problema é solucionável: não descarte o objetivo. Falta um dado? Derive-o sozinho ou assuma uma premissa, registre e siga.
+
+## Autonomia total (sem depender de ninguém)
+- O dono **não está disponível** e não fará nada: sem foto, sem rodar comando, sem responder, sem senha. Nenhum agente espera humano nem outro agente.
+- **Proibido** escrever "o dono precisa X" como próximo passo ou bloqueio. Dado faltante (ex.: `VEN_/DEV_` do Wi-Fi) → obtenha no próprio ambiente (imagem WinRE, catálogo MS, logs, simulação) **ou cubra todas as hipóteses** (ex.: empacote drivers de todos os chips Wi-Fi/Bluetooth comuns e deixe o PnP escolher).
+- Dúvida → adote a hipótese mais provável, registre em `HANDOFF.md` (seção Premissas) e avance; troque se a evidência contrariar.
+- O entregável deve ser **autoexecutável** na máquina do dono: imagem/script que roda sozinho (sem digitar nada, sem entrada manual), detecta o hardware, tenta todos os caminhos e grava log. Tudo no repo, pronto para uso.
+- Push: `h.sh` já configura o acesso com o que o ambiente fornece. Commit local não basta: se o push falhar, diagnostique, corrija e repita até passar.
 
 ## Ciclo mínimo
 1. Inspecionar a árvore de arquivos.
@@ -49,6 +56,6 @@ Regras padrão do repositório. Valem para tudo.
 
 ## Registro
 - Nada só no chat: registre descobertas, decisões, estado e dúvidas nos docs do repo; sempre no fim, sem reescrever nem duplicar (máx. 500 caracteres por entrada).
-- Chat vivo entre agentes (`CHAT.md`): escreva **1 linha só ao terminar a rodada** — `HH:MM <agente> <tag> msg` (tags `+` feito · `D` descoberta · `?` dúvida · `!` bloqueio). Só append, nunca reescreva; leia só o fim (`tail -5 CHAT.md`). Vários agentes ao mesmo tempo não conflitam (`merge=union`). Se o push falhar, repita até passar.
+- Chat vivo entre agentes (`CHAT.md`): escreva **1 linha só ao terminar a rodada** — `HH:MM <agente> <tag> msg` (tags `+` feito · `D` descoberta · `?` hipótese assumida · `!` bloqueio externo comprovado). Só append, nunca reescreva; leia só o fim (`tail -5 CHAT.md`). Vários agentes ao mesmo tempo não conflitam (`merge=union`). Se o push falhar, repita até passar.
 - Mudou a base (este repo-template)? Espelhe na branch `backup` (ver skill `iniciar-projeto`).
 - Responda em português. Commits pequenos e imediatos.

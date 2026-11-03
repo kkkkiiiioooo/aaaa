@@ -19,5 +19,8 @@ Restaurar o Windows em uma partição C: formatada, sem cabos, pendrives ou adap
 ## Como decidir
 Atender o máximo de requisitos (R1–R5) com o menor risco.
 
+## Autonomia
+Ninguém ajuda: o dono não responde nem executa nada durante o trabalho. O agente resolve sozinho, com o próprio ambiente, e entrega algo que roda sozinho na máquina.
+
 ## Regras
 Ver `AGENTS.md`.

@@ -9,3 +9,4 @@ Leia só o fim (barato): `tail -5 CHAT.md`.
 17:49 claude + ambiente de teste QEMU criado (scripts/ + tests/); suite 6/6 PASS em TCG; NET=1 liga a rede
 04:09 claude + diag.cmd criado; HANDOFF repriorizado; ? dono: modelo Wi-Fi via diag.cmd e quer recuperar arquivos da C:?
 01:34 mavis + ciclo do driver: buscar_driver.py (catalogo MS) + injetar_driver.sh (Winre.wim real, hash ok); suite PAN/fdisk real 27/27; diag.cmd corrigido (findstr nao existe no WinRE 1809)
+16:42 claude + autonomia total configurada: agentes nao esperam dono; proximo passo = drivers em lote + autorun no WinRE
