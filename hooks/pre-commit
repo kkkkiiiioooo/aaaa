@@ -30,14 +30,8 @@ case "$b" in
   main|0|backup|relatorio) exit 0 ;;
 esac
 
-# --- registro automatico de trabalho: 1 linha por commit, sem o agente lembrar ---
+# --- presenca: 1 linha por commit: nome data ---
 A=$(cat "$R/.work/agente" 2>/dev/null || git config user.name 2>/dev/null || echo desconhecido)
-F="$R/PRESENCA.md"
-if [ ! -f "$F" ]; then
-  printf '# PRESENCA\n\nQuem entrou e quem trabalhou. Append-only (merge=union): nao reescreva.\nUTC | agente | evento | branch | host | HEAD\n' > "$F"
-fi
-printf '%s | %s | commit | %s | %s | %s\n' \
-  "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" "$A" "$b" "$(hostname)" \
-  "$(git rev-parse --short HEAD 2>/dev/null || echo -)" >> "$F"
+printf '%s %s\n' "$A" "$(date -u +%F)" >> "$R/PRESENCA.md"
 git add -- PRESENCA.md || exit 1
 exit 0

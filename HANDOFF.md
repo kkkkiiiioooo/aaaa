@@ -24,7 +24,7 @@ Rodada de **autonomia do repositório** (2026-11-04), além do desafio em si:
   todo clone novo nascia sem trava de `main` nem push), `setup.sh` reescrito.
 - **Procedência**: `h.sh` fixa `user.name=claude` para todos os agentes, então
   `git log` não distinguia ninguém. Com `A=<nome>` os commits passam a trazer o nome
-  real e `PRESENCA.md` registra hora UTC + agente + evento (testado: `entrou`/`commit`).
+  real e `PRESENCA.md` registra so `nome data` por linha (minimo, p/ tokens).
 
 ## Próximo passo
 1. **T3 (em andamento nesta rodada)**: baixar os UUP do 1809 (3,61 GB, `uup_links.sh`
@@ -45,7 +45,7 @@ Rodada de **autonomia do repositório** (2026-11-04), além do desafio em si:
 ## Riscos abertos
 - T3 sem KVM: cada boot de PE do Windows sob TCG pode levar dezenas de minutos; 4 GB de
   RAM é o mínimo apertado para PE. Discos: 3,61 GB UUP + ~5 GB ISO.
-- `PRESENCA.md`/`HANDOFF.md` crescem; `HANDOFF` é reescrito e **não** tem `merge=union`
+- `HANDOFF.md` cresce (PRESENCA.md agora e minima: `nome data`); `HANDOFF` é reescrito e **não** tem `merge=union`
   → dois agentes simultâneos conflitam e o rebase do `post-commit` aborta.
 
 ## Bloqueios
