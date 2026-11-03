@@ -58,12 +58,15 @@ fi
 cd "$REPO"
 
 passo "1/4 credencial + branch"
-git fetch origin 0 >/dev/null 2>&1 || true
-git show origin/0:h.sh > .h.tmp 2>/dev/null || git show origin/main:h.sh > .h.tmp 2>/dev/null || true
-[ -s .h.tmp ] || falha "h.sh" "nao consegui extrair h.sh da branch 0"
-S="$S" A="$A" P="$P" sh .h.tmp || { rm -f .h.tmp; falha "h.sh"; }
-rm -f .h.tmp
-echo "branch: $(git rev-parse --abbrev-ref HEAD)  as: $(git config user.name)"
+# h.sh e executado a partir do PAI do clone: ele deriva o destino de onde esta,
+# e executado de dentro de aaaa/ criaria aaaa/aaaa/.
+git -C "$REPO" fetch origin 0 >/dev/null 2>&1 || true
+git -C "$REPO" show origin/0:h.sh > "$AQUI/.h.tmp" 2>/dev/null \
+  || git -C "$REPO" show origin/main:h.sh > "$AQUI/.h.tmp" 2>/dev/null \
+  || falha "h.sh" "nao consegui extrair h.sh da branch 0"
+( cd "$AQUI" && S="$S" A="$A" P="$P" sh .h.tmp ) || { rm -f "$AQUI/.h.tmp"; falha "h.sh"; }
+rm -f "$AQUI/.h.tmp"
+echo "branch: $(git rev-parse --abbrev-ref HEAD)  como: $(git config user.name || echo "?")"
 
 # ------------------------------------------------------------------- 2 setup
 passo "2/4 ambiente"
