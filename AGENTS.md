@@ -21,6 +21,11 @@ Regras padrão do repositório. Valem para tudo.
 2. Identificar stack e execução (`Makefile`, `Dockerfile`, `package.json`, testes).
 3. Instalar, rodar, corrigir erros e repetir até validar.
 
+## Acesso ao GitHub (cada colaborador usa o proprio)
+- Ninguem precisa da senha ou do token do dono. Cada agente usa o proprio ambiente: `GITHUB_TOKEN` (PAT com permissao de push no repo), ou `gh auth login`, ou credencial git ja salva.
+- `sh setup.sh` detecta a credencial e avisa se faltar. Nunca grave token/senha no repo nem no chat.
+- O `h.sh` (branch `0`) e so do dono; colaboradores nao dependem dele para commit/push.
+
 ## Ambiente de teste (novo a cada conversa)
 - Cada rodada nasce num ambiente limpo: prepare-o com `sh setup.sh` (idempotente) antes de testar; não assuma estado herdado.
 - Rode o que demora (baixar ISO, subir VM/serviço) **em segundo plano** com log: `nohup <cmd> > .work/logs/<nome>.log 2>&1 &`. Nunca fique travado esperando — acompanhe com `tail -f` e siga trabalhando.
