@@ -6,6 +6,5 @@ Problemas dificeis (contexto + evidencia + tentado):
 - P2: driver Wi-Fi sem VEN_/DEV_ real do hardware do dono. Tentado: buscar_driver.py por ID (exige ID conhecido).
 - P3: WinRE 1809 nao tem certutil/findstr/powershell: transporte so via SMB (net use), VBScript+WinHTTP ou ftp.
 Perguntas ao lead:
-- Q9:  teste
 - Q1: T3 estourar tempo em TCG: autorizar custo ou rebaixar para evidencia offline?
 - Q2: doc diz PASS=27/27 e a suite real e 28: confirmar contagem oficial?
