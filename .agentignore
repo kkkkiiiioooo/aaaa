@@ -1,2 +1,4 @@
 t.gpg
 _archived/
+__pycache__/
+*.pyc

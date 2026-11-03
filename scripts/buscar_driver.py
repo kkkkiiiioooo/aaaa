@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""buscar_driver.py — acha e baixa o driver de um dispositivo no Microsoft Update Catalog.
+r"""buscar_driver.py — acha e baixa o driver de um dispositivo no Microsoft Update Catalog.
 
 Resolve o passo "pegar o ID (VEN_/DEV_) -> achar o driver -> injetar com DISM"
 do desafio, sem depender de pagina web aberta a mao.
@@ -74,7 +74,7 @@ def search(op, hwid):
         raise RuntimeError("catalogo recusou a busca (tente de novo em alguns minutos)")
     out = []
     # cada linha da tabela de resultados: <tr id="<GUID>_R0"> ... titulo ... data ... tamanho
-    for m in re.finditer(r'<tr id="([0-9a-f-]{36})_R0".*?</tr>', html, re.S):
+    for m in re.finditer(r'<tr id="([0-9a-f-]{36})_R\d+".*?</tr>', html, re.S):
         guid, row = m.group(1), m.group(0)
         cells = re.findall(r"<td[^>]*>(.*?)</td>", row, re.S)
 
