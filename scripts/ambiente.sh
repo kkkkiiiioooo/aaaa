@@ -81,8 +81,12 @@ for d in .work .work/logs .work/uup .work/iso .work/mnt .work/vm .work/downloads
 # --- recursos do ambiente (útil para decidir o que da para rodar) ---
 say "disco livre: $(df -h . 2>/dev/null | awk 'NR==2{print $4}')"
 say "memoria: $(free -h 2>/dev/null | awk 'NR==2{print $2}')"
-for v in kvm docker qemu-system-x86_64 virtualbox; do
-  if [ "$v" = kvm ]; then [ -e /dev/kvm ] && say "virtualizacao: /dev/kvm" && continue; fi
+# KVM so conta se /dev/kvm for ESCREVEL. O pacote qemu instala o binario /usr/bin/kvm,
+# e um `command -v kvm` ingenuo dava "virtualizacao: kvm" mesmo sem o modulo carregado
+# (kvm: Could not access KVM kernel module) - falso positivo que empurra o agente para
+# um caminho de teste que nao existe.
+if [ -w /dev/kvm ]; then say "virtualizacao: kvm (acelerada)"; else say "virtualizacao: sem kvm - QEMU usara TCG (emulacao, lenta)"; fi
+for v in docker qemu-system-x86_64 virtualbox; do
   command -v "$v" >/dev/null 2>&1 && say "virtualizacao: $v"
 done
 say "pronto."

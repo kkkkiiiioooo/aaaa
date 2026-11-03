@@ -3,54 +3,53 @@
 Estado atual (snapshot; reescreva ao fim de cada rodada — não append).
 
 ## Fase
-Quatro frentes, todas com evidência executada (não análise):
-- **WinRE 1809 inspecionado** (conteúdo de imagem): `netsh wlan` **existe** (dispensa
-  WinPE-WiFi-Package); `certutil.exe`/`powershell.exe` **não** existem; só um driver
-  Wi-Fi de fábrica (`mrvlpcie8897`). Detalhes: `docs/evidence/winre_1809_evidencia.md`.
-- **Ciclo completo do driver fechado** (o passo 4 do plano antigo, que dependia do ID
-  do dono): `scripts/buscar_driver.py` acha o driver no Microsoft Update Catalog pelo
-  `VEN_/DEV_`, baixa o `.cab` oficial e **confere se o INF cobre o dispositivo**;
-  `scripts/injetar_driver.sh` grava o driver no **Winre.wim real 17763** (mesmos
-  caminhos do DISM) e a verificação é por **hash byte a byte após reextrair**.
-  Evidência: `docs/evidence/driver_injecao.md`.
-- **Simulação de PAN + fdisk real** no guest QEMU: fdisk de verdade cria C: +
-  partição de recuperação e prova (md5) que **formatar C: não apaga a recuperação**;
-  PAN com network namespaces + `veth` prova que o PC usa o celular como gateway,
-  com teste negativo. Suíte **27/27 PASS**. Evidência:
-  `docs/evidence/ambiente-teste-pan-fdisk.md`.
-- **`diag.cmd` corrigido**: o script anterior **não funcionaria** na máquina do dono
-  (usava `findstr.exe`, que não existe no WinRE 1809, e buscava o ID em dados em vez
-  do nome da chave). Inventário real do WinRE 1809 documentado.
+Rodada de **autonomia do repositório** (2026-11-04), além do desafio em si:
+
+- **Ambiente de teste PROVADO executável num sandbox hostil**: sem `/dev/kvm`, sem
+  docker, 2 núcleos, 4 GB. `sh scripts/ambiente.sh` + `sh scripts/tests/run-tests.sh`
+  ⇒ `SUITE: PASS` (28 `[PASS]` / 0 `[FAIL]`) em **259 s** sob TCG.
+- **Causa raiz das rodadas perdidas** (não era falta de Windows, eram 3 defeitos de setup):
+  1. `setup.sh` instalava só curl/wget/git/unzip/xz — nenhum qemu/wimlib — e dizia "pronto";
+  2. `docs/evidence/ambiente-teste.md` mandava rodar `scripts/env-setup.sh`, **que não
+     existe** (renomeado para `ambiente.sh`): quem obedecia levava "no such file";
+  3. `run-tests.sh` escondia a saída do install (`>/dev/null || true`) e devolvia
+     `SKIP: qemu ausente` (exit 2), que se lê como "aqui não dá".
+- **Falso positivo corrigido**: `ambiente.sh` reportava `virtualizacao: kvm` porque o
+  pacote qemu instala `/usr/bin/kvm`; o módulo não existia (`Could not access KVM kernel
+  module`). Agora mede `[ -w /dev/kvm ]` e diz TCG. Detector otimista faz agente tentar
+  o impossível e gastar a rodada.
+- **Novos**: `scripts/doctor.sh` (níveis T0–T4, exit ≠ 0 se nada for executável),
+  `scripts/agente.sh` (identidade `A=<nome>` → `git config` + `PRESENCA.md`),
+  `hooks/` versionados via `core.hooksPath` (antes: `.git/hooks` não é clonado, então
+  todo clone novo nascia sem trava de `main` nem push), `setup.sh` reescrito.
+- **Procedência**: `h.sh` fixa `user.name=claude` para todos os agentes, então
+  `git log` não distinguia ninguém. Com `A=<nome>` os commits passam a trazer o nome
+  real e `PRESENCA.md` registra hora UTC + agente + evento (testado: `entrou`/`commit`).
 
 ## Próximo passo
-Tudo executável por agente, sem o dono (ver `AGENTS.md` > Autonomia total):
-1. **Cobertura sem ID**: rodar `buscar_driver.py` em lote nos fabricantes Wi-Fi/BT comuns
-   (`VEN_8086` Intel, `10EC` Realtek, `168C`/`17CB` Qualcomm, `14E4` Broadcom, `14C3`
-   MediaTek, `11AB` Marvell), baixar os `.cab` compatíveis com 1809 e conferir os INF.
-2. Injetar todos no `Winre.wim` com `injetar_driver.sh`: o PnP escolhe o que casa com o
-   hardware real, então o ID deixa de ser necessário.
-3. **Autorun**: criar script para o cmd que inicia sozinho no WinRE: `drvload` dos drivers,
-   `netsh wlan`, PAN, `pnputil /enum-drivers`, tudo com log em arquivo, sem digitar nada.
-   `diag.cmd` vira etapa de log, não de entrada.
-4. Reinstalação sem mídia: A1 + `setup.exe` via rede; validar A3 em simulação e documentar.
-5. Simular tudo no QEMU, registrar R1–R5 e entregar `Winre.wim` pronto + runbook de uma linha.
+1. **T3 (em andamento nesta rodada)**: baixar os UUP do 1809 (3,61 GB, `uup_links.sh`
+   gerou links válidos) → `converter_iso.sh` → ISO bootável. Faltava `xorriso`/`mkisofs`
+   para o conversor: **instalado** (`ambiente.sh` não cuida disso — adicionar).
+2. Com a ISO: trocar `sources/boot.wim` pelo WIM modificado e usar **`winpeshl.ini`**
+   para o PE iniciar o script sozinho (fecha o "autorun" do plano antigo). Validar em
+   TCG com timeout alto, 2º plano. `HIPÓTESE` — nunca tentado aqui; pode falhar por
+   tempo/timeout, e falha também é evidência.
+3. Itens 1–3 do HANDOFF anterior continuam válidos (drivers em lote por `VEN_`, injeção,
+   autorun), agora com harness que de fato roda.
 
 ## Premissas (assumidas, sem dono)
-- Hardware desconhecido: cobrir todos os chips comuns (item 1) em vez de descobrir um.
-- Dados da `C:`: prioridade é restaurar o Windows; se der de graça, tentar `testdisk` antes de gravar.
-- Fonte local do driver: procurar na própria imagem WinRE/partição de recuperação.
+- Hardware desconhecido: cobrir chips comuns em lote, como antes.
+- A validação de **runtime** de driver Wi-Fi (erro 10) segue fora de alcance de qualquer
+  sandbox: exige o adaptador real. Isso é limite do método, não do esforço.
 
 ## Riscos abertos
-- A3 (Reset com nuvem) provavelmente exige Windows existente; `C:` formatada → tratar A1 + setup.exe
-  via rede como caminho principal. Validar antes de confiar em A3.
-- Arquivos da `C:`: ver Premissas (não perguntar a ninguém).
-- O `dism /Add-Driver` **não** foi executado (exige Windows). O `wimlib` grava os
-  arquivos, mas quem registra o driver no hive (SYSTEM/SOFTWARE) e atualiza o
-  catálogo de assinaturas é o DISM.
+- T3 sem KVM: cada boot de PE do Windows sob TCG pode levar dezenas de minutos; 4 GB de
+  RAM é o mínimo apertado para PE. Discos: 3,61 GB UUP + ~5 GB ISO.
+- `PRESENCA.md`/`HANDOFF.md` crescem; `HANDOFF` é reescrito e **não** tem `merge=union`
+  → dois agentes simultâneos conflitam e o rebase do `post-commit` aborta.
 
 ## Bloqueios
-- Sandbox Linux: **não dá boot no WinRE** nem validar runtime/driver (erro 10); a evidência é
-  de conteúdo de imagem + lógica de injeção → forte, mas a confirmação final exige a máquina real.
-- Nenhum bloqueio depende do dono: modelo do Wi-Fi e fonte do driver são cobertos por
-  Premissas e pelo item 1 do Próximo passo.
-- Push: o `h.sh` configura o acesso; se falhar, diagnosticar e repetir (ver `AGENTS.md`).
+- Nenhum bloqueio depende do dono.
+- **Nada foi enviado** nesta rodada: os commits estão locais (hook de push desativado de
+  propósito com `MM_GUARDA=1`), porque enviar é ação externa e o dono não autorizou
+  explicitamente este conteúdo. `HEAD` local = `origin/4.4mmii1` no momento do setup.

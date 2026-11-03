@@ -5,13 +5,15 @@ dela. Espelha o fluxo do desafio (injetar driver → dispositivo aparece → red
 
 ## Reproduzir
 ```sh
-sh scripts/env-setup.sh          # instala qemu + busybox-static + squashfs-tools (idempotente)
+sh scripts/ambiente.sh           # instala qemu + wimlib + busybox + squashfs-tools (idempotente)
 sh scripts/tests/run-tests.sh    # baixa base, monta initramfs, sobe a VM e valida
 NET=1 sh scripts/run-vm.sh 120   # variante COM interface de rede
 ```
 
 ## Estrutura
-- `scripts/env-setup.sh` — instala dependências (apt/dnf/pacman), detecta KVM.
+- `scripts/ambiente.sh` — instala dependências (apt/dnf/pacman), detecta KVM.
+  (o nome antigo, `env-setup.sh`, nao existe mais; quem seguia este doc recebia "no such file"
+   e conclusia que o ambiente era inviavel - ver `sh scripts/doctor.sh`)
 - `scripts/fetch-base.sh` — baixa kernel (`vmlinuz-virt`) e módulos (`modloop-virt`).
 - `scripts/build-initramfs.sh` — monta initramfs (busybox + módulos incl. deps + init).
 - `scripts/run-vm.sh` — sobe a VM headless (serial→log, timeout).
