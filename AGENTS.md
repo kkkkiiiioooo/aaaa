@@ -34,3 +34,11 @@ confirmação explícita do usuário.
 - Perguntas devem ser curtas, diretas e com exemplos de opção quando possível.
 - Se o usuário pedir para você decidir: proponha UMA opção com justificativa
   e aguarde aprovação antes de registrar.
+
+## Compartilhamento de arquivos (obrigatório)
+
+- O repositório fica em `/home/claude/aaaa/`.
+- **Sempre** que editar qualquer arquivo, chame `present_files` com o caminho
+  completo logo após o commit, para o usuário poder abrir no editor.
+- Exemplo: após editar `prompt.md`, chamar `present_files(["/home/claude/aaaa/prompt.md"])`.
+- Isso vale para todo arquivo criado ou modificado, sem exceção.
