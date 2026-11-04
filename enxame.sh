@@ -1,6 +1,7 @@
 #!/bin/sh
 # enxame.sh - inicializa os arquivos do protocolo de enxame no projeto atual.
 # Uso: dentro do clone, ja na branch do projeto (nunca na main): NOME=<agente> sh enxame.sh
+# Idempotente: arquivos existentes sao preservados e nada e anexado a eles.
 set -u
 B=$(git branch --show-current 2>/dev/null)
 [ -n "$B" ] && [ "$B" != main ] || { echo "erro: rode numa branch de projeto, nunca na main"; exit 1; }
@@ -50,8 +51,6 @@ Modelo:
 <o que foi feito, decisao tomada, estado em que ficou o trabalho>
 FIM3
 
-printf '## %s — %s (Explorador)\nProtocolo de enxame inicializado por enxame.sh.\n' "$AGORA" "$NOME" >> PROGRESS.md
-
 grava HANDOFF.md <<'FIM4'
 # HANDOFF.md — recado ao proximo agente
 
@@ -62,8 +61,6 @@ Reescrito a cada turno. Toda atualizacao exige data E hora: YYYY-MM-DD HH:MM (UT
 3. Armadilhas conhecidas:
 4. Pendencias humanas (arbitrio aguardado):
 FIM4
-
-printf 'Ultima atualizacao: %s — %s\n' "$AGORA" "$NOME" >> HANDOFF.md
 
 grava DEBATE.md <<'FIM5'
 # DEBATE.md
@@ -78,6 +75,14 @@ Convergencia registrada como "revogo minha posicao", seguida de registro em PROG
 ## Replica (<agente>, <YYYY-MM-DD HH:MM>)
 [replica, contraexemplo ou questionamento]
 FIM5
+
+# Entradas iniciais: apenas se o arquivo foi criado NESTA execucao (idempotencia)
+case " $CRIADOS " in *" PROGRESS.md "*)
+  printf '## %s — %s (Explorador)\nProtocolo de enxame inicializado por enxame.sh.\n' "$AGORA" "$NOME" >> PROGRESS.md ;;
+esac
+case " $CRIADOS " in *" HANDOFF.md "*)
+  printf 'Ultima atualizacao: %s — %s\n' "$AGORA" "$NOME" >> HANDOFF.md ;;
+esac
 
 if [ -n "$CRIADOS" ]; then
   git add $CRIADOS; git add enxame.sh 2>/dev/null
