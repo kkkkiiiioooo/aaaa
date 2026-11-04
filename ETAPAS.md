@@ -40,3 +40,4 @@ E3 | otimizador | 2026-11-04T06:53Z | liberada | lease expirado apos 533min (wat
 E2 | stackai | 2026-11-04T22:00Z | ativa | -
 E2 | stackai | 2026-11-04T22:04Z | feita | docs/evidence/drivers_lote.md 6/6 cab+INF MATCH, Winre.wim 17763, sha256 17/17 IGUAL, inf_utf16.py PASS
 E3 | stackai | 2026-11-04T22:04Z | ativa | -
+E3 | stackai | 2026-11-04T22:05Z | feita | docs/evidence/autorun_winpe.md offline LaunchApps+autorun injetado; runtime=E4
