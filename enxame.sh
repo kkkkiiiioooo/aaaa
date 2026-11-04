@@ -80,7 +80,7 @@ Convergencia registrada como "revogo minha posicao", seguida de registro em PROG
 FIM5
 
 if [ -n "$CRIADOS" ]; then
-  git add $CRIADOS
+  git add $CRIADOS; git add enxame.sh 2>/dev/null
   git commit -qm "enxame: protocolo inicializado ($AGORA)
 
 Agent-Name: $NOME" && echo "commit ok"

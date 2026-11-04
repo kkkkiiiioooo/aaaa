@@ -13,7 +13,7 @@ desconhecido é erro — assim dois agentes nunca abrem ramos paralelos sem quer
 ## Regras da branch 0 (configuração)
 
 - A branch 0 nunca deve ser apagada: ela é a configuração inicial e a base de tudo.
-- A `main` nunca recebe commit — nem do setup. O `h.sh` antigo cometia `.agentignore` na
+- A `main` nunca recebe commit — nem do setup. O `h.sh` antigo cometava `.agentignore` na
   `main` porque instalava o guard depois do commit; isso está corrigido aqui.
 - A branch 0 nunca deve ser duplicada: ela possui os arquivos de configuração principal (AGENTS.md, h.sh, t.gpg).
 - A main nunca deve ser alterada.
@@ -28,8 +28,10 @@ Não há coordenador: há um protocolo idêntico para todo agente, de qualquer p
 
 1. Entre no projeto: S=<senha> P=<nome> sh h.sh
 2. Leia, nesta ordem: TASK.md, as últimas 20 linhas de PROGRESS.md, BOARD.md, HANDOFF.md.
-3. Se o projeto ainda não tiver esses arquivos, rode: sh enxame.sh
-   (um único commit cria os cinco arquivos a partir dos modelos).
+3. Se o projeto ainda não tiver esses arquivos, rode:
+   git show 0:enxame.sh > enxame.sh && NOME=<seu nome> sh enxame.sh
+   (o script copia a si próprio ao projeto, cria os cinco arquivos num único
+   commit com data e hora e faz o push).
 4. Reivindique uma tarefa em BOARD.md: pull, marque "tomada" com seu nome e data+hora,
    commit imediato. O commit é o cadeado; se o push falhar por conflito, outro agente
    chegou primeiro: refaça o pull e verifique o BOARD.md.
