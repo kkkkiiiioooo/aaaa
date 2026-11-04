@@ -22,11 +22,14 @@ TIMEOUT=${TIMEOUT:-1800}
 POLL=${POLL:-20}
 MEM=${MEM:-4096}
 CPUS=${CPUS:-2}
+# VGA=cirrus -> o screendump sai como texto legivel (std da fonte "checkerboard" ilegivel no TCG)
+VGA=${VGA:-cirrus}
 while [ $# -gt 0 ]; do
   case "$1" in
     --iso) ISO="$2"; shift 2;; --disk) DISK="$2"; shift 2;;
     --timeout) TIMEOUT="$2"; shift 2;; --poll) POLL="$2"; shift 2;;
     --mem) MEM="$2"; shift 2;; --cpus) CPUS="$2"; shift 2;;
+    --vga) VGA="$2"; shift 2;;
     *) echo "opcao desconhecida: $1"; exit 2;;
   esac
 done
@@ -83,7 +86,10 @@ fi
 say "subendo QEMU TCG ($FWMODE) mem=${MEM}MB cpus=${CPUS} timeout=${TIMEOUT}s"
 # DISK_BOOT=<img> troca o CD por um disco de boot (ESP com \EFI\BOOT\BOOTX64.EFI): foi o unico
 # caminho que o OVMF aceitou sem tecla e sem opcao de boot inventada (ver montar_disco_winre.sh).
-MEDIA="-boot order=d -cdrom $ISO"
+# IMPORTANTE: o disco de dados vai SEMPRE preso (-hdb), inclusive no boot por CD. No teste de
+# 2026-11-04 ele so era ligado quando DISK_BOOT estava definido, entao o autorun gravava o log
+# num disco que o host nao enxergava e o gate de E4 nunca podia ser verificado.
+MEDIA="-boot order=d -cdrom $ISO -hdb $DISK"
 [ -n "${DISK_BOOT:-}" ] && MEDIA="-boot order=c -hda $DISK_BOOT -hdb $DISK"
 setsid sh -c "exec qemu-system-x86_64 \
   -name wwii-e4 -pidfile $PIDF \
@@ -91,7 +97,7 @@ setsid sh -c "exec qemu-system-x86_64 \
   $FW \
   $MEDIA \
   -netdev user,id=n0,dhcpstart=10.0.2.15 -device e1000,netdev=n0,mac=52:54:00:00:04:04 \
-  -display none -vga std \
+  -display none -vga "$VGA" \
   -serial file:$SERIAL \
   -monitor unix:$MON,server,nowait" > "$LOG" 2>&1 < /dev/null &
 sleep 8
