@@ -38,3 +38,4 @@ Achado que muda o plano: `WlanSvc` = AUTO no hive mas `wcmsvc.dll` NAO existe na
 E2 | otimizador | 2026-11-04T06:53Z | liberada | lease expirado apos 790min (watchdog)
 E3 | otimizador | 2026-11-04T06:53Z | liberada | lease expirado apos 533min (watchdog)
 E2 | stackai | 2026-11-04T22:00Z | ativa | -
+E2 | stackai | 2026-11-04T22:04Z | feita | docs/evidence/drivers_lote.md 6/6 cab+INF MATCH, Winre.wim 17763, sha256 17/17 IGUAL, inf_utf16.py PASS
