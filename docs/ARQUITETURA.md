@@ -12,6 +12,7 @@ Os agentes não precisam ler este arquivo. Ele é para o dono e para quem evolui
 | `casos/<id>.md` (branch `relatorio`) | `escalar.sh` | só o lead | dossiê de decisão, até 1,5 KB |
 | `PROBLEMAS.md` | agentes, via `problema.sh` | agentes (`abertos`, `buscar`) | cooperação entre pares |
 | `SUGESTOES.md` | agentes, via `sugerir.sh` | dono | evolução do processo e custo |
+| painel (`sh scripts/painel.sh`) | ninguem (so le) | dono e Claude, no inicio de cada conversa | uma pagina: etapas, parados, problemas, presença, sugestões, capacidade |
 | `PRESENCA.md` | hooks | dono | `inicio` e `push` com data UTC |
 | `HANDOFF.md` | agente, ao fim da rodada | agentes | snapshot do estado |
 | `ETAPAS.md` | `etapa.sh` | agentes | etapas com evidência |
