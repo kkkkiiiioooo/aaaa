@@ -4,28 +4,16 @@
 
 Unico arquivo que o lead escreve e que os agentes leem. Caminho inverso:
 `RELATORIO.md` (branch `relatorio`) — resumo executivo que so o lead le.
-Dono: tech lead. Agente nao edita (hook `pre-commit` recusa sem `LEAD=1`).
-
-## Protocolo do lead (leia 1x; siga sempre)
-1. Entrada unica: `RELATORIO.md` inteiro (resumo executivo <=2 KB: desafio,
-   estado, problemas dificeis com evidencia, perguntas). Nada mais; nao investigue o projeto.
-2. Reescreva ESTE arquivo inteiro (nunca append). Teto: 4 KB.
-3. Seu valor e o que o modelo basico nao pensa: para cada frente deixe
-   passos exatos, armadilha nao-obvia, aceite mensuravel e plano B.
-4. Veredito -> acao: PASS = frente fechada; FAIL = plano B; PARCIAL =
-   repriorizar; BLOQUEIO-EVIDENCIADO = reabrir com contorno novo.
-5. Responda cada pergunta do resumo aqui; o agente a remove do RELATORIO.
-6. Frente sem acrescento nao-obvio: remova-a (deixe "siga PROMPT.md").
+Dono: tech lead. Agente nao edita.
 
 ## Instrucoes para os agentes
-- Leia na ordem: PLANO.md > AGENTS.md > PROMPT.md > HANDOFF.md. PLANO manda em prioridade.
+- Leia na ordem: este PLANO > AGENTS.md > PROMPT.md > HANDOFF.md. O PLANO manda em prioridade.
 - Pegue a frente livre mais alta (`sh scripts/etapa.sh status`); registre antes de comecar.
-- Execute os passos exatos; nao pule o aceite. Leia a armadilha antes de rodar.
-- Falhou? Siga o plano B. Sem plano B? Registre em `ETAPAS.md` e va para a proxima frente; nao espere o lead.
-- RELATORIO.md = resumo executivo do lead (<=2 KB), atualizado CONFORME os problemas
-  surgem, so pelo `scripts/relatorio.sh`: `problema "P<n>: contexto+evidencia+tentado"` ·
-  `problema -P<n>` (resolvido) · `pergunta "Q<n>: ..."` · `pergunta -Q<n>` (respondida
-  no PLANO) · `estado "<provado + onde + proximo>"` no fim da rodada.
+- Execute os passos exatos; nao pule o aceite; leia a armadilha antes. Falhou: plano B. Sem plano B: `problema.sh` e proxima frente; nao espere o lead.
+- Duvida que so o lead resolve: `sh scripts/escalar.sh` (apos 2 tentativas). A resposta aparece abaixo, por id.
+
+## Respostas do lead (por id; o lead reescreve)
+(nenhuma)
 
 ## Frentes
 | # | Frente | Passos exatos | Armadilha | Aceite | Plano B |
