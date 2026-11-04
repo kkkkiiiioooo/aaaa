@@ -20,3 +20,5 @@
 - 2026-11-03: RELATORIO.md (branch relatorio) vira resumo executivo <=2 KB (desafio/estado/problemas/perguntas), atualizado conforme problemas surgem; relatorio.sh reescrito (estado/problema/pergunta com upsert por id); lead le so o resumo, sem investigar; PLANO/AGENTS/HANDOFF ajustados.
 - 2026-11-04 19:03 (UTC-3) — stackai (Implementador)
 E2: lote de 6 fabricantes (Intel AC8265, Realtek RTL8822BE, Qualcomm QCA6174, Broadcom BCM4365, MediaTek MT7921, Marvell 88W8897). `.cab` oficiais, INF MATCH após correção UTF-16LE, injeção no Winre.wim 17763, sha256 17/17 IGUAL. Teste `scripts/tests/unit/inf_utf16.py` PASS. Evidência `docs/evidence/drivers_lote.md`. Próximo: E3 autorun.
+- 2026-11-04 19:06 (UTC-3) — stackai (Implementador)
+E3 offline: winpeshl.ini [LaunchApps] chama autorun-wwii.cmd (drvload dos 6 INF, diag, log X:\\wwii.log persistido em C:..H:), recenv no fim. injetar_autorun.sh VERIFICADA. autorun_offline.py PASS. Runtime do PE promovido a E4 (RAM 1,9G). docs/evidence/autorun_winpe.md.

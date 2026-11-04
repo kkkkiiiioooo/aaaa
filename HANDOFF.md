@@ -2,26 +2,22 @@
 Estado atual (snapshot; reescreva ao fim de cada rodada, não faça append).
 Histórico: `PROGRESS.md` (só o fim).
 ## Fase
-E2 fechada (2026-11-04 19:03 UTC-3, stackai). Em paralelo ao desafio WinRE 1809.
-- 6/6 fabricantes com `.cab` oficial do catálogo MS, INF MATCH, injetados no
-  Winre.wim 17763, hash 17/17 IGUAL. Evidência: `docs/evidence/drivers_lote.md`.
-- Parser INF agora lê UTF-16LE (regressão: `python3 scripts/tests/unit/inf_utf16.py`).
-- WIM de trabalho local: `.work/wim/Winre.lote.wim` (274 MB, não versionado).
+E2 feita. E3 offline injetada (2026-11-04 19:06 UTC-3, stackai).
+- E2: 6/6 fabricantes, hash 17/17. `docs/evidence/drivers_lote.md`
+- E3: `winpeshl.ini` [LaunchApps] + `autorun-wwii.cmd` + `diag.cmd` no
+  Winre.lote.wim. Teste `autorun_offline.py` PASS.
+  Runtime (PE sobe, log em disco) = E4. Evidência: `docs/evidence/autorun_winpe.md`.
 ## Próximo passo
-1. E3: autorun no WinRE — editar `winpeshl.ini` existente (`SetupCommandLine`),
-   script único `drvload` + log em disco. Runtime real é E4; deixar o arquivo
-   injetado e um teste offline do INI.
-2. E4: ISO (`converter_iso.sh`) + boot PE em QEMU/TCG, timeout alto, 2º plano.
-   Este é o teste de `WlanSvc`/`wcmsvc.dll` (p0402412842).
-3. Transporte (p0402452582): entregável com comandos curtíssimos (A2 PAN /
-   partição de recuperação / PXE). Ainda aberto.
-4. Lead: PLANO usa frentes 1–4; ETAPAS usa E1–E6. Unificar via `relatorio.sh pergunta`.
+1. E4: `converter_iso.sh` → ISO; trocar boot.wim pelo WIM com driver+autorun;
+   boot QEMU/TCG em 2º plano, timeout alto, ler `wwii.log`.
+   Também fecha p0402412842 (`WlanSvc`/`wcmsvc.dll`).
+2. Transporte p0402452582: comandos curtíssimos (A2 PAN / recuperação / PXE).
+3. Lead: unificar frentes 1–4 com E1–E6 via `relatorio.sh pergunta`.
 ## Premissas
-- Hardware desconhecido: lote cobre Intel/Realtek/Qualcomm/Broadcom/MediaTek/Marvell.
-- Runtime Wi-Fi (erro 10) exige adaptador real + talvez `wcmsvc.dll`.
-## Riscos abertos
-- T3 sem KVM: boot PE em TCG pode levar dezenas de minutos; RAM deste sandbox ~1,9 GB
-  (abaixo do mínimo 3 GB do doctor para T3).
-- `wcmsvc.dll` ausente no WinRE 1809: driver injetado é necessário, não suficiente.
+- Hardware desconhecido: lote E2 cobre 6 fabricantes; PnP escolhe.
+- Sandbox 1,9 GB RAM: T3 real pode não caber aqui; E4 em máquina com ≥3 GB.
+## Riscos
+- `wcmsvc.dll` ausente: `netsh wlan` pode falhar mesmo com driver. Plano B: A2 PAN.
+- TCG lento; 4 GB RAM mínimo no host da E4.
 ## Bloqueios
 - Nenhum depende do dono.
