@@ -15,13 +15,6 @@ if [ "$b" = main ] && [ -z "${OK:-}" ]; then
 fi
 
 
-# PLANO.md e a resposta do lead. Agente que escreve nele sem ser o lead destrói a
-# unica direcao que os outros leem. Recusa antes de gravar.
-if [ -z "${LEAD:-}" ] && git diff --cached --name-only | grep -qx 'PLANO.md'; then
-  echo "PLANO.md pertence ao tech lead. Escreva na branch relatorio (scripts/relatorio.sh);"
-  echo "se voce E o lead deste turno, assuma explicitamente: LEAD=1 git commit ..."
-  exit 1
-fi
 
 
 exit 0

@@ -103,7 +103,7 @@ fi
 cat <<EOF
 
 PRONTO. Você está em $REPO, branch $(git rev-parse --abbrev-ref HEAD), etapa $MINHA.
-  leia   : AGENTS.md -> PLANO.md -> ETAPAS.md
+  leia   : AGENTS.md -> sh scripts/plano.sh -> ETAPAS.md
   trabalho: scripts/etapa.sh fechar $MINHA "<evidencia: caminho + saida>"
   status : sh scripts/etapa.sh status
 EOF

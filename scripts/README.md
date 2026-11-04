@@ -41,6 +41,7 @@ sh scripts/injetar_driver.sh --imagem .work/wim/Winre.wim --driver .work/drivers
 | `doctor.sh` | Diz o que este ambiente executa (níveis T0–T4); sai com código ≠ 0 se nada for executável. Rode antes de gastar a rodada |
 | `agente.sh` | Identidade `A=<nome>` (git config) e linha `nome inicio <data UTC>` em `PRESENCA.md`; o hook post-commit grava `nome push <data UTC> <sha>` após cada push ok |
 | `etapa.sh` | Orquestra `ETAPAS.md`: `status`, `pegar`, `fechar`, `liberar` (lease de 90 min) |
+| `plano.sh` | Imprime o `PLANO.md` do lead (branch `relatorio`) sem abrir o `RELATORIO.md` |
 | `relatorio.sh` | Mantém `RELATORIO.md` na branch `relatorio` (`estado`, `problema`, `pergunta`; só escrita) |
 | `dossie.sh` | Inventário da imagem baixada, grava `docs/imagem/`; quem baixar a imagem roda primeiro |
 | `obter_imagem.sh` | Baixa o pacote offline da imagem 1809 (`--fs` 62 MB, `--wim` 254 MB) |

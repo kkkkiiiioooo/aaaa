@@ -12,18 +12,19 @@ Contrato único. Receber o repo já é a ordem: execute, não espere nada.
 - Simule o mais perto possível o que não der para reproduzir e documente a diferença.
 
 ## Leitura (contexto mínimo, nesta ordem, ~9 KB)
-`PLANO.md` (lead; manda na prioridade) · `AGENTS.md` · `PROMPT.md` · `HANDOFF.md`.
-`PROGRESS.md` e `docs/evidence/` crescem: só o fim (`tail -20`). Nunca leia a branch `relatorio` nem `RELATORIO.md`.
+`sh scripts/plano.sh` (PLANO do lead, vive na branch `relatorio`; manda na prioridade) · `AGENTS.md` · `PROMPT.md` · `HANDOFF.md`.
+`PROGRESS.md` e `docs/evidence/` crescem: só o fim (`tail -20`). Da branch `relatorio` só o PLANO, via `plano.sh`; nunca abra `RELATORIO.md`.
 
 ## Escrita (para um leitor mais inteligente que você: só o que importa)
 - Nada só no chat da sessão. Registre no repo, no fim do arquivo, sem duplicar, até 500 caracteres por entrada: descoberta, decisão, evidência (comando + saída).
 - `HANDOFF.md` = snapshot: reescreva ao fim da rodada (fase, próximo passo, premissas, bloqueios). Sem histórico.
 - `RELATORIO.md` = resumo executivo do lead (até 2 KB), só via `sh scripts/relatorio.sh estado|problema|pergunta`. Atualize quando o problema surgir.
-- `PLANO.md` é do lead: o hook recusa sem `LEAD=1`. Fale com o lead pelo relatório.
+- O PLANO é do lead (branch `relatorio`, só ele escreve). O lead só acessa essa branch: fale com ele pelo relatório.
 
 ## Rodada
 ```
 sh iniciar.sh A=<nome> P=<projeto> S_ARQ=<arquivo-da-passphrase>   # entra e registra inicio
+sh scripts/plano.sh                                                 # direção do lead
 sh scripts/etapa.sh status                                          # quem tem o quê
 sh scripts/etapa.sh pegar E<n>                                      # reclama (lease 90 min)
 sh scripts/etapa.sh fechar E<n> "<evidencia: caminho + saida>"      # sem evidência não está feita
