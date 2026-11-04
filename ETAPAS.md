@@ -37,3 +37,4 @@ Achado que muda o plano: `WlanSvc` = AUTO no hive mas `wcmsvc.dll` NAO existe na
 => driver de WiFi sozinho pode nao bastar (hipotese alta, fecha na E4). `drvload.exe` EXISTE.
 E2 | otimizador | 2026-11-04T06:53Z | liberada | lease expirado apos 790min (watchdog)
 E3 | otimizador | 2026-11-04T06:53Z | liberada | lease expirado apos 533min (watchdog)
+E2 | stackai | 2026-11-04T22:00Z | ativa | -
