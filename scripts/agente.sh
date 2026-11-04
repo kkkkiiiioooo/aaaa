@@ -1,5 +1,5 @@
 #!/bin/sh
-# agente.sh - identidade do agente + presenca (nome data) em PRESENCA.md.
+# agente.sh - identidade do agente + presenca em PRESENCA.md (linha `nome inicio <data UTC>`; a linha `push` e do post-commit).
 #
 # Uso:
 #   A=vibe sh scripts/agente.sh   # identifica e registra presenca
@@ -23,5 +23,6 @@ if [ "${1:-}" = quem ]; then
   exit 0
 fi
 
-printf '%s %s\n' "$A" "$(date -u +%F)" >> "$F"
+touch "$F"; grep -v "^$A inicio " "$F" > "$R/.work/p"
+printf '%s inicio %s\n' "$A" "$(date -u +%FT%TZ)" >> "$R/.work/p"; cat "$R/.work/p" > "$F"
 printf 'ok %s\n' "$A"

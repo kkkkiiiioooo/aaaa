@@ -28,6 +28,13 @@ mkdir -p "$LOG"
   if git push -q origin "$b"; then
     echo "ok push $b"
     rm -f "$PEND"
+    case "$b" in main|0|backup|relatorio) ;; *)
+      A=$(cat "$R/.work/agente" 2>/dev/null || git config user.name || echo desconhecido)
+      touch "$R/PRESENCA.md"; grep -v "^$A push " "$R/PRESENCA.md" > "$R/.work/p"
+      printf '%s push %s %s\n' "$A" "$(date -u +%FT%TZ)" "$(git rev-parse --short HEAD)" >> "$R/.work/p"
+      cat "$R/.work/p" > "$R/PRESENCA.md"
+      git add PRESENCA.md && git commit -q --no-verify -m "presenca: $A" && git push -q origin "$b" && echo "ok presenca" ;;
+    esac
   else
     echo "FALHA push: commit local nao enviado. Diagnostique e repita."
     : > "$PEND"

@@ -39,7 +39,7 @@ sh scripts/injetar_driver.sh --imagem .work/wim/Winre.wim --driver .work/drivers
 | `download.vbs` | **Roda no WinRE** (não no Linux): baixa arquivo por HTTP(S) via `cscript` — supre a ausência de `certutil`/PowerShell |
 | `download_ftp.txt` | Modelo de comandos para `ftp.exe -s:` no WinRE (alternativa de download) |
 | `doctor.sh` | Diz o que este ambiente executa (níveis T0–T4); sai com código ≠ 0 se nada for executável. Rode antes de gastar a rodada |
-| `agente.sh` | Identidade `A=<nome>` (git config + `PRESENCA.md`); `saiu` registra a saída |
+| `agente.sh` | Identidade `A=<nome>` (git config) e linha `nome inicio <data UTC>` em `PRESENCA.md`; o hook post-commit grava `nome push <data UTC> <sha>` após cada push ok |
 | `etapa.sh` | Orquestra `ETAPAS.md`: `status`, `pegar`, `fechar`, `liberar` (lease de 90 min) |
 | `relatorio.sh` | Mantém `RELATORIO.md` na branch `relatorio` (`estado`, `problema`, `pergunta`; só escrita) |
 | `dossie.sh` | Inventário da imagem baixada, grava `docs/imagem/`; quem baixar a imagem roda primeiro |

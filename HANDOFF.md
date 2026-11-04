@@ -8,9 +8,8 @@ Otimização de documentos e agentes (2026-11-04), em paralelo ao desafio:
 - Nomes sem número: projeto chama `wwii` em README, PROGRESS e testes (assinatura `WINRE_WIM_SIGNATURE_WWII`).
 - Ambiente de teste provado sem KVM e sem docker: `sh scripts/ambiente.sh` + `sh scripts/tests/run-tests.sh` termina em `SUITE: PASS` (28 PASS / 0 FAIL, ~259 s sob TCG).
 - `ambiente.sh` agora instala `xorriso` (o `converter_iso.sh` precisa).
-- `PRESENCA.md` sem linhas repetidas; hook `pre-commit` só acrescenta `nome data` se ainda não existir.
+- `PRESENCA.md` automático: `agente.sh` grava `nome inicio <data UTC>`; o `post-commit` grava `nome push <data UTC> <sha>` após cada push ok. CHAT.md removido.
 - `scripts/README.md` lista todos os scripts; contagens fixas de PASS removidas dos docs.
-- `CHAT.md` usa as mesmas tags do `AGENTS.md` (`?` hipótese assumida, `!` bloqueio externo comprovado).
 
 ## Próximo passo
 1. E2: drivers em lote por `VEN_` (`buscar_driver.py` → `.cab` 1809 → `injetar_driver.sh`).
