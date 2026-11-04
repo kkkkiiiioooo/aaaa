@@ -9,6 +9,7 @@
 set -u
 R=$(cd "$(dirname "$0")/.." 2>/dev/null && pwd)
 F="$R/ETAPAS.md"
+LOCK="$R/.work/etapa.lock"
 LEASE_MIN=${LEASE_MIN:-90}
 A=$(cat "$R/.work/agente" 2>/dev/null)
 A=${A:-$(git config user.name 2>/dev/null)}
@@ -78,15 +79,15 @@ case "$1" in
         exit 1
       fi
     fi
-    printf '%s | %s | %s | ativa | -\n' "$ET" "$A" "$NOW" >> "$F"
+    (flock -x 9; printf '%s | %s | %s | ativa | -\n' "$ET" "$A" "$NOW" >> "$F") 9>"$LOCK"
     echo "reclamada: $ET por $A as $NOW (lease ${LEASE_MIN}min)"
     ;;
   fechar)
-    printf '%s | %s | %s | feita | %s\n' "$ET" "$A" "$NOW" "${3:-ver docs/evidence/}" >> "$F"
+    (flock -x 9; printf '%s | %s | %s | feita | %s\n' "$ET" "$A" "$NOW" "${3:-ver docs/evidence/}" >> "$F") 9>"$LOCK"
     echo "fechada: $ET por $A"
     ;;
   liberar)
-    printf '%s | %s | %s | liberada | %s\n' "$ET" "$A" "$NOW" "${3:-sem progresso}" >> "$F"
+    (flock -x 9; printf '%s | %s | %s | liberada | %s\n' "$ET" "$A" "$NOW" "${3:-sem progresso}" >> "$F") 9>"$LOCK"
     echo "liberada: $ET"
     ;;
   *) echo "comando desconhecido: $1"; exit 1 ;;

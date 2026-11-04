@@ -60,6 +60,7 @@ if [ ! -d "$REPO/.git" ]; then
     || falha "clone" "nem clone parcial nem completo funcionaram — veja a mensagem acima"
 fi
 cd "$REPO"
+git -C "$REPO" fsck --no-dangling 2>&1 | grep -q "^error:" && falha "clone" "clone corrompido — delete $REPO e repita"
 
 passo "1/4 credencial + branch"
 # h.sh e executado a partir do PAI do clone: ele deriva o destino de onde esta,

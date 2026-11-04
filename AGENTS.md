@@ -45,3 +45,14 @@ Quem obtiver a imagem roda `sh scripts/dossie.sh` e comita `docs/imagem/` antes 
 
 ## Concluir apenas quando
 Resolvido, ou validado, ou bloqueio externo comprovado com evidência. Responda em português.
+
+## Decisão rápida (fluxograma — 10 s)
+
+```
+Qual é o estado do ambiente?  → sh scripts/doctor.sh --env
+Qual etapa está livre?         → sh scripts/etapa.sh status
+Estou bloqueado?               → sh scripts/problema.sh buscar <termo>
+Preciso de driver?             → buscar_driver.py + VEN_ de docs/imagem/DOSSIE.md
+Comunicar lead?                → sh scripts/relatorio.sh estado "<msg>"
+Lease expirado de outro?       → sh scripts/watchdog.sh
+```

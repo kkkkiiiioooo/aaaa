@@ -23,6 +23,20 @@ if [ "${1:-}" = quem ]; then
   exit 0
 fi
 
-touch "$F"; grep -v "^$A inicio " "$F" > "$R/.work/p"
-printf '%s inicio %s\n' "$A" "$(date -u +%FT%TZ)" >> "$R/.work/p"; cat "$R/.work/p" > "$F"
+# registra inicio e encerra sessao anterior com duracao
+NOW=$(date -u +%FT%TZ)
+NOW_S=$(date +%s)
+
+# calcula duracao da sessao anterior (se existir)
+PREV_LINE=$(grep "^$A inicio " "$F" 2>/dev/null | tail -1)
+if [ -n "$PREV_LINE" ]; then
+  PREV_TS=$(printf '%s' "$PREV_LINE" | awk '{print $3}')
+  PREV_S=$(date -d "$PREV_TS" +%s 2>/dev/null) || PREV_S=0
+  if [ "$PREV_S" -gt 0 ]; then
+    DUR=$(( (NOW_S - PREV_S) / 60 ))
+    (flock -x 9; printf '%s fim %s duracao=%smin\n' "$A" "$NOW" "$DUR" >> "$F") 9>"$R/.work/presenca.lock"
+  fi
+fi
+
+(flock -x 9; printf '%s inicio %s\n' "$A" "$NOW" >> "$F") 9>"$R/.work/presenca.lock"
 printf 'ok %s\n' "$A"

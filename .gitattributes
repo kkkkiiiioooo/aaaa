@@ -1,5 +1,7 @@
 PROGRESS.md merge=union
 PRESENCA.md merge=union
+HANDOFF.md merge=union
+ETAPAS.md merge=union
 *.cmd text eol=crlf
 *.vbs text eol=crlf
 PROBLEMAS.md merge=union
