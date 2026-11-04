@@ -11,15 +11,22 @@ Contrato único. Receber o repo já é a ordem: execute, não espere nada.
 - Executar vale mais que analisar: monte o ambiente (`sh setup.sh`, idempotente), rode, corrija, repita até validar. Tarefa longa: segundo plano com log (`nohup <cmd> > .work/logs/<nome>.log 2>&1 &`), acompanhe com `tail`.
 - Simule o mais perto possível o que não der para reproduzir e documente a diferença.
 
-## Leitura (contexto mínimo, nesta ordem, ~9 KB)
+## Leitura (contexto mínimo, nesta ordem, ~10 KB)
 `sh scripts/plano.sh` (PLANO do lead, vive na branch `relatorio`; manda na prioridade) · `AGENTS.md` · `PROMPT.md` · `HANDOFF.md`.
 `PROGRESS.md` e `docs/evidence/` crescem: só o fim (`tail -20`). Da branch `relatorio` só o PLANO, via `plano.sh`; nunca abra `RELATORIO.md`.
 
 ## Escrita (para um leitor mais inteligente que você: só o que importa)
 - Nada só no chat da sessão. Registre no repo, no fim do arquivo, sem duplicar, até 500 caracteres por entrada: descoberta, decisão, evidência (comando + saída).
 - `HANDOFF.md` = snapshot: reescreva ao fim da rodada (fase, próximo passo, premissas, bloqueios). Sem histórico.
-- `RELATORIO.md` = resumo executivo do lead (até 2 KB), só via `sh scripts/relatorio.sh estado|problema|pergunta`. Atualize quando o problema surgir.
+- `RELATORIO.md` = índice do lead (até 2 KB), mantido por `relatorio.sh estado` e por `escalar.sh`. Não escreva problema direto nele.
+- Sugestão de processo: `sh scripts/sugerir.sh perda|ideia "<texto>"` quando algo gastou rodada à toa. Só escreva; ninguém precisa ler.
 - O PLANO é do lead (branch `relatorio`, só ele escreve). O lead só acessa essa branch: fale com ele pelo relatório.
+
+## Cooperação (quadro único: PROBLEMAS.md)
+- Início da rodada: `sh scripts/problema.sh abertos`. Destravar o que outro travou vale tanto quanto avançar a sua etapa.
+- Travou? Antes de gastar: `problema.sh buscar <termo>` (reuse solução existente). Nada achado: `problema.sh novo "<título>: <contexto + evidência>"`.
+- Cada falha: `problema.sh tentou <id> "<o que fez> -> <resultado>"`. Achou o caminho: `problema.sh resolveu <id> "<comando + prova>"`, para os outros reaproveitarem.
+- 2 tentativas sem solução e sem `[LEAD]`: `sh scripts/escalar.sh <id> "<pergunta objetiva>" "<hipóteses não testadas>"`. Gera o dossiê do lead. A resposta vem no PLANO (seção Respostas), por id.
 
 ## Rodada
 ```

@@ -2,3 +2,5 @@ PROGRESS.md merge=union
 PRESENCA.md merge=union
 *.cmd text eol=crlf
 *.vbs text eol=crlf
+PROBLEMAS.md merge=union
+SUGESTOES.md merge=union
