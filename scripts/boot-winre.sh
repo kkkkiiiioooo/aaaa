@@ -81,16 +81,19 @@ if [ "$FWMODE" = uefi ]; then
   FW="-drive if=pflash,format=raw,readonly=on,file=$CODE -drive if=pflash,format=raw,file=$VARS"
 fi
 say "subendo QEMU TCG ($FWMODE) mem=${MEM}MB cpus=${CPUS} timeout=${TIMEOUT}s"
-setsid qemu-system-x86_64 \
-  -name wwii-e4 -pidfile "$PIDF" \
-  -m "$MEM" -smp "$CPUS" -cpu qemu64 \
+# DISK_BOOT=<img> troca o CD por um disco de boot (ESP com \EFI\BOOT\BOOTX64.EFI): foi o unico
+# caminho que o OVMF aceitou sem tecla e sem opcao de boot inventada (ver montar_disco_winre.sh).
+MEDIA="-boot order=d -cdrom $ISO"
+[ -n "${DISK_BOOT:-}" ] && MEDIA="-boot order=c -hda $DISK_BOOT -hdb $DISK"
+setsid sh -c "exec qemu-system-x86_64 \
+  -name wwii-e4 -pidfile $PIDF \
+  -m $MEM -smp $CPUS -cpu qemu64 \
   $FW \
-  -boot order=d -cdrom "$ISO" -hda "$DISK" \
+  $MEDIA \
   -netdev user,id=n0,dhcpstart=10.0.2.15 -device e1000,netdev=n0,mac=52:54:00:00:04:04 \
   -display none -vga std \
-  -serial "file:$SERIAL" \
-  -monitor "unix:$MON,server,nowait" \
-  > "$LOG" 2>&1 < /dev/null &
+  -serial file:$SERIAL \
+  -monitor unix:$MON,server,nowait" > "$LOG" 2>&1 < /dev/null &
 sleep 8
 QP=$(cat "$PIDF" 2>/dev/null || pgrep -f 'wwii-e4' | head -1)
 [ -n "$QP" ] || { tail -20 "$LOG"; die "qemu nao subiu"; }

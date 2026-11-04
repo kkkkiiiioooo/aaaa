@@ -77,6 +77,16 @@ pega /Windows/Boot/DVD/EFI/BCD             "$STAGE/efi/microsoft/boot/BCD"
 pega /Windows/Boot/DVD/EFI/en-US/efisys_noprompt.bin "$STAGE/efi/microsoft/boot/efisys.bin" \
   || pega /Windows/Boot/DVD/EFI/en-US/efisys.bin     "$STAGE/efi/microsoft/boot/efisys.bin"
 pega /Windows/Boot/EFI/bootmgr.efi         "$STAGE/efi/boot/bootmgfw.efi"
+# bootmgr de BIOS (PCAT) EXISTE no Winre.wim em /Windows/Boot/PCAT/bootmgr — ele e que vai na
+# RAIZ da ISO com nome ISO9660 "BOOTMGR.;1", que e exatamente o nome que o etfsboot.com procura.
+# Sem esse arquivo na raiz, o SeaBIOS carrega o etfsboot e para em "CDBOOT: Couldn't find BOOTMGR".
+pega /Windows/Boot/PCAT/bootmgr            "$STAGE/bootmgr"
+# BOOTX64.EFI e o mesmo bootmgr.efi com o nome de fallback da spec UEFI. Sem ele o OVMF,
+# quando o boot parte da ordem do QEMU (-boot order=d), monta a opcao "UEFI QEMU DVD-ROM"
+# como caminho SEM Partition() e falha com "BdsDxe: failed to start ... : No mapping"
+# (visto 2026-11-04). Com o arquivo na raiz ISO9660 /EFI/BOOT/ o EDK2 acha o loader.
+[ -s "$STAGE/efi/boot/bootmgfw.efi" ] && cp "$STAGE/efi/boot/bootmgfw.efi" "$STAGE/efi/boot/bootx64.efi" \
+  && say "efi/boot/bootx64.efi = fallback UEFI do bootmgr"
 # bootmgr de BIOS (PCAT) NAO existe dentro do Winre.wim 1809 — so o .efi. Sem ele o El Torito
 # BIOS carrega o etfsboot e para em "CDBOOT: Couldn't find BOOTMGR". Se voce tiver o arquivo
 # (ADK/midia de instalacao), passe BOOTMGR_PCAT=/caminho/bootmgr que ele vai para a raiz da ISO.
@@ -104,6 +114,40 @@ rm -f "$SAIDA"
 [ -s "$SAIDA" ] || { say "ERRO: ISO nao gerada"; exit 1; }
 
 say "conferindo a ISO"
+# O etfsboot.com do 1809 procura o identificador ISO9660 exato "BOOTMGR;1". O xorriso grava
+# "BOOTMGR." (com ponto, sem versao) e o SeaBIOS para em "CDBOOT: Couldn't find BOOTMGR" —
+# medido 2026-11-04. Corrigimos o identificador no registro do diretorio raiz, sem mover
+# nenhum byte de dados: o campo e de tamanho variavel e sobra padding no mesmo registro.
+python3 - "$SAIDA" <<'PY' || say "AVISO: patch BOOTMGR;1 falhou (boot de BIOS pode falhar)"
+import struct, sys
+p = sys.argv[1]
+blob = open(p, 'rb').read()
+pvd = blob[16*2048:17*2048]
+assert pvd[1:6] == b'CD001', 'PVD nao encontrado'
+loc, size = struct.unpack('<I', pvd[158:162])[0], struct.unpack('<I', pvd[166:170])[0]
+buf = bytearray(blob[loc*2048:loc*2048+size])
+i, hit = 0, False
+while i < len(buf):
+    rl = buf[i]
+    if rl == 0:
+        break
+    il = buf[i+32]
+    ident = bytes(buf[i+33:i+33+il])
+    if ident.startswith(b'BOOTMGR') and ident != b'BOOTMGR;1':
+        new = b'BOOTMGR;1'
+        assert len(new) <= rl - 33, 'registro pequeno demais'
+        buf[i+32] = len(new)
+        buf[i+33:i+33+len(new)] = new
+        hit = True
+        print('[iso]   identificador %r -> BOOTMGR;1' % ident)
+    elif ident == b'BOOTMGR;1':
+        hit = True
+    i += rl
+assert hit, 'registro BOOTMGR nao encontrado na raiz'
+with open(p, 'r+b') as f:
+    f.seek(loc*2048); f.write(bytes(buf))
+print('[iso]   identificador da raiz corrigido para BOOTMGR;1')
+PY
 xorriso -indev "$SAIDA" -report_el_torito as_mkisofs 2>/dev/null | sed 's/^/[iso]   /'
 say "conteudo da raiz:"
 xorriso -indev "$SAIDA" -find / -maxdepth 2 -type f 2>/dev/null | sed 's/^/[iso]   /' | head -14
