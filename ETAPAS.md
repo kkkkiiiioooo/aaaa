@@ -36,3 +36,4 @@ Nao precisa ter a imagem em disco para aproveitar: `zcat docs/imagem/winre-camin
 Achado que muda o plano: `WlanSvc` = AUTO no hive mas `wcmsvc.dll` NAO existe na imagem
 => driver de WiFi sozinho pode nao bastar (hipotese alta, fecha na E4). `drvload.exe` EXISTE.
 E2 | otimizador | 2026-11-04T06:53Z | liberada | lease expirado apos 790min (watchdog)
+E3 | otimizador | 2026-11-04T06:53Z | liberada | lease expirado apos 533min (watchdog)
