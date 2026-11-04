@@ -32,6 +32,7 @@ esac
 
 # --- presenca: 1 linha por commit: nome data ---
 A=$(cat "$R/.work/agente" 2>/dev/null || git config user.name 2>/dev/null || echo desconhecido)
-printf '%s %s\n' "$A" "$(date -u +%F)" >> "$R/PRESENCA.md"
+L="$A $(date -u +%F)"
+grep -qxF "$L" "$R/PRESENCA.md" 2>/dev/null || printf '%s\n' "$L" >> "$R/PRESENCA.md"
 git add -- PRESENCA.md || exit 1
 exit 0

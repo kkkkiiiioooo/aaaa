@@ -45,7 +45,7 @@ Regras padrão do repositório. Valem para tudo.
 
 ## Escopo de leitura (contexto do planner)
 - Leia sempre e nesta ordem: `PLANO.md` (direcao do lead) + `AGENTS.md` (contrato) +
-  `PROMPT.md` (tarefa) + `HANDOFF.md` (estado atual). Fixo, ~3 KB.
+  `PROMPT.md` (tarefa) + `HANDOFF.md` (estado atual). Fixo, ~15 KB, lido 1x por rodada.
 - `PLANO.md` manda em caso de duvida de prioridade. Se estiver vazio/desatualizado, siga o `PROMPT.md` e registre a escolha no relatorio.
 - `PROGRESS.md`, `CHAT.md` e `docs/evidence/` são append-only e crescem: nunca leia inteiro, só o fim (tail, ~20 linhas).
 - `HANDOFF.md` é snapshot: reescreva-o ao **fim de cada rodada** (fase, próximo passo, bloqueios); não faça append.

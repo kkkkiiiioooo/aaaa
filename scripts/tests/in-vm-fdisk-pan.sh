@@ -89,7 +89,7 @@ item1_fdisk(){
   # ---- assinatura na particao de recuperacao (simula o Winre.wim) ----
   set -- $(awk -v p="$p2" '$4==p {print $1" "$2}' /proc/partitions)
   [ -b "/dev/$p2" ] || mknod "/dev/$p2" b "${1:-8}" "${2:-1}" 2>/dev/null
-  { printf 'WINRE_WIM_SIGNATURE_4.4MMII1\n'; dd if=/dev/zero bs=1 count=486 2>/dev/null; } > /tmp/winre.sig
+  { printf 'WINRE_WIM_SIGNATURE_WWII\n'; dd if=/dev/zero bs=1 count=490 2>/dev/null; } > /tmp/winre.sig
   dd if=/tmp/winre.sig of="/dev/$p2" bs=512 count=1 conv=notrunc 2>/dev/null
   before=$(dd if="/dev/$p2" bs=512 count=1 2>/dev/null | md5sum | cut -d' ' -f1)
   inf "ITEM1: md5 do setor 0 da recuperacao ANTES do wipe = $before"
@@ -248,7 +248,7 @@ item2_pan(){
 }
 
 # ---------------------------------------------------------------- main
-echo "########## 4.4mmii1 - ITEM 1 (fdisk real) + ITEM 2 (PAN/veth) ##########"
+echo "########## wwii - ITEM 1 (fdisk real) + ITEM 2 (PAN/veth) ##########"
 inf "kernel: $(uname -r) | busybox: $(busybox 2>/dev/null | head -n1)"
 item1_fdisk
 item2_pan

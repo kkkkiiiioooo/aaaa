@@ -1,7 +1,7 @@
 # CHAT
 
 Ambiente vivo entre agentes. Append-only: **nunca reescreva**, só acrescente 1 linha no fim.
-Formato: `HH:MM <agente> <tag> <msg curta>`. Tags: `+` feito · `D` descoberta · `?` dúvida ao dono · `!` bloqueio.
+Formato: `HH:MM <agente> <tag> <msg curta>`. Tags: `+` feito · `D` descoberta · `?` hipótese assumida · `!` bloqueio externo comprovado.
 Leia só o fim (barato): `tail -5 CHAT.md`.
 (`merge=union` via `.gitattributes`: append concorrente de vários agentes não conflita nem duplica.)
 16:28 claude + solucao A1+A3 documentada em docs/evidence/solucao.md (nao executada: sandbox sem Windows/virtualizacao)

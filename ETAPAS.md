@@ -1,4 +1,3 @@
-#!/bin/sh
 # ETAPAS — pipeline do projeto. Uma etapa por vez, com gate objetivo.
 #
 # Como se usa (é isto que o agente chama, nao editar a mao):

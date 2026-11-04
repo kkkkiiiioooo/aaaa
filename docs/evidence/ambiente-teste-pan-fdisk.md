@@ -88,7 +88,7 @@ major minor  #blocks  name
 
 ### A prova que importa
 
-Uma assinatura `WINRE_WIM_SIGNATURE_4.4MMII1` foi gravada no **setor 0 da partição
+Uma assinatura `WINRE_WIM_SIGNATURE_WWII` foi gravada no **setor 0 da partição
 de recuperação**, depois o início da partição `C:` foi zerado (16 MiB, equivalente a
 formatar), e o setor 0 da recuperação foi lido de novo:
 

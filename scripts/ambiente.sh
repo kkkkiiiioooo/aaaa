@@ -73,7 +73,7 @@ instalar(){
 }
 
 instalar curl wget wimlib-imagex 7z aria2c python3 \
-         qemu-system-x86_64 qemu-img busybox unsquashfs cpio gzip
+         qemu-system-x86_64 qemu-img busybox unsquashfs cpio gzip xorriso
 
 # --- diretórios de trabalho (ignorados pelo git) ---
 for d in .work .work/logs .work/uup .work/iso .work/mnt .work/vm .work/downloads; do mkdir -p "$d"; done

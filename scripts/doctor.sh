@@ -23,7 +23,7 @@ echo "T0 - inspecao/injecao offline de WIM (wimlib)"
 if have wimlib-imagex; then ok "wimlib-imagex presente: da para abrir e alterar o Winre.wim"; T0=sim
 else no "wimlib-imagex ausente: rode sh scripts/ambiente.sh"; T0=nao; fi
 
-echo "T1 - suite QEMU Linux ja escrita (a dos 27/27 PASS)"
+echo "T1 - suite QEMU Linux ja escrita (a que termina em SUITE: PASS)"
 if have qemu-system-x86_64 && have qemu-img && have busybox && have unsquashfs; then
   ok "qemu + qemu-img + busybox + unsquashfs: suite executavel"
   if [ "$KVM" = sim ]; then ok "/dev/kvm acessivel (acelerado)"; else no "sem /dev/kvm: usara TCG (emulacao pura, mais lento)"; fi

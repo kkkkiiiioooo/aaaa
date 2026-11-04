@@ -12,7 +12,7 @@ sh scripts/uup_links.sh                # 2) resolve links diretos oficiais (nao 
 sh scripts/baixar_uup.sh '\.esd$'      # 3) baixa (filtro opcional; retomavel/paralelo)
 sh scripts/inspecionar_winre.sh <img>  # 4) examina o WinRE (netsh/WLAN/drivers)
 sh scripts/converter_iso.sh            # 5) opcional: monta a ISO completa a partir dos UUP
-sh scripts/tests/run-tests.sh          # 6) ambiente de teste: VM QEMU + suite (27/27 PASS)
+sh scripts/tests/run-tests.sh          # 6) ambiente de teste: VM QEMU + suite (termina em SUITE: PASS)
 ```
 
 ## Driver: do hardware ID ao Winre.wim (ciclo fechado)
@@ -38,6 +38,14 @@ sh scripts/injetar_driver.sh --imagem .work/wim/Winre.wim --driver .work/drivers
 | `diag.cmd` | **Roda no WinRE** (não no Linux): coleta os IDs de hardware (Wi-Fi/Bluetooth) e o inventário de drivers. Detalhes em `docs/evidence/driver_injecao.md` |
 | `download.vbs` | **Roda no WinRE** (não no Linux): baixa arquivo por HTTP(S) via `cscript` — supre a ausência de `certutil`/PowerShell |
 | `download_ftp.txt` | Modelo de comandos para `ftp.exe -s:` no WinRE (alternativa de download) |
+| `doctor.sh` | Diz o que este ambiente executa (níveis T0–T4); sai com código ≠ 0 se nada for executável. Rode antes de gastar a rodada |
+| `agente.sh` | Identidade `A=<nome>` (git config + `PRESENCA.md`); `saiu` registra a saída |
+| `etapa.sh` | Orquestra `ETAPAS.md`: `status`, `pegar`, `fechar`, `liberar` (lease de 90 min) |
+| `relatorio.sh` | Mantém `RELATORIO.md` na branch `relatorio` (`estado`, `problema`, `pergunta`; só escrita) |
+| `dossie.sh` | Inventário da imagem baixada, grava `docs/imagem/`; quem baixar a imagem roda primeiro |
+| `obter_imagem.sh` | Baixa o pacote offline da imagem 1809 (`--fs` 62 MB, `--wim` 254 MB) |
+| `listar_hwid.py` | Lista os HWIDs presentes no WinRE (os INF são UTF-16LE; grep ASCII devolve zero) |
+| `ler_hive.py` | Inventário de serviços do WinRE lido do próprio WIM |
 
 ## Ambiente de teste (VM QEMU) — `tests/`
 
