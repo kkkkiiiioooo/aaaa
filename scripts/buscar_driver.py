@@ -314,6 +314,125 @@ def cmd_catalog(args):
     return 0 if res else 2
 
 
+
+def _load_table(path):
+    rows = []
+    with open(path, "r", encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            parts = line.split("\t")
+            if len(parts) < 2:
+                continue
+            rows.append({"fab": parts[0].lower(), "hwid": parts[1],
+                         "nota": parts[2] if len(parts) > 2 else ""})
+    return rows
+
+
+def cmd_lote(args):
+    """Baixa >=1 .cab oficial por fabricante; para no primeiro hit de cada um."""
+    table = _load_table(args.tabela)
+    fabs = [f.strip().lower() for f in args.so.split(",")] if args.so else []
+    if fabs:
+        table = [r for r in table if r["fab"] in fabs]
+    wanted = []
+    for r in table:
+        if r["fab"] not in wanted:
+            wanted.append(r["fab"])
+    outdir = os.path.abspath(args.dir)
+    os.makedirs(outdir, exist_ok=True)
+    cache = os.path.abspath(args.cache)
+    os.makedirs(cache, exist_ok=True)
+    op = _opener()
+    got = {}
+    report = []
+    for r in table:
+        fab, hwid, nota = r["fab"], r["hwid"], r["nota"]
+        if fab in got:
+            continue
+        key = hwid.replace("\\", "_").replace("&", "_")
+        dest = os.path.join(cache, key)
+        os.makedirs(dest, exist_ok=True)
+        print(f"\n== {fab} {hwid} ({nota}) ==")
+        try:
+            res = search(op, hwid)
+        except Exception as e:  # noqa: BLE001
+            print(f"  busca falhou: {e}")
+            report.append((fab, hwid, "busca-erro", str(e)[:80]))
+            continue
+        if not res:
+            print("  nenhum driver no catalogo")
+            report.append((fab, hwid, "vazio", ""))
+            continue
+        guid = res[0]["guid"]
+        title = res[0]["title"]
+        print(f"  hit: {title} guid={guid}")
+        try:
+            files = resolve_download(op, hwid, guid)
+        except Exception as e:  # noqa: BLE001
+            print(f"  resolve falhou: {e}")
+            report.append((fab, hwid, "resolve-erro", str(e)[:80]))
+            continue
+        if not files:
+            print("  catalogo sem arquivos")
+            report.append((fab, hwid, "sem-arquivo", title))
+            continue
+        cab_path = None
+        for f in files:
+            destf = os.path.join(dest, f["name"])
+            if os.path.exists(destf) and os.path.getsize(destf) > 0:
+                print(f"  cache: {f['name']}")
+            else:
+                try:
+                    size = download(op, f["url"], destf)
+                except Exception as e:  # noqa: BLE001
+                    print(f"  download falhou {f['name']}: {e}")
+                    continue
+                print(f"  baixado: {f['name']} ({size} bytes)")
+            if f["name"].lower().endswith(".cab") or cab_path is None:
+                cab_path = destf
+        if not cab_path:
+            report.append((fab, hwid, "download-erro", title))
+            continue
+        extracted = os.path.join(dest, "extracted")
+        extract(cab_path, extracted)
+        infs = check_infs(hwid, extracted)
+        match = any(x["match"] for x in infs)
+        if not match:
+            print("  INF nao casa com o HWID (pacote baixado mesmo assim)")
+            report.append((fab, hwid, "inf-nao-casa", title))
+            # ainda conta como .cab oficial do fabricante
+        else:
+            print("  INF MATCH")
+            report.append((fab, hwid, "ok", title))
+        # espelha em outdir/<fab>/
+        fabdir = os.path.join(outdir, fab)
+        if os.path.isdir(fabdir):
+            shutil.rmtree(fabdir)
+        shutil.copytree(dest, fabdir)
+        got[fab] = {
+            "hwid": hwid, "title": title, "guid": guid,
+            "dir": fabdir, "cab": os.path.basename(cab_path),
+            "match": match,
+        }
+    print("\n===== RESUMO LOTE =====")
+    missing = [f for f in wanted if f not in got]
+    for fab in wanted:
+        if fab in got:
+            g = got[fab]
+            flag = "INF-OK" if g["match"] else "CAB-SEM-MATCH"
+            print(f"  {fab:10} {flag:14} {g['hwid']}  {g['cab']}")
+        else:
+            print(f"  {fab:10} FALTOU")
+    print(f"fabricantes ok: {len(got)}/{len(wanted)}")
+    summary = os.path.join(outdir, "lote.json")
+    with open(summary, "w", encoding="utf-8") as fh:
+        json.dump({"got": got, "missing": missing, "report": report}, fh, indent=2)
+    print(f"resumo: {summary}")
+    return 0 if not missing else 2
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -337,6 +456,13 @@ def main():
     p = sub.add_parser("catalogo", help="saida JSON da busca")
     p.add_argument("hwid")
     p.set_defaults(func=cmd_catalog)
+
+    p = sub.add_parser("lote", help="baixa >=1 .cab oficial por fabricante (tabela 1809)")
+    p.add_argument("--tabela", default="scripts/drivers-1809.tsv")
+    p.add_argument("--dir", default=".work/drivers")
+    p.add_argument("--cache", default=".work/driver-cache")
+    p.add_argument("--so", default="", help="lista csv de fabricantes (vazio=todos)")
+    p.set_defaults(func=cmd_lote)
 
     args = ap.parse_args()
     sys.exit(args.func(args))
