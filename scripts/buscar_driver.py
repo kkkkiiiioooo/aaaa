@@ -144,13 +144,23 @@ def inf_hardware_ids(path):
 
     O INF traz o ID na secao [Manufacturer] (%Mfg% = Modelo, PCI\\VEN_...&DEV_...)
     e/ou na secao de modelos, via HardwareID=.
+    WinRE/driver packs da MS frequentemente sao UTF-16LE (BOM FF FE): grep ASCII
+    devolve zero. Decodifica como listar_hwid.py.
     """
     ids = set()
     try:
-        with open(path, "r", encoding="utf-8", errors="ignore") as fh:
-            text = fh.read()
+        with open(path, "rb") as fh:
+            raw = fh.read()
     except OSError:
         return ids
+    text = ""
+    if raw.startswith(b"\xff\xfe"):
+        text = raw.decode("utf-16-le", "ignore")
+    elif raw.startswith(b"\xfe\xff"):
+        text = raw.decode("utf-16-be", "ignore")
+    else:
+        text = raw.decode("utf-8", "ignore")
+    text = text.replace("\x00", "")
     # forma "PCI\VEN_14E4&DEV_4365&SUBSYS_..." em linhas de modelo
     for m in re.finditer(r"((?:PCI|USB|USBSTOR|ACPI|ROOT)\\[A-Za-z0-9_&\\.\-]+)", text, re.I):
         ids.add(m.group(1))

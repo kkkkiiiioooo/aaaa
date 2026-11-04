@@ -1,29 +1,27 @@
 # HANDOFF
-
 Estado atual (snapshot; reescreva ao fim de cada rodada, não faça append).
-Histórico e causas das rodadas anteriores: `PROGRESS.md` (só o fim).
-
+Histórico: `PROGRESS.md` (só o fim).
 ## Fase
-Otimização de documentos e agentes (2026-11-04), em paralelo ao desafio:
-- Nomes sem número: projeto chama `wwii` em README, PROGRESS e testes (assinatura `WINRE_WIM_SIGNATURE_WWII`).
-- Ambiente de teste provado sem KVM e sem docker: `sh scripts/ambiente.sh` + `sh scripts/tests/run-tests.sh` termina em `SUITE: PASS` (28 PASS / 0 FAIL, ~259 s sob TCG).
-- `ambiente.sh` agora instala `xorriso` (o `converter_iso.sh` precisa).
-- `PRESENCA.md` automático: `agente.sh` grava `nome inicio <data UTC>`; o `post-commit` grava `nome push <data UTC> <sha>` após cada push ok. CHAT.md removido.
-- `scripts/README.md` lista todos os scripts; contagens fixas de PASS removidas dos docs.
-
+E2 fechada (2026-11-04 19:03 UTC-3, stackai). Em paralelo ao desafio WinRE 1809.
+- 6/6 fabricantes com `.cab` oficial do catálogo MS, INF MATCH, injetados no
+  Winre.wim 17763, hash 17/17 IGUAL. Evidência: `docs/evidence/drivers_lote.md`.
+- Parser INF agora lê UTF-16LE (regressão: `python3 scripts/tests/unit/inf_utf16.py`).
+- WIM de trabalho local: `.work/wim/Winre.lote.wim` (274 MB, não versionado).
 ## Próximo passo
-1. E2: drivers em lote por `VEN_` (`buscar_driver.py` → `.cab` 1809 → `injetar_driver.sh`).
-2. E3: autorun no WinRE via `winpeshl.ini` (`SetupCommandLine`). HIPÓTESE, nunca testada aqui.
-3. E4: ISO por `converter_iso.sh` (UUP 3,61 GB) e boot do PE em QEMU/TCG, com timeout alto, em segundo plano.
-4. Lead: O PLANO do lead (branch `relatorio`) usa "frentes 1–4" e `ETAPAS.md` usa E1–E6. Sugerir ao lead unificar (via `relatorio.sh pergunta`).
-
-## Premissas (assumidas, sem dono)
-- Hardware desconhecido: cobrir chips comuns em lote.
-- Runtime do driver Wi-Fi (erro 10) exige o adaptador real: limite do método, não do esforço.
-
+1. E3: autorun no WinRE — editar `winpeshl.ini` existente (`SetupCommandLine`),
+   script único `drvload` + log em disco. Runtime real é E4; deixar o arquivo
+   injetado e um teste offline do INI.
+2. E4: ISO (`converter_iso.sh`) + boot PE em QEMU/TCG, timeout alto, 2º plano.
+   Este é o teste de `WlanSvc`/`wcmsvc.dll` (p0402412842).
+3. Transporte (p0402452582): entregável com comandos curtíssimos (A2 PAN /
+   partição de recuperação / PXE). Ainda aberto.
+4. Lead: PLANO usa frentes 1–4; ETAPAS usa E1–E6. Unificar via `relatorio.sh pergunta`.
+## Premissas
+- Hardware desconhecido: lote cobre Intel/Realtek/Qualcomm/Broadcom/MediaTek/Marvell.
+- Runtime Wi-Fi (erro 10) exige adaptador real + talvez `wcmsvc.dll`.
 ## Riscos abertos
-- T3 sem KVM: boot do PE sob TCG pode levar dezenas de minutos; 4 GB de RAM é o mínimo. Disco: 3,61 GB de UUP + ~5 GB de ISO.
-- `HANDOFF.md` não tem `merge=union`: dois agentes simultâneos conflitam e o rebase do `post-commit` aborta. Um agente por vez reescreve.
-
+- T3 sem KVM: boot PE em TCG pode levar dezenas de minutos; RAM deste sandbox ~1,9 GB
+  (abaixo do mínimo 3 GB do doctor para T3).
+- `wcmsvc.dll` ausente no WinRE 1809: driver injetado é necessário, não suficiente.
 ## Bloqueios
 - Nenhum depende do dono.

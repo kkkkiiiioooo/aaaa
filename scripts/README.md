@@ -33,7 +33,8 @@ sh scripts/injetar_driver.sh --imagem .work/wim/Winre.wim --driver .work/drivers
 | `baixar_uup.sh` | Baixa os arquivos com retomada (`-c`); usa `aria2c` paralelo se existir. Aceita **filtro regex** para baixar só o necessário |
 | `inspecionar_winre.sh` | Acha o `Winre.wim` (inclusive aninhado em `install.wim`/ESD/ISO) e verifica `netsh.exe`, `wlanapi.dll`, `wlanmsm.dll`, `certutil.exe`, drivers `Net*.inf` |
 | `converter_iso.sh` | Usa o conversor oficial uup-dump (wimlib, multiplataforma) para gerar a ISO |
-| `buscar_driver.py` | Acha o driver de um dispositivo no **Microsoft Update Catalog** pelo hardware ID (`VEN_/DEV_` ou `VID_/PID_`), baixa o `.cab` oficial e **confere se o INF cobre o dispositivo** (ignora `SUBSYS_`/`REV_`, como o Windows). `busca` / `baixa` / `inf` / `catalogo` |
+| `buscar_driver.py` | Acha o driver de um dispositivo no **Microsoft Update Catalog** pelo hardware ID (`VEN_/DEV_` ou `VID_/PID_`), baixa o `.cab` oficial e **confere se o INF cobre o dispositivo** (ignora `SUBSYS_`/`REV_`, como o Windows). `busca` / `baixa` / `inf` / `catalogo` / `lote` (um `.cab` por fabricante, tabela `drivers-1809.tsv`, cache, INF UTF-16) |
+| `lote_drivers.sh` | E2 ponta a ponta: `buscar_driver.py lote` + injeta cada fabricante no Winre.wim e confere hash |
 | `injetar_driver.sh` | Injeta um driver numa imagem Windows/WinRE (WIM/ESD) via `wimlib`, nos mesmos caminhos do `dism /Add-Driver`: `/Windows/INF`, `DriverStore/FileRepository`, `System32/drivers`. Faz backup e verifica. `--listar` mostra o que já está na imagem |
 | `diag.cmd` | **Roda no WinRE** (não no Linux): coleta os IDs de hardware (Wi-Fi/Bluetooth) e o inventário de drivers. Detalhes em `docs/evidence/driver_injecao.md` |
 | `download.vbs` | **Roda no WinRE** (não no Linux): baixa arquivo por HTTP(S) via `cscript` — supre a ausência de `certutil`/PowerShell |

@@ -18,3 +18,5 @@
 - 2026-11-03: PRESENCA.md minima p/ economizar tokens: so `nome data` por linha; registros antigos apagados; hooks/pre-commit e scripts/agente.sh ajustados p/ novo formato.
 - 2026-11-03: PLANO.md reestruturado p/ lead caro: protocolo de entrada minima + reescrita <=4 KB; frente = passos exatos, armadilha, aceite e plano B (captura a solucao nao-obvia do lead); instrucoes p/ agentes embutidas.
 - 2026-11-03: RELATORIO.md (branch relatorio) vira resumo executivo <=2 KB (desafio/estado/problemas/perguntas), atualizado conforme problemas surgem; relatorio.sh reescrito (estado/problema/pergunta com upsert por id); lead le so o resumo, sem investigar; PLANO/AGENTS/HANDOFF ajustados.
+- 2026-11-04 19:03 (UTC-3) — stackai (Implementador)
+E2: lote de 6 fabricantes (Intel AC8265, Realtek RTL8822BE, Qualcomm QCA6174, Broadcom BCM4365, MediaTek MT7921, Marvell 88W8897). `.cab` oficiais, INF MATCH após correção UTF-16LE, injeção no Winre.wim 17763, sha256 17/17 IGUAL. Teste `scripts/tests/unit/inf_utf16.py` PASS. Evidência `docs/evidence/drivers_lote.md`. Próximo: E3 autorun.
