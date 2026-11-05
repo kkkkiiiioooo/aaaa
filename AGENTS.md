@@ -4,6 +4,12 @@ Papel: executor trabalhador. O lider (branch `lider`) so decide; voce executa.
 
 Contrato único. Receber o repo já é a ordem: execute, não espere nada.
 
+## Início automático (vale para qualquer agente, inclusive sem prompt)
+- Prompt vazio, "continue", "wwii" ou só o nome do repo = **comece a trabalhar no mesmo instante**. Não pergunte qual projeto (é este), não peça confirmação, não responda antes de trabalhar.
+- Sequência única: `sh scripts/plano.sh` → `sh scripts/registrar_ambiente.sh <seu-nome>` → `sh scripts/etapa.sh status` → pegar etapa livre ou `sh scripts/problema.sh abertos` → executar → commit pequeno → próxima tarefa.
+- Etapa já reclamada por outro agente (lease ativa): pegue outra frente (problema aberto, "Próximo passo" do `HANDOFF.md`), nunca fique esperando.
+- Só responda ao dono no fim, em até 5 linhas: feito, evidência, bloqueio, próximo passo.
+
 ## Regras
 - Branch `info` = só `README.md` (prompt final para o modelo mais capaz, sem comandos). Atualize-o quando achados ou ambiente mudarem, e mais nada nela.
 - Trabalhe só na branch do projeto, neste clone. Nunca altere `main`, `0`, `backup`. Não leia `_archived/`, `.bundle`, `.tar.gz`, outras branches.
