@@ -48,7 +48,11 @@ Cada linha é um boot real medido; veredito em `.work/chovar/resultados.tsv`.
 Conclusão que muda o plano: **a tela azul não é da injeção**. O `pristine.raw.wim` (WIM original,
 sem driver nenhum e sem autorun) e o `Winre.nodrv.wim` (drivers, autorun sem `drvload`) deram a
 MESMA tela laranja, e o `boot.wim` em LZMS não deu. O que quebra é o `boot.wim` **sem compressão**
-(1,03 GB) — maior do que o RAMDisk descrito no `boot.sdi` do WinRE, então o PE sobe e bugcheck.
+(1,03 GB). O mecanismo **não** está medido. Uma hipótese que já caiu: o `boot.sdi` do PCAT tem
+3 170 304 bytes e é contêiner **SDI** (registros PART e WIM internos), não VHD — o campo
+"Current Size" que cheguei a ler nele (956 MB) é leitura fora de contexto, não medida. Ou seja,
+não existe ali um "tamanho de RAMDisk" declarado para estourar.
+O que está medido é a correlação (3 ISOs descomprimidas → BSOD; LZMS → nenhum BSOD em 232 s).
 Efeito colateral útil: com cache de página quente, o boot LZMS ainda é lento (CPU-bound na
 descompressão), mas é o caminho correto; `wimlib-imagex optimize --compress=None` está
 **proibido** no engolidor de teste.
