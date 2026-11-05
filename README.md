@@ -44,7 +44,7 @@ Fonte: `docs/evidence/winre_1809_evidencia.md`, `docs/evidence/wlan_wcm_bth_hive
 | `wcmsvc.dll` | ausente, mas `wlansvc.dll` **não importa** `wcmsvc.dll` e testa `WCMPresent` em runtime | a hipótese "falta wcmsvc quebra o Wi-Fi" **caiu** |
 | Binário que exporte `WlanConnect` (via `rundll32`/`cscript`) | nenhum | irrelevante agora: `netsh wlan connect` cobre |
 | `wmic.exe`, `reg.exe`, `pnputil.exe` (sem `/enum-devices` no 1809), `regedit.exe`, `drvload.exe`, `bcdedit.exe`, `bcdboot.exe`, `robocopy.exe`, `xcopy.exe`, `diskpart.exe`, `mountvol.exe`, `expand.exe`, `bootsect.exe`, `WcnNetsh.dll`, `wcncsvc.dll`, `WiFiConfigSP.dll`, pasta `\ProgramData` | presentes | `reg query ...\Enum` e `wmic` ajudam a listar hardware (P4/P11) |
-| `curl.exe`, `tar.exe`, `findstr.exe`, `where.exe`, `reagentc.exe`, `setup.exe`, `schtasks.exe`, `msiexec.exe`, `devcon.exe` | **ausentes** (0 na lista de caminhos) | sem `curl`; `reagentc` e `setup.exe` não estão no WinRE (vêm de fora) |
+| `sc.exe`, `tasklist.exe`, `taskkill.exe`, `curl.exe`, `tar.exe`, `findstr.exe`, `where.exe`, `reagentc.exe`, `setup.exe`, `schtasks.exe`, `msiexec.exe`, `devcon.exe` | **ausentes** (0 na lista de caminhos) | sem `curl`; `reagentc` e `setup.exe` não estão no WinRE (vêm de fora) |
 | Pilha Bluetooth (`bth*`, `bthserv`, `bthpan.sys`, `bthprops.cpl`) | **0 arquivos, 0 chaves no hive** | **PAN não existe no WinRE**; só no Windows instalado |
 | Driver Wi-Fi embutido | só `mrvlpcie8897.inf` (Marvell 88W8897) | não é genérico |
 | `WCM Auto Connect` | está dentro de `wlansvc.dll` | com perfil XML certo o serviço pode conectar sozinho **[HIPÓTESE, nunca medida em runtime]** |
