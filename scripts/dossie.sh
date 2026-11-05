@@ -73,7 +73,7 @@ fi
 # separada que alguem esquece de fazer.
 if [ -f "$REPO/scripts/relatorio.sh" ]; then
   ( cd "$REPO" && sh scripts/relatorio.sh "${A:-agente} | imagem | disponivel | $NF arquivos, sha1 OK=$OK/$NF | WinRE sem wcmsvc.dll, com drvload | leia docs/imagem/DOSSIE.md" ) >/dev/null 2>&1 \
-    && echo "  anuncio: publicado em branch relatorio (o lead ve) e no git log" || echo "  anuncio: FALHOU - avise manualmente"
+    && echo "  anuncio: publicado em branch lider (o lead ve) e no git log" || echo "  anuncio: FALHOU - avise manualmente"
 fi
 
 cat <<EOF

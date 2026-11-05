@@ -1,6 +1,6 @@
 #!/bin/sh
 # escalar.sh - leva um problema DIFICIL ao lead com um dossie de decisao.
-# O lead so acessa a branch `relatorio`: o dossie vai para casos/<id>.md la e o indice
+# O lead so acessa a branch `lider`: o dossie vai para casos/<id>.md la e o indice
 # (INDICE-PARA-O-LIDER.md) ganha 1 linha apontando para ele. Exige >=2 tentativas registradas.
 #
 #   sh scripts/escalar.sh <id> "<pergunta objetiva ao lead>" ["<hipoteses que nao deu para testar>"]
@@ -24,7 +24,7 @@ corpo(){
 }
 if [ -n "${DRY:-}" ]; then corpo | head -c 1500; exit 0; fi
 
-BR="${BR_REL:-relatorio}"; WT="$R/.work/wt-$BR"
+BR="${BR_REL:-lider}"; WT="$R/.work/wt-$BR"
 mkdir -p "$R/.work"
 if [ ! -d "$WT" ]; then
   if git -C "$R" rev-parse --verify "refs/heads/$BR" >/dev/null 2>&1; then

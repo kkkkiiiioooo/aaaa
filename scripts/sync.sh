@@ -1,9 +1,9 @@
 #!/bin/sh
 # sync.sh - liga lead <-> executores sem ninguem rodar nada. Chamado pelo hook post-commit e por iniciar.sh.
-#   DESCE: PLANO-DO-LIDER.md (origin/relatorio) -> .work/PLANO-DO-LIDER.md; avisa SO quando mudou.
-#   SOBE : docs/retorno/<ID>.md -> relatorio:RETORNO/<ID>.md + linha "Retornos" no INDICE-PARA-O-LIDER.md.
-# O lead so escreve PLANO-DO-LIDER.md na branch relatorio. Silencioso se nada mudou. Nunca falha (exit 0).
-B="${BR_REL:-relatorio}"
+#   DESCE: PLANO-DO-LIDER.md (origin/lider) -> .work/PLANO-DO-LIDER.md; avisa SO quando mudou.
+#   SOBE : docs/retorno/<ID>.md -> lider:RETORNO/<ID>.md + linha "Retornos" no INDICE-PARA-O-LIDER.md.
+# O lead so escreve PLANO-DO-LIDER.md na branch lider. Silencioso se nada mudou. Nunca falha (exit 0).
+B="${BR_REL:-lider}"
 R=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
 cd "$R" || exit 0
 mkdir -p .work

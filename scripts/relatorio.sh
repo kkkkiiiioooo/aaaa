@@ -1,5 +1,5 @@
 #!/bin/sh
-# relatorio.sh - mantem INDICE-PARA-O-LIDER.md (branch relatorio) como RESUMO EXECUTIVO
+# relatorio.sh - mantem INDICE-PARA-O-LIDER.md (branch lider) como RESUMO EXECUTIVO
 # compacto (<=2 KB): o lead le SO este arquivo, inteiro, sem investigar o repo.
 # Atualize CONFORME os problemas surgirem - nao so no fim da rodada.
 #
@@ -11,7 +11,7 @@
 #   sh scripts/relatorio.sh pergunta  -Q<n>        # respondida no PLANO: sai
 #   sh scripts/relatorio.sh "<veredito>" "<prova>" "<proximo>"   # legado = estado
 set -u
-BR_REL="${BR_REL:-relatorio}"
+BR_REL="${BR_REL:-lider}"
 WT=".work/wt-$BR_REL"
 F="$WT/INDICE-PARA-O-LIDER.md"
 MODO="${1:-}"
