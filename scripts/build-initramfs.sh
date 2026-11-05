@@ -71,7 +71,7 @@ else
 fi
 
 # --- 'ip' do iproute2 (o busybox ip nao suporta 'ip link add type veth') ---
-HOST_IP=$(command -v ip 2>/dev/null)
+HOST_IP=$(command -v ip 2>/dev/null || true)
 if [ -n "$HOST_IP" ]; then
   mkdir -p "$VM/initrd/sbin" "$VM/initrd/usr/sbin"
   cp -f "$HOST_IP" "$VM/initrd/sbin/ip.full"

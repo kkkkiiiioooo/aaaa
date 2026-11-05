@@ -38,6 +38,6 @@ else
     echo "[fetch-base] modloop ok ($(wc -c <"$MODLOOP") bytes)"
   else
     echo "[fetch-base] aviso: modloop indisponivel (disco da VM pode nao aparecer)"
-    rm -f "$MODLOOP.part"
+    rm -f "$MODLOOP.part"; sh "$ROOT/scripts/fetch-modulos-ubuntu.sh"
   fi
 fi
