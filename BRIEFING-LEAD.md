@@ -77,3 +77,10 @@ Uma entrada por decisao D1 a D6 e por contradicao C1 a C4, ate 600 bytes cada: d
 - Ambiente e PAN: docs/evidence/ambiente-teste.md, docs/evidence/ambiente-teste-pan-fdisk.md.
 - Solucao proposta: docs/evidence/solucao.md (desatualizada em A5, ver C4).
 - Melhorias de processo (nao afetam o objetivo): MELHORIAS.md, SUGESTOES.md.
+
+## 10. Correcao (2026-11-05): driver instalado NAO e driver funcionando
+- O que a E2 provou: o arquivo existe, o INF casa com o VEN_/DEV_ e os bytes do WinRE conferem (drivers_lote.md, secao 4).
+- O que a E2 NAO provou: que o dispositivo inicia. Nao houve boot, nem Device Manager, nem codigo de erro. A propria driver_injecao.md (secao 6) diz isso.
+- Sintoma do dono: driver instalado, erro 10. Causa provavel: firmware exigido pelo INF ausente. A E2 nunca verificou arquivos de firmware.
+- Acao: `python3 scripts/checar_firmware.py <pasta-do-driver>` (criado nesta rodada, testado com pastas sinteticas, NAO testado em pacote real). Gate E2 no ETAPAS.md foi atualizado para exigir isso.
+- Consequencia para D1: qualquer driver Wi-Fi so conta como funcional com codigo de erro observado (sc query, pnputil ou Device Manager) no WinRE ou na maquina do dono.
