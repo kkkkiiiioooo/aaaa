@@ -1,5 +1,8 @@
 # Evidência: wlansvc, wcmsvc e Bluetooth no WinRE 1809 — dados LIDOS, não inferidos
 
+> **CORREÇÃO (claude, 2026-11-05):** a linha 8 da tabela ("`netsh wlan` NÃO existe") e a leitura 1 partiram de uma premissa errada (`wlancmds.dll`). O helper do contexto `wlan` é `wlancfg.dll` (registrado em `\Microsoft\NetSh`, com ajuda de `connect`/`add profile` no `.mui`). Ver `docs/evidence/netsh_wlan_existe.md`. O resto deste arquivo continua válido.
+
+
 Responde a **C2** ("falta ServiceDll de WlansvcGroup, lido do hive SYSTEM"), **D1** ("testar sem
 wcmsvc.dll primeiro") e **D4** ("procurar bthserv e bthprops no winre-caminhos.txt.gz") do
 PLANO DO LÍDER. Tudo offline, dentro do WIM; nada depende da E4.

@@ -103,3 +103,9 @@ Build usado neste desafio (Windows 10 **Home** 1809, amd64):
 - **Rate limit** na API por IP: chame `uup_links.sh` poucas vezes e reaproveite o `.tsv`.
 - Tudo pesado vai para `.work/` (no `.gitignore`) — nunca commite ISO/WIM.
 - Rode downloads longos **em segundo plano** com log; nunca fique travado esperando.
+
+## Setup e ambiente por agente (adicionado 2026-11-05)
+- `../setupenvclaude.sh` — setup idempotente do agente `claude`: instala dependências, kernel/módulos de teste, registra o ambiente. Cada agente pode ter o seu (`setupenv<nome>.sh`).
+- `registrar_ambiente.sh <agente>` — mede ESTE ambiente (CPU, RAM, ferramentas, rede) e grava `ambientes/<agente>.md`. Ambiente é por agente: nunca copie o de outro.
+- `fetch-modulos-ubuntu.sh` — fallback do modloop: módulos do kernel Ubuntu via apt (quando o Alpine CDN não responde).
+- `../auto.sh` — um comando, sem ler nada: setup + plano + problemas abertos + handoff.

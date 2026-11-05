@@ -1,5 +1,8 @@
 # Ambiente de teste (QEMU) — scripts e evidência
 
+> **Nota:** a base Alpine abaixo é a do ambiente que escreveu este documento. Em ambientes sem acesso ao Alpine CDN, `fetch-base.sh` cai para o kernel Ubuntu via apt (`docs/evidence/t1t2_ubuntu_fallback.md`). Ambiente é por agente: `ambientes/<agente>.md`.
+
+
 Harness real e reutilizável: sobe uma VM Linux mínima no QEMU e roda a suíte dentro
 dela. Espelha o fluxo do desafio (injetar driver → dispositivo aparece → rede).
 
