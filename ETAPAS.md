@@ -42,3 +42,4 @@ E2 | stackai | 2026-11-04T22:04Z | feita | docs/evidence/drivers_lote.md 6/6 cab
 E3 | stackai | 2026-11-04T22:04Z | ativa | -
 E3 | stackai | 2026-11-04T22:05Z | feita | docs/evidence/autorun_winpe.md offline LaunchApps+autorun injetado; runtime=E4
 E4 | qoder | 2026-11-04T22:55Z | ativa | -
+E5 | claude | 2026-11-05T00:47Z | ativa | -
