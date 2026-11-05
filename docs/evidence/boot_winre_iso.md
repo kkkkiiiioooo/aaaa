@@ -35,6 +35,24 @@
 `doctor.sh`: MEM=7940 MB, DISK=20370 MB, KVM=nao → TCG puro, `-smp 3 -m 4096`. QEMU 6.2.0, SeaBIOS 1.15.0-1.
 Leitura do log do convidado pelo host sem `mount`: o kernel deste sandbox não tem o módulo `vfat`, então `scripts/boot-winre.sh` usa mtools com `partition=1` no `MTOOLSRC` (`mdir/mtype/mcopy t:/`).
 
+## Matriz de configuração do ambiente (`scripts/chovar-qemu.sh`, 2026-11-04 21:56–22:02 UTC-3)
+
+Cada linha é um boot real medido; veredito em `.work/chovar/resultados.tsv`.
+
+| rótulo | ISO | QEMU | veredito |
+|---|---|---|---|
+| base | `winre-wwii-raw.iso` (boot.wim **sem compressão**, 1,03 GB) | `-cpu qemu64 -smp 3 -m 4096`, sem NIC | **BSOD em 36 s** (tela laranja, `SYSTEM_THREAD_EXCEPTION_NOT_HANDLED`) |
+| lzms | `winre-wwii.iso` (boot.wim **LZMS**, 288 MB) | idem | **sem BSOD** — 232 s em modo texto, ainda carregando |
+| gate | `winre-wwii.iso` (LZMS, drivers + autorun com persistência) | `-cpu max -smp 4 -m 4096` | em andamento (`.work/logs/e4-gate.log`) |
+
+Conclusão que muda o plano: **a tela azul não é da injeção**. O `pristine.raw.wim` (WIM original,
+sem driver nenhum e sem autorun) e o `Winre.nodrv.wim` (drivers, autorun sem `drvload`) deram a
+MESMA tela laranja, e o `boot.wim` em LZMS não deu. O que quebra é o `boot.wim` **sem compressão**
+(1,03 GB) — maior do que o RAMDisk descrito no `boot.sdi` do WinRE, então o PE sobe e bugcheck.
+Efeito colateral útil: com cache de página quente, o boot LZMS ainda é lento (CPU-bound na
+descompressão), mas é o caminho correto; `wimlib-imagex optimize --compress=None` está
+**proibido** no engolidor de teste.
+
 ## Estado do aceite (o que falta)
 
 O gate é "PE inicia o script sozinho e grava log em disco; log lido no host". O run de 20:26–20:51 (1500 s) e o de até 20:56 não podiam produzir log por causa da descoberta 7. Rebuild com persistência incremental no autorun (item 2 abaixo) + disco preso + `--vga cirrus`: run em andamento desde 20:57 (UTC-3), timeout 3600 s, poll 60 s, `.work/logs/e4-boot2.log`.
