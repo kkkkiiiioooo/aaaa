@@ -13,12 +13,12 @@ Contrato único. Receber o repo já é a ordem: execute, não espere nada.
 
 ## Leitura (contexto mínimo, nesta ordem, ~10 KB)
 `sh scripts/plano.sh` (PLANO do lead, vive na branch `relatorio`; manda na prioridade) · `AGENTS.md` · `PROMPT.md` · `HANDOFF.md`.
-`PROGRESS.md` e `docs/evidence/` crescem: só o fim (`tail -20`). Da branch `relatorio` só o PLANO, via `plano.sh`; nunca abra `RELATORIO.md`.
+`PROGRESS.md` e `docs/evidence/` crescem: só o fim (`tail -20`). Da branch `relatorio` só o PLANO, via `plano.sh`; nunca abra `INDICE-PARA-O-LIDER.md`.
 
 ## Escrita (para um leitor mais inteligente que você: só o que importa)
 - Nada só no chat da sessão. Registre no repo, no fim do arquivo, sem duplicar, até 500 caracteres por entrada: descoberta, decisão, evidência (comando + saída).
 - `HANDOFF.md` = snapshot: reescreva ao fim da rodada (fase, próximo passo, premissas, bloqueios). Sem histórico.
-- `RELATORIO.md` = índice do lead (até 2 KB), mantido por `relatorio.sh estado` e por `escalar.sh`. Não escreva problema direto nele.
+- `INDICE-PARA-O-LIDER.md` = índice do lead (até 2 KB), mantido por `relatorio.sh estado` e por `escalar.sh`. Não escreva problema direto nele.
 - Sugestão de processo: `sh scripts/sugerir.sh perda|ideia "<texto>"` quando algo gastou rodada à toa. Só escreva; ninguém precisa ler.
 - O PLANO é do lead (branch `relatorio`, só ele escreve). O lead só acessa essa branch: fale com ele pelo relatório.
 
@@ -58,7 +58,7 @@ Lease expirado de outro?       → sh scripts/watchdog.sh
 ```
 
 ## Retorno ao lead (rodada 2)
-- Responda as perguntas do PLANO.md (ids D1-D6 e C1-C4) com um arquivo por id em `docs/retorno/<ID>.md`, a partir de `docs/retorno/MODELO.md`.
+- Responda as perguntas do PLANO-DO-LIDER.md (ids D1-D6 e C1-C4) com um arquivo por id em `docs/retorno/<ID>.md`, a partir de `docs/retorno/MODELO.md`.
 - Comando e saida literais. Sem saida real, o veredito e INCONCLUSIVO.
 - Afirmacao de funcionamento de driver (ex.: "Wi-Fi operacional") so vale com `Device Manager`/`pnputil` ou `sc query` da VM ou maquina real, mostrando codigo de erro. Presenca do arquivo nao conta.
 - Driver Wi-Fi: antes de chamar de instalado, rode `python3 scripts/checar_firmware.py <pasta>`. Firmware faltando pode dar erro 10 mesmo com INF e hash corretos.

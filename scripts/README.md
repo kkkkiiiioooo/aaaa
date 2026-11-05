@@ -42,11 +42,11 @@ sh scripts/injetar_driver.sh --imagem .work/wim/Winre.wim --driver .work/drivers
 | `doctor.sh` | Diz o que este ambiente executa (níveis T0–T4); sai com código ≠ 0 se nada for executável. Rode antes de gastar a rodada |
 | `agente.sh` | Identidade `A=<nome>` (git config) e linha `nome inicio <data UTC>` em `PRESENCA.md`; o hook post-commit grava `nome push <data UTC> <sha>` após cada push ok |
 | `etapa.sh` | Orquestra `ETAPAS.md`: `status`, `pegar`, `fechar`, `liberar` (lease de 90 min) |
-| `plano.sh` | Imprime o `PLANO.md` do lead (branch `relatorio`) sem abrir o `RELATORIO.md` |
+| `plano.sh` | Imprime o `PLANO-DO-LIDER.md` do lead (branch `relatorio`) sem abrir o `INDICE-PARA-O-LIDER.md` |
 | `problema.sh` | Quadro de problemas compartilhado (`PROBLEMAS.md`): `abertos`, `buscar`, `novo`, `tentou`, `resolveu`; commita para os outros verem |
 | `escalar.sh` | Dossiê de decisão para o lead (`casos/<id>.md` na branch `relatorio` + 1 linha no índice); exige 2 tentativas |
 | `sugerir.sh` | Registra perda ou ideia de processo em `SUGESTOES.md` (só escrita) |
-| `relatorio.sh` | Mantém `RELATORIO.md` na branch `relatorio` (`estado`, `problema`, `pergunta`; só escrita) |
+| `relatorio.sh` | Mantém `INDICE-PARA-O-LIDER.md` na branch `relatorio` (`estado`, `problema`, `pergunta`; só escrita) |
 | `dossie.sh` | Inventário da imagem baixada, grava `docs/imagem/`; quem baixar a imagem roda primeiro |
 | `obter_imagem.sh` | Baixa o pacote offline da imagem 1809 (`--fs` 62 MB, `--wim` 254 MB) |
 | `listar_hwid.py` | Lista os HWIDs presentes no WinRE (os INF são UTF-16LE; grep ASCII devolve zero) |

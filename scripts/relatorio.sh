@@ -1,5 +1,5 @@
 #!/bin/sh
-# relatorio.sh - mantem RELATORIO.md (branch relatorio) como RESUMO EXECUTIVO
+# relatorio.sh - mantem INDICE-PARA-O-LIDER.md (branch relatorio) como RESUMO EXECUTIVO
 # compacto (<=2 KB): o lead le SO este arquivo, inteiro, sem investigar o repo.
 # Atualize CONFORME os problemas surgirem - nao so no fim da rodada.
 #
@@ -13,7 +13,7 @@
 set -u
 BR_REL="${BR_REL:-relatorio}"
 WT=".work/wt-$BR_REL"
-F="$WT/RELATORIO.md"
+F="$WT/INDICE-PARA-O-LIDER.md"
 MODO="${1:-}"
 
 limpa() { printf '%s' "$1" | tr '\n|' '  ' | sed 's/  */ /g; s/^ //' | cut -c1-300; }

@@ -1,7 +1,7 @@
 #!/bin/sh
 # escalar.sh - leva um problema DIFICIL ao lead com um dossie de decisao.
 # O lead so acessa a branch `relatorio`: o dossie vai para casos/<id>.md la e o indice
-# (RELATORIO.md) ganha 1 linha apontando para ele. Exige >=2 tentativas registradas.
+# (INDICE-PARA-O-LIDER.md) ganha 1 linha apontando para ele. Exige >=2 tentativas registradas.
 #
 #   sh scripts/escalar.sh <id> "<pergunta objetiva ao lead>" ["<hipoteses que nao deu para testar>"]
 # DRY=1 imprime o dossie sem gravar nem enviar. FORCA=1 dispensa as 2 tentativas (diga o motivo na pergunta).
@@ -20,7 +20,7 @@ corpo(){
   printf 'Problema e evidencia:\n'; grep "^$ID novo " "$F" | sed 's/^[^ ]* [^ ]* //'
   printf 'Tentativas (agente data texto):\n'; grep "^$ID tentou " "$F" | sed 's/^[^ ]* [^ ]* //'
   printf 'Hipoteses nao testadas: %s\n' "$H"
-  printf 'Resposta esperada: causa/decisao + passos exatos + aceite mensuravel + plano B, no PLANO.md (Respostas), por id.\n'
+  printf 'Resposta esperada: causa/decisao + passos exatos + aceite mensuravel + plano B, no PLANO-DO-LIDER.md (Respostas), por id.\n'
 }
 if [ -n "${DRY:-}" ]; then corpo | head -c 1500; exit 0; fi
 

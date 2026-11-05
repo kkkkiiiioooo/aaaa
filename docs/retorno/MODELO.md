@@ -1,5 +1,5 @@
 # Retorno <ID> — <titulo curto>  (maximo 2 KB; copie este modelo)
-Agente: <nome> · Data UTC: <AAAA-MM-DDTHH:MMZ> · Pergunta do lead: <Dn ou Cn do PLANO.md>
+Agente: <nome> · Data UTC: <AAAA-MM-DDTHH:MMZ> · Pergunta do lead: <Dn ou Cn do PLANO-DO-LIDER.md>
 
 ## Comando executado (literal)
     <comando exato>
