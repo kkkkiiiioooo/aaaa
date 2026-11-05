@@ -44,3 +44,4 @@ E3 | stackai | 2026-11-04T22:05Z | feita | docs/evidence/autorun_winpe.md offlin
 E4 | qoder | 2026-11-04T22:55Z | ativa | -
 E5 | claude | 2026-11-05T00:47Z | ativa | -
 E4 | qoder | 2026-11-05T01:11Z | ativa | -
+E4 | qoder | 2026-11-05T01:58Z | liberada | INCONCLUSIVA: 5 boots reais, PE nunca chegou ao autorun; escalado p0423333970 ao lead
