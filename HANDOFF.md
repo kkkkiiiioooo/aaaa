@@ -28,7 +28,16 @@ lead). E1–E3 feitas; E5 ativa (claude).
 3. E4 tem um bug de ambiente não resolvido: BSOD com WIM `raw` (36 s) e `XPRESS` (425 s), sem
    BSOD com LZMS/LZX. A correlação antiga ("é o descomprimido") está refutada; mecanismo não
    medido. Não gastar tempo aí antes de trocar de transporte.
-4. Transporte p0402452582: comandos curtíssimos (A2 PAN / recuperação / PXE).
+4. **`p0502061818` (novo, escalado) trava o D1**: `wlancmds.dll` — o contexto `wlan` do `netsh` —
+   **não existe** no WinRE 1809, então `netsh wlan ...` não funciona e o bloco `netsh wlan` do
+   `autorun-wwii.cmd` é decorativo. `rundll32`/`cscript` não salvam: nenhum binário da imagem
+   exporta `WlanConnect`. Decisão pendente do lead entre (a) perfil XML no store do wlansvc +
+   auto-connect e (b) copiar `wlancmds.dll` do `Core_en-us.esd` (ESD não está em disco agora).
+   Medição completa: `docs/evidence/wlan_wcm_bth_hive.md`.
+5. **D4 respondido com dado**: 0 arquivos `bth` e 0 chaves `bth` → PAN só no Windows instalado.
+   **p0402412842 resolvido**: `wlansvc.dll` não importa `wcmsvc.dll` (58 imports, nenhum com
+   `wcm`) e testa `WCMPresent`; a ausência do WCM é tratada por projeto.
+6. Transporte p0402452582: comandos curtíssimos (A2 PAN / recuperação / PXE).
 ## Premissas
 - Hardware desconhecido: lote E2 cobre 6 fabricantes; PnP escolhe.
 - Sandbox: 7 940 MB RAM, sem KVM → TCG puro. O gargalo é o bootmgr descomprimindo o WIM em CPU
