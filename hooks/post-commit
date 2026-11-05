@@ -28,7 +28,7 @@ mkdir -p "$LOG"
   if git push -q origin "$b"; then
     echo "ok push $b"
     rm -f "$PEND"
-    case "$b" in main|0|backup|lider|info) ;; *)
+    case "$b" in main|0|backup|lider|info|pesquisador) ;; *)
       A=$(cat "$R/.work/agente" 2>/dev/null || git config user.name || echo desconhecido)
       touch "$R/PRESENCA.md"; grep -v "^$A push " "$R/PRESENCA.md" > "$R/.work/p"
       printf '%s push %s %s\n' "$A" "$(date -u +%FT%TZ)" "$(git rev-parse --short HEAD)" >> "$R/.work/p"
@@ -41,7 +41,7 @@ mkdir -p "$LOG"
   fi
 } >> "$LOG/push.log" 2>&1
 
-case "$b" in main|0|backup|lider|info) ;; *) sh "$R/scripts/sync.sh" 2>/dev/null || true ;; esac
+case "$b" in main|0|backup|lider|info|pesquisador) ;; *) sh "$R/scripts/sync.sh" 2>/dev/null || true ;; esac
 
 if [ -f "$PEND" ]; then
   echo "ATENCAO: push pendente (ver .work/logs/push.log). Commit local != trabalho entregue."
