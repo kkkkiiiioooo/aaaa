@@ -17,7 +17,13 @@ else
     mv "$KERNEL.part" "$KERNEL"
     echo "[fetch-base] kernel ok ($(wc -c <"$KERNEL") bytes)"
   else
-    echo "[fetch-base] falha no download do kernel (rede/proxy?)"; rm -f "$KERNEL.part"; exit 1
+    echo "[fetch-base] Alpine inacessivel; fallback: kernel Ubuntu via apt (archive.ubuntu.com)"; rm -f "$KERNEL.part"
+    T=$(mktemp -d) && ( cd "$T" && P=$(apt-cache depends linux-image-virtual 2>/dev/null | sed -n 's/.*Depends: \(linux-image-.*\)/\1/p' | head -1) \
+      && apt-get download "$(echo "$P" | sed 's/linux-image-/linux-image-unsigned-/')" >/dev/null 2>&1 \
+      && dpkg-deb -x linux-image-*.deb x ) \
+      && cp "$T"/x/boot/vmlinuz-* "$KERNEL" && echo "[fetch-base] kernel Ubuntu ok ($(wc -c <"$KERNEL") bytes)" \
+      || { echo "[fetch-base] falha no download do kernel (rede/proxy?)"; exit 1; }
+    rm -rf "$T"
   fi
 fi
 
