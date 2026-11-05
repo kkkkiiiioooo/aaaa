@@ -98,29 +98,28 @@ O erro 10 é firmware ausente **[HIPÓTESE]**. Falta uma ferramenta que leia o c
 6. **Digitação:** um `.cmd` que o próprio PE gera a partir de um arquivo mínimo (ex.: um único `for` que baixa o resto) reduz o que o dono digita. Também vale um arquivo de resposta já gravado no WIM.
 7. **Testar o fluxo em Windows real** (VM com KVM, outra máquina) é o que falta. O sandbox Linux nunca fecha a prova.
 
-## 7. Ambiente de teste do executor (inventário exato) — [MEDIDO em 2026-11-05]
+## 7. Ambientes de teste — um por agente, NÃO misturar
 
-**O sandbox muda entre sessões.** Medido em duas sessões diferentes:
+Cada agente roda numa máquina diferente (CPU, RAM, rede, ferramentas). **Nenhuma medida de um agente vale para outro.** Cada um mede e anota o seu em `wwii:ambientes/<agente>.md` (gerado por `sh scripts/registrar_ambiente.sh <agente>`, com limitações medidas e notas). Leia o arquivo do agente que vai executar a ideia antes de decidir o que dá para provar nele.
 
-| | Sessão anterior (handoff) | Sessão de 2026-11-05 |
+Quem mediu o quê, **com atribuição**:
+
+| Agente | O que foi reportado | Fonte |
 |---|---|---|
-| RAM / CPU | 7 940 MB / 3 | **3 990 MB / 1** |
-| QEMU | 6.2.0 | **8.2.2** (Debian 1:8.2.2+ds-0ubuntu1.18) |
-| Rede | alcançava `catalog.s.download.windowsupdate.com` (baixou os `.cab`) | **`dl-cdn.alpinelinux.org` não resolve (DNS)** |
-| `regipy` | instalado | instalado depois pelo setup |
-| KVM | não | **não** (`/dev/kvm` ausente, TCG puro) |
+| **claude** (executor atual) | Ubuntu 24.04.5, 1 CPU, 3 990 MB RAM, ~8 GB de disco, sem KVM, sem módulo `vfat`, QEMU 8.2.2, wimlib 1.14.4. Rede: apt, pypi, npm e github respondem; **Alpine CDN, uupdump.net, learn.microsoft.com e o catálogo do Windows Update não respondem**. Tem busca web e leitura de páginas fora do bash. | `wwii:ambientes/claude.md` (medido em 2026-11-05) |
+| **qoder** | 7 940 MB RAM, 3 CPUs, sem KVM, QEMU 6.2.0, SeaBIOS 1.15.0; todos os boots do WinRE (E4) foram feitos nessa máquina | `docs/evidence/boot_winre_iso.md` |
+| **stackai** | alcançou o Catálogo Microsoft Update e baixou os 6 `.cab` de driver (E2) | `docs/evidence/drivers_lote.md` |
 
-- **SO:** Ubuntu 24.04.5 LTS, kernel 6.18.44, x86_64, usuário `root`, disco livre ~8 GB. O módulo `vfat` **não** existe no kernel do sandbox (por isso o host lê disco FAT com `mtools`).
-- **Presentes:** `qemu-system-x86_64`, `wimlib-imagex` 1.14.4 (+ `wimextract`), `xorriso`, `mtools`/`mcopy`/`mdir`, `7z`, `unsquashfs`, `cpio`, `gzip`, `xz`, `zstd`, `python3` 3.12.3, `pip3`, `node`/`npm`, `gcc`, `make`, `git`, `curl`, `wget`, `objdump`, `strings`, `ip` (iproute2), `busybox`, `dd`, `tar`, `unzip`, `xxd`, `file`, `depmod` (kmod).
-- **Ausentes:** `jq`, `hivexsh`, `reglookup`, `chntpw`, `fdisk`/`sfdisk`/`parted` (no host; o `fdisk` dos testes é o do busybox dentro da VM), `mkfs.vfat`, `ntfs-3g`, `mkfs.ntfs`, `cabextract`, `msitools`, `hexdump`, `bsdtar`, `genisoimage`, `smbclient`, `tftp`, `samba`.
-- **Python:** `requests`; **`regipy` e `pefile` instalados pelo setup** (leitura de hive e PE sem hivex).
-- **Firmware e ROMs:** OVMF em `/usr/share/OVMF/` (`OVMF_CODE_4M.fd`, `.ms.fd`, `.secboot.fd`, `OVMF_VARS_4M.fd`) e `/usr/share/ovmf/OVMF.fd`; iPXE em `/usr/lib/ipxe/` (`e1000_82540.rom`, `virtio-net.rom`, `rtl8139.rom`, `pcnet32.rom`, `eepro100.rom`, `ns8390.rom`).
-- **Rede liberada do `bash_tool`:** api.anthropic.com, api.github.com, archive.ubuntu.com, security.ubuntu.com, codeload.github.com, github.com, raw.githubusercontent.com, release-assets.githubusercontent.com, conda.anaconda.org, crates.io, index.crates.io, static.crates.io, files.pythonhosted.org, pypi.org, pythonhosted.org, npmjs.com/.org, registry.npmjs.org, registry.yarnpkg.com, yarnpkg.com. **Tudo fora disso está bloqueado** (inclusive o Alpine CDN; o catálogo `windowsupdate.com` foi alcançado numa sessão anterior, mas não é garantido).
-- **Kernel de teste:** Alpine `vmlinuz-virt` quando o CDN responde; senão **fallback Ubuntu** `6.8.0-147-generic` via apt (módulos `veth.ko` etc. extraídos de `linux-modules-*`). Nesse kernel `sd_mod` e `virtio_net` são **built-in**.
-- **Fuso:** logs em UTC; alguns documentos antigos em UTC-3.
+Consequência: o que o **claude** não consegue baixar (ESD, `wlancmds.dll`, drivers novos) pode ser possível em outro agente. O boot do WinRE em TCG foi medido **só no ambiente do qoder**; no do claude (1 CPU) nem foi tentado.
 
-**O que este ambiente consegue:** inspecionar/alterar WIMs (`wimlib`), montar ISO, ler hive/PE (`regipy`, `objdump`), rodar VM Linux mínima, subir o boot do WinRE em TCG (muito lento), simular PAN com `veth`, testar iPXE/DHCP no QEMU.
-**O que não consegue:** executar `dism`/`drvload`/`wlansvc` de verdade, provar Wi-Fi, Bluetooth, erro 10 e o BCD do dono.
+Inventário do ambiente do **claude** (resumo; detalhe e limites no arquivo dele):
+- **Presentes:** `qemu-system-x86_64`, `wimlib-imagex`/`wimextract`, `xorriso`, `mtools`, `7z`, `unsquashfs`, `cpio`, `zstd`, `xz`, `python3` 3.12 (+`regipy`, `pefile`, `requests`), `node`/`npm`, `gcc`, `make`, `git`, `curl`, `wget`, `objdump`, `strings`, `ip`, `busybox`, `depmod`, `xxd`, `file`.
+- **Ausentes:** `jq`, `hivexsh`, `reglookup`, `chntpw`, `fdisk`/`sfdisk`/`parted` (o `fdisk` dos testes é o do busybox dentro da VM), `mkfs.vfat`, `ntfs-3g`, `cabextract`, `msitools`, `hexdump`, `bsdtar`, `genisoimage`, `smbclient`, `tftp`.
+- **Firmware/ROMs:** OVMF em `/usr/share/OVMF/` e `/usr/share/ovmf/OVMF.fd`; iPXE em `/usr/lib/ipxe/` (`e1000_82540.rom`, `virtio-net.rom`, `rtl8139.rom`, `pcnet32.rom`, `eepro100.rom`, `ns8390.rom`).
+- **Kernel de teste:** como o Alpine CDN não responde para o claude, `scripts/fetch-base.sh` cai para o kernel Ubuntu `6.8.0-147-generic` via apt (`sd_mod` e `virtio_net` são built-in; `veth.ko` vem de `linux-modules-*`).
+
+**O que um ambiente Linux assim consegue:** inspecionar/alterar WIMs (`wimlib`), montar ISO, ler hive/PE (`regipy`, `objdump`), rodar VM Linux mínima, simular PAN com `veth`, testar iPXE/DHCP.
+**O que nenhum dos ambientes conseguiu:** executar `dism`/`drvload`/`wlansvc` de verdade, provar Wi-Fi, Bluetooth, erro 10 e o BCD do dono.
 
 ## 8. Mapa do repositório
 
@@ -156,4 +155,8 @@ Pense em todas as possibilidades, inclusive as que contradizem o executor e o l�
 5. **O que provar antes de tocar a máquina real** e o que só a máquina real prova.
 6. **Falhas e plano B/C** para cada passo, e **onde o plano atual do líder está errado**.
 
-> Regras do projeto: nunca declarar "impossível" sem tentativas registradas; marcar claramente o que é medido e o que é hipótese; nada destrutivo na máquina do dono antes do D5.
+> Regras do projeto: **os agentes trabalham até se esgotar** (nunca param por conta própria; só param por limite do ambiente ou com todas as alternativas registradas). Ambiente é por agente.
+>
+> Pesquisa profunda complementar: branch `pesquisador`, arquivo `PROMPT-PESQUISA.md`. Antes de decidir, confira se já há `RESULTADO-PESQUISA.md` lá.
+>
+> Outras regras: nunca declarar "impossível" sem tentativas registradas; marcar claramente o que é medido e o que é hipótese; nada destrutivo na máquina do dono antes do D5.
