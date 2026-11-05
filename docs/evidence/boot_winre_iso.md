@@ -26,7 +26,9 @@
    `scripts/montar_disco_winre.sh` ficou pronto e documentado; enquanto o `fw_cfg` gerar essa opção, o caminho confiável é **BIOS + etfsboot + `BOOTMGR;1`**.
 6. **`efisys.bin` pede tecla; `efisys_noprompt.bin` não.** Os dois estão dentro do WIM, em `/Windows/Boot/DVD/EFI/en-US/`.
 7. **A ausência do log era do engolidor de teste, não do PE.** `scripts/boot-winre.sh` só prendia o disco de dados quando `DISK_BOOT` estava definido (`MEDIA="-boot order=d -cdrom $ISO"`, sem `-hdb`). Ou seja: nos dois primeiros runs o convidado nunca viu o disco onde o autorun grava `wwii.log`, e o `mtype t:/wwii.log` do host lia um disco que não estava na VM. Corrigido: o disco de dados vai **sempre** como `-hdb`. Isso invalida a conclusão provisória de que "o PE não chegou a rodar o autorun" — ela nunca foi testável.
-8. **`-vga std` + `-display none` não dá prova visual.** O `screendump` do QEMU 6.2 devolve 720x400 ilegível depois que o convidado sai do modo texto. Agora o script aceita `VGA=`/`--vga` e o padrão é `cirrus`.
+8. **`-vga std` + `-display none` não dá prova visual.** O `screendump` do QEMU 6.2 devolve 720x400 ilegível depois que o convidado sai do modo texto, e com `-vga cirrus` devolve faixas. Medido também: `pmemsave 0xb8000 4000` já vem preenchido por framebuffer (o bootmgr saiu do texto), então o dump de vídeo só vale na fase do SeaBIOS.
+9. **Prova visual resolvida: cliente RFB próprio (`scripts/vncshot.py`).** Com `-display vnc=127.0.0.1:N` (sem X, sem cliente instalado) o script fala RFB 3.8, segurança None, e grava PNG. Medido neste build: o `ServerInit` tem 24 bytes (w2 h2 pixfmt16 nameLen4 — o nameLen está **dentro** do cabeçalho), bpp=32, e o `FramebufferUpdate` chega com **byte de tipo 0**, não 2 — quem filtrar por 2 descarta o frame inteiro. Validação: VM de teste sem mídia de boot devolveu a tela legível com `Booting from DVD/CD...`, `Boot failed: Could not read from CDROM (code 0003)` e `No bootable device.` (18 526 pixels não-pretos em 720x400).
+10. **iPXE existe neste QEMU** (`iPXE 1.21.1+git-20220113.fbbdc3926-0ubuntu1`, `-device e1000` + `-netdev user`): a tela do teste mostra DHCP ok (`10.0.2.15/255.255.255.0 gw 10.0.2.2`). Isso destrava testar a alternativa de transporte **PXE** (A5 / p0402452582) aqui dentro, sem hardware.
 
 ## Ambiente
 
@@ -45,6 +47,12 @@ Foi feito enquanto o run anda, para o gate virar verificável em qualquer cenár
 Pendências para o próximo turno, na ordem:
 
 1. Ler o resultado de `.work/logs/e4-boot2.log`. Se aparecer `wwii.log LIDO DO DISCO`, anexar o conteúdo em `docs/evidence/` e fechar E4 com a evidência; se aparecer só um log parcial, registrar qual bloco parou (isso já é evidência de qual serviço do PE falha).
-2. Se o log parcial parar em `netsh wlan` / `WlanSvc`: o suspeito continua sendo o `wcmsvc.dll` ausente (p0402412842), não o transporte — abrir problema próprio com a linha exata do log.
-3. Se não aparecer log nenhum com o disco preso: trocar o `-hdb` por `-hda` (o PE do 1809 às vezes não enumera slave IDE) e conferir no screenshot se o bootmgr chegou na tela de escolha de opção.
-4. Reduzir o custo do ciclo: o gargalo é LZMS + TCG. Um `boot.wim` menor (extrair só o necessário) ou `--cpus 4` com `mkexited` no monitor encurtam o teste do gate.
+2. **Prova visual**: trocar `-display none` por `-display vnc=127.0.0.1:<porta>` no
+   `boot-winre.sh` e chamar `python3 scripts/vncshot.py --porta <5900+N> --saida
+   .work/vm/tela-$T.png` a cada poll (o `screendump` continua como registro barato,
+   mas não é mais a prova). Feito no próximo run, porque mexer no arquivo com o
+   `sh` executando ele pode corromper o run em andamento.
+3. Se o log parcial parar em `netsh wlan` / `WlanSvc`: o suspeito continua sendo o `wcmsvc.dll` ausente (p0402412842), não o transporte — abrir problema próprio com a linha exata do log.
+4. Se não aparecer log nenhum com o disco preso: trocar o `-hdb` por `-hda` (o PE do 1809 às vezes não enumera slave IDE) e usar a tela VNC para ver onde o bootmgr parou.
+5. Reduzir o custo do ciclo: o gargalo é LZMS + TCG. Um `boot.wim` menor (extrair só o necessário) ou `--cpus 4` encurtam o teste do gate.
+6. Transporte: com iPXE confirmado no firmware deste QEMU (descoberta 10), montar um teste PXE (dnsmasq proxy + TFTP/HTTP) para a alternativa A5 de p0402452582.
