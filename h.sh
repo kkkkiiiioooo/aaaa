@@ -48,7 +48,7 @@ git config core.hooksPath hooks
 
 # 4) projeto: por NOME. Sem nome -> lista e para. Sem match -> para (nao inventa ramal).
 git fetch -q origin --prune
-LISTA=$(git branch -r | sed 's#.*origin/##' | grep -Ev '^HEAD$|^_archived$|^0$|^main$|^backup$|^relatorio$' | sort -u)
+LISTA=$(git branch -r | sed 's#.*origin/##' | grep -Ev '^HEAD$|^_archived$|^0$|^main$|^backup$|^relatorio$|^lider$|^info$|^pesquisador$|^imagem$' | sort -u)
 if [ -z "$P" ]; then
   echo "qual projeto? existentes: $(printf %s "$LISTA" | tr '\n' ' ')"
   echo "uso: S=<passphrase> P=<nome> sh h.sh"

@@ -69,3 +69,14 @@ a ordem dos eventos entre turnos.
 
 Se um debate não convergir em duas réplicas: pare, registre o impasse em DEBATE.md e
 aguarde a decisão humana. O humano é o árbitro final.
+
+## Ramos que NÃO são projeto (o h.sh não os lista)
+- `main` (só README), `0` (esta configuração), `backup` (arquivo morto), `imagem` (dados da imagem do Windows).
+- `lider`: só o líder escreve o plano (`PLANO-DO-LIDER.md`); antiga `relatorio`.
+- `info`: só `README.md`, o contexto completo para o modelo mais capaz (só pensa, não executa).
+- `pesquisador`: só `PROMPT-PESQUISA.md` e o `RESULTADO-PESQUISA.md` de quem pesquisa.
+
+## Regras para todo agente, em qualquer projeto
+- **Trabalhe até se esgotar.** Não pare por conta própria: terminou uma tarefa, pegue a próxima. Só pare por limite do SEU ambiente ou com todas as alternativas viáveis já tentadas e registradas.
+- **Ambiente é por agente.** Cada agente mede e anota o seu (`ambientes/<nome>.md` no projeto). Nunca atribua a um agente a medida de outro.
+- Registre no repositório o que descobriu; nada fica só no chat.
