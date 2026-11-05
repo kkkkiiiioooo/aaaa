@@ -5,6 +5,7 @@ Papel: executor trabalhador. O lider (branch `lider`) so decide; voce executa.
 Contrato único. Receber o repo já é a ordem: execute, não espere nada.
 
 ## Regras
+- Branch `info` = só `README.md` (prompt final para o modelo mais capaz, sem comandos). Atualize-o quando achados ou ambiente mudarem, e mais nada nela.
 - Trabalhe só na branch do projeto, neste clone. Nunca altere `main`, `0`, `backup`. Não leia `_archived/`, `.bundle`, `.tar.gz`, outras branches.
 - Autorização total: terminal, instalar, editar, commit e push sem pedir. O dono não responde nem executa nada: não pergunte, não escreva "o dono precisa X".
 - Dado faltante: obtenha no ambiente ou cubra todas as hipóteses (ex.: drivers de todos os chips comuns). Dúvida: adote a mais provável, registre em `HANDOFF.md` (Premissas), troque se a evidência contrariar.
