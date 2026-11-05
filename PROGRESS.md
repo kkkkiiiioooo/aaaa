@@ -32,3 +32,4 @@ executor 2026-11-05: dl-cdn.alpinelinux.org inacessivel no sandbox (DNS). fetch-
 executor 2026-11-05: T1+T2 SUITE PASS (21/0) com kernel Ubuntu. evidence: docs/evidence/t1t2_ubuntu_fallback.md
 executor 2026-11-05: criado setupenvclaude.sh (setup do agente) e branch info (README.md = prompt final, ambiente + achados + hipoteses).
 claude 2026-11-05: wlancmds.dll era premissa errada; netsh wlan existe via wlancfg.dll (hive NetSh + MUI). evidence: docs/evidence/netsh_wlan_existe.md. D1 volta a valer.
+claude 2026-11-05: autorun-wwii.cmd ganhou passo wifi.xml (netsh wlan add profile) + net start wlansvc; re-injetado no Winre.lote.wim (verificado). sc.exe confirmado AUSENTE (nome exato). Ferramentas do WinRE conferidas por nome exato.

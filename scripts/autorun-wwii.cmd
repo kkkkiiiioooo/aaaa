@@ -1,7 +1,7 @@
 @echo off
 rem autorun-wwii.cmd - WinRE 1809, ZERO tecla, ZERO pause.
 rem Permitido: cmd reg netsh pnputil drvload ipconfig net diskpart find type.
-rem Proibido: certutil findstr powershell bitsadmin pause msiexec sc (sc.exe nao esta no WinRE 1809).
+rem Proibido: certutil findstr powershell bitsadmin curl pause msiexec sc tasklist taskkill (nenhum deles esta no WinRE 1809; conferido por nome exato na lista de caminhos).
 rem
 rem Persistencia em DOIS canais (PLANO DO LIDER D6, 2026-11-04):
 rem   1) COM1 - o host escuta com -serial file:, entao o log chega ao host mesmo sem
@@ -45,11 +45,22 @@ rem D1 do lead: aceite de Wi-Fi = wlansvc RODANDO + netsh lista a interface.
 rem sc.exe nao existe no WinRE 1809, entao "net start" e o que prova o servico.
 echo --- net start --- >> %LOG%
 net start >> %LOG% 2>&1
+net start wlansvc >> %LOG% 2>&1
+net start >> %LOG% 2>&1
 call :persist
 
 echo --- netsh wlan --- >> %LOG%
 netsh wlan show drivers >> %LOG% 2>&1
 netsh wlan show interfaces >> %LOG% 2>&1
+rem D1 (a): se existir wifi.xml em algum volume (perfil exportado, connectionMode=auto), carrega e deixa conectar.
+for %%D in (C D E F G H) do (
+  if exist %%D:\wifi.xml (
+    echo add profile %%D:\wifi.xml >> %LOG%
+    netsh wlan add profile filename=%%D:\wifi.xml >> %LOG% 2>&1
+  )
+)
+netsh wlan show profiles >> %LOG% 2>&1
+netsh wlan show networks >> %LOG% 2>&1
 call :persist
 
 echo --- ipconfig --- >> %LOG%
