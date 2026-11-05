@@ -1,10 +1,14 @@
 @echo off
 rem autorun-wwii.cmd - WinRE 1809, ZERO tecla, ZERO pause.
 rem Permitido: cmd reg netsh pnputil drvload ipconfig net diskpart find type.
-rem Proibido: certutil findstr powershell bitsadmin pause msiexec.
-rem Persistencia incremental (E4, 2026-11-04): cada bloco copia o log para todo volume que
-rem existir. Antes o copy so rodava no fim; em PE lento (TCG) ou bugcheck no meio o host nao
-rem via rastro nenhum e nao dava para saber em que passo o boot parou.
+rem Proibido: certutil findstr powershell bitsadmin pause msiexec sc (sc.exe nao esta no WinRE 1809).
+rem
+rem Persistencia em DOIS canais (PLANO DO LIDER D6, 2026-11-04):
+rem   1) COM1 - o host escuta com -serial file:, entao o log chega ao host mesmo sem
+rem      disco, sem rede e mesmo se o volume FAT nao for enumerado pelo PE;
+rem   2) todo volume que existir (C:..H:) - copia do arquivo, para quando o disco funcionar.
+rem Antes o copy so rodava no fim: em PE lento (TCG) ou bugcheck no meio o host nao via
+rem rastro nenhum e nao dava para saber em que passo o boot parou.
 setlocal
 set LOG=X:\wwii.log
 echo === autorun-wwii start === > %LOG%
@@ -37,6 +41,12 @@ echo --- pnputil --- >> %LOG%
 pnputil /enum-drivers >> %LOG% 2>&1
 call :persist
 
+rem D1 do lead: aceite de Wi-Fi = wlansvc RODANDO + netsh lista a interface.
+rem sc.exe nao existe no WinRE 1809, entao "net start" e o que prova o servico.
+echo --- net start --- >> %LOG%
+net start >> %LOG% 2>&1
+call :persist
+
 echo --- netsh wlan --- >> %LOG%
 netsh wlan show drivers >> %LOG% 2>&1
 netsh wlan show interfaces >> %LOG% 2>&1
@@ -52,7 +62,9 @@ endlocal
 exit /b 0
 
 :persist
-rem Nao pode usar findstr/certutil. Copia simples, sem falha visivel, para todo volume.
+rem Canal 1: serial. Se COM1 nao existir no PE, o erro e engolido e o disco ainda vale.
+type %LOG% > COM1 2>nul
+rem Canal 2: todo volume. Copia simples, sem falha visivel.
 for %%D in (C D E F G H) do (
   if exist %%D:\ (
     echo persist %%D: >> %LOG%

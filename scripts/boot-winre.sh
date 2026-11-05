@@ -23,7 +23,12 @@ POLL=${POLL:-20}
 MEM=${MEM:-4096}
 CPUS=${CPUS:-2}
 # VGA=cirrus -> o screendump sai como texto legivel (std da fonte "checkerboard" ilegivel no TCG)
-VGA=${VGA:-cirrus}
+VGA=${VGA:-std}
+# PROVA VISUAL: com -display none o screendump do QEMU 6.2 devolve superficie invalida. Com
+# DISP=vnc=127.0.0.1:N + VNC=<porta TCP> o frame real vem de scripts/vncshot.py (sem X, sem
+# cliente VNC instalado). Sem VNC definido, o script segue funcionando so com screendump.
+DISP=${DISP:-none}
+VNC=${VNC:-}
 while [ $# -gt 0 ]; do
   case "$1" in
     --iso) ISO="$2"; shift 2;; --disk) DISK="$2"; shift 2;;
@@ -89,10 +94,13 @@ fi
 say "subendo QEMU TCG ($FWMODE) mem=${MEM}MB cpus=${CPUS} timeout=${TIMEOUT}s"
 # DISK_BOOT=<img> troca o CD por um disco de boot (ESP com \EFI\BOOT\BOOTX64.EFI): foi o unico
 # caminho que o OVMF aceitou sem tecla e sem opcao de boot inventada (ver montar_disco_winre.sh).
-# IMPORTANTE: o disco de dados vai SEMPRE preso (-hdb), inclusive no boot por CD. No teste de
-# 2026-11-04 ele so era ligado quando DISK_BOOT estava definido, entao o autorun gravava o log
-# num disco que o host nao enxergava e o gate de E4 nunca podia ser verificado.
-MEDIA="-boot order=d -cdrom $ISO -hdb $DISK"
+# IMPORTANTE: o disco de dados vai SEMPRE preso, inclusive no boot por CD. No teste de
+# 2026-11-04 ele so era ligado quando DISK_BOOT estava definido, entao o autorun gravava o
+# log num disco que o host nao enxergava e o gate de E4 nunca podia ser verificado.
+# DISKAT=hda por decisao do lead (PLANO DO LIDER D6): repetir uma vez com -hda e nao
+# depender do disco, porque o log tambem sai por COM1 (-serial file:, lido abaixo).
+DISKAT=${DISKAT:-hda}
+MEDIA="-boot order=d -cdrom $ISO -$DISKAT $DISK"
 [ -n "${DISK_BOOT:-}" ] && MEDIA="-boot order=c -hda $DISK_BOOT -hdb $DISK"
 setsid sh -c "exec qemu-system-x86_64 \
   -name wwii-e4 -pidfile $PIDF \
@@ -100,7 +108,7 @@ setsid sh -c "exec qemu-system-x86_64 \
   $FW \
   $MEDIA \
   -netdev user,id=n0,dhcpstart=10.0.2.15 -device e1000,netdev=n0,mac=52:54:00:00:04:04 \
-  -display none -vga "$VGA" \
+  -display "$DISP" -vga "$VGA" \
   -serial file:$SERIAL \
   -monitor unix:$MON,server,nowait" > "$LOG" 2>&1 < /dev/null &
 sleep 8
@@ -118,6 +126,9 @@ readlog(){ # readlog <rotulo> -> .work/vm/wwii-<rotulo>.log
   rm -f "$VM/wwii-$1.log"
   mtype t:/wwii.log > "$VM/wwii-$1.log" 2>/dev/null && [ -s "$VM/wwii-$1.log" ]
 }
+serialmarca(){ # canal alternativo (D6): o autorun despeja o log em COM1 e o QEMU grava em SERIAL
+  [ -s "$SERIAL" ] && grep -aq 'autorun-wwii' "$SERIAL"
+}
 
 START=$(date +%s); N=0; FOUND=0
 while :; do
@@ -126,10 +137,20 @@ while :; do
   kill -0 "$QP" 2>/dev/null || { say "qemu encerrou sozinho em ${EL}s"; break; }
   N=$((N+1)); T=$(printf '%03d' "$N")
   shot "$T" && say "${EL}s: tela capturada (shot-$T.ppm)"
+  if [ -n "$VNC" ]; then
+    python3 "$R/scripts/vncshot.py" --porta "$VNC" --saida "$VM/tela-$T.png" >/dev/null 2>&1 \
+      && say "${EL}s: tela VNC -> tela-$T.png"
+  fi
   if readlog "$T"; then
     FOUND=1
     say "${EL}s: wwii.log LIDO DO DISCO ($(wc -l < "$VM/wwii-$T.log") linhas)"
     grep -q 'autorun-wwii end' "$VM/wwii-$T.log" && { say "${EL}s: autorun concluido"; break; }
+  fi
+  if serialmarca; then
+    FOUND=1
+    cp -f "$SERIAL" "$VM/serial-$T.log" 2>/dev/null
+    say "${EL}s: AUTORUN VISTO NO SERIAL ($(wc -l < "$VM/serial-$T.log") linhas)"
+    grep -aq 'autorun-wwii end' "$SERIAL" && { say "${EL}s: autorun concluido (serial)"; break; }
   fi
   sleep "$POLL"
 done
