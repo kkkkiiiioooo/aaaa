@@ -37,16 +37,19 @@ Fonte: `docs/evidence/winre_1809_evidencia.md`, `docs/evidence/wlan_wcm_bth_hive
 | TCP/IP (`dnsapi`, `dhcpcsvc`, `iphlpapi`) | presente | IP/DNS/DHCP funcionam |
 | `certutil.exe`, `powershell.exe`, `bitsadmin.exe` | **ausentes** | runbook antigo com `certutil -urlcache` está errado |
 | `netsh.exe`, `netshell.dll`, `wlancfg.dll` | presentes | mas veja a linha seguinte |
-| **`wlancmds.dll`** (contexto `wlan` do netsh) | **ausente** | **`netsh wlan ...` não existe no WinRE 1809** |
+| `wlancfg.dll` registrado como helper do netsh (hive `\Microsoft\NetSh`: `wlancfg=wlancfg.dll`), importa `NETSH.EXE`+`wlanapi.dll`, e o `en-US/wlancfg.dll.mui` traz a ajuda de `connect`/`add profile`/`export`/`show` | presente | **`netsh wlan ...` provavelmente EXISTE** `[MEDIDO estático]`; runtime não provado. Fonte: `wwii:docs/evidence/netsh_wlan_existe.md` |
+| `wlancmds.dll` | ausente (0 ocorrências) | **não é o helper do `wlan`**; a conclusão anterior do executor "netsh wlan inexistente" partiu dessa premissa errada e foi **corrigida** em 2026-11-05 |
 | `wlansvc.dll`, `wlanapi.dll`, `wlanmsm.dll`, `wlansec.dll`, `nwifi.sys`, `vwififlt.sys`, `WdiWiFi.sys`, `ndisuio.sys` | presentes | pilha WLAN existe, falta a interface de linha de comando |
 | Serviço `WlanSvc` | `Start=2` (auto), `ServiceDll=wlansvc.dll`, depende de `nativewifip`, `RpcSs`, `Ndisuio` | sem dependência de `wcmsvc` |
 | `wcmsvc.dll` | ausente, mas `wlansvc.dll` **não importa** `wcmsvc.dll` e testa `WCMPresent` em runtime | a hipótese "falta wcmsvc quebra o Wi-Fi" **caiu** |
-| Qualquer binário que exporte `WlanConnect` (via `rundll32`/`cscript`) | **nenhum** | sem `wlancmds.dll` não há como conectar por linha de comando |
+| Binário que exporte `WlanConnect` (via `rundll32`/`cscript`) | nenhum | irrelevante agora: `netsh wlan connect` cobre |
+| `wmic.exe`, `reg.exe`, `pnputil.exe` (sem `/enum-devices` no 1809), `regedit.exe`, `drvload.exe`, `bcdedit.exe`, `bcdboot.exe`, `robocopy.exe`, `xcopy.exe`, `diskpart.exe`, `mountvol.exe`, `expand.exe`, `bootsect.exe`, `WcnNetsh.dll`, `wcncsvc.dll`, `WiFiConfigSP.dll`, pasta `\ProgramData` | presentes | `reg query ...\Enum` e `wmic` ajudam a listar hardware (P4/P11) |
+| `curl.exe`, `tar.exe`, `findstr.exe`, `where.exe`, `reagentc.exe`, `setup.exe`, `schtasks.exe`, `msiexec.exe`, `devcon.exe` | **ausentes** (0 na lista de caminhos) | sem `curl`; `reagentc` e `setup.exe` não estão no WinRE (vêm de fora) |
 | Pilha Bluetooth (`bth*`, `bthserv`, `bthpan.sys`, `bthprops.cpl`) | **0 arquivos, 0 chaves no hive** | **PAN não existe no WinRE**; só no Windows instalado |
 | Driver Wi-Fi embutido | só `mrvlpcie8897.inf` (Marvell 88W8897) | não é genérico |
 | `WCM Auto Connect` | está dentro de `wlansvc.dll` | com perfil XML certo o serviço pode conectar sozinho **[HIPÓTESE, nunca medida em runtime]** |
 
-Duas correções ao que o enunciado e o primeiro plano supunham: o WinRE 1809 **traz** a pilha WLAN (não precisa do ADK), mas **não traz** o comando `netsh wlan`, e o erro "falta wcmsvc" não procede.
+Correções ao que o enunciado e os planos supunham: o WinRE 1809 **traz** a pilha WLAN e, pelas evidências estáticas, **traz também o `netsh wlan`** (via `wlancfg.dll`); não precisa do ADK. O erro "falta `wcmsvc`" não procede. `certutil`, `powershell`, `bitsadmin`, `curl` e `findstr` **não existem**.
 
 ## 4. O que já foi construído e provado — [MEDIDO]
 
@@ -74,11 +77,10 @@ Cinco boots reais, TCG puro (sem KVM), todos sem chegar ao `autorun-wwii.cmd`:
 - Não medido: `-cpu max` (o script fixa `qemu64`), progresso real do LZMS aos 1800 s (faltou gravar `info blockstats` e telas por run), WIM menor.
 - **iPXE existe no QEMU** (`-device e1000` + `-netdev user`, DHCP ok `10.0.2.15`). Abre o teste de transporte PXE (A5) sem hardware.
 
-### 5.2 D1 travado: como conectar no Wi-Fi sem `netsh wlan`
+### 5.2 Conectar no Wi-Fi no WinRE — (CORRIGIDO)
 
-Duas saídas, nenhuma testada em runtime:
-- **(a)** depositar o perfil XML em `%ProgramData%\Microsoft\Wlansvc\Profiles\Interfaces\{guid}\` depois do `drvload` e deixar o `wlansvc` auto-conectar. Problema: o GUID da interface só existe depois do driver carregar; e perfil exige o SSID e a senha, que ninguém informou.
-- **(b)** copiar `wlancmds.dll` do índice 3 do `Core_en-us.esd` (Windows 10 Home completo). Exige ter o ESD em disco (neste sandbox não está agora) e pode puxar dependências, como `dwapi.dll`/`wcnapi.dll`, também ausentes. **[HIPÓTESE]**
+O executor chegou a afirmar que `netsh wlan` não existia (premissa `wlancmds.dll`). **Corrigido:** o helper é `wlancfg.dll` e o texto de `connect`/`add profile` está na imagem (§3). O caminho passa a ser: `drvload <inf>` → `netsh wlan add profile filename=<perfil.xml>` → `netsh wlan connect name=<perfil>`.
+**Ainda em aberto (runtime, nunca medido):** (1) o `wlansvc` iniciar e enxergar a interface sem `wcmsvc`; (2) o perfil XML precisa do **SSID e da senha**, que ninguém informou ao executor e que o dono teria de digitar ou deixar num arquivo; (3) `drvload` carregar o driver sem erro 10; (4) a hipótese anterior de depositar o XML no store do `wlansvc` e copiar `wlancmds.dll` do ESD fica como plano B, sem evidência.
 
 ### 5.3 Transporte até o WinRE (p0402452582, aberto)
 
@@ -137,7 +139,7 @@ Scripts principais em `wwii:scripts/`: `ambiente.sh`, `doctor.sh`, `obter_imagem
 
 ## 9. Plano do líder vigente (resumo das decisões D1–D6)
 
-- **D1** testar Wi-Fi sem `wcmsvc.dll` (injetar driver, `drvload`, `sc query wlansvc`, `netsh wlan show drivers`) — **o critério usa `netsh wlan`, que não existe** (§5.2).
+- **D1** testar Wi-Fi sem `wcmsvc.dll` (injetar driver, `drvload`, `sc query wlansvc`, `netsh wlan show drivers`) — **vale como escrito**: `netsh wlan` provavelmente existe (§5.2, correção de 2026-11-05); falta provar em runtime.
 - **D2** baixar o ESD por **HTTP** (`cscript` + `WinHttpRequest`), em partes, retomando por `Range`; plano B FTP.
 - **D3** exportar drivers antes do wipe (`dism /Image:C:\ /Export-Driver /Destination:R:\DriversOEM`) só se C: ainda existir.
 - **D4** Bluetooth PAN só como plano B, **verificado**: sem BT no WinRE, PAN só no Windows instalado.
@@ -150,8 +152,8 @@ Pense em todas as possibilidades, inclusive as que contradizem o executor e o l�
 
 1. **A rota de menor risco que cubra mais de R1–R5**, justificando por quê (compare A1–A5 e as ideias do §6).
 2. **O que decide entre as rotas** e como o dono descobre isso lendo o mínimo da própria máquina (`diag.cmd` somente leitura).
-3. **Um runbook digitável**, com o menor número de caracteres possível, para o WinRE 1809, sem `certutil`, sem `powershell` e sem `netsh wlan`.
-4. **Como conectar o Wi-Fi no WinRE** sem `wlancmds.dll`: (a), (b) ou uma terceira via que ninguém viu.
+3. **Um runbook digitável**, com o menor número de caracteres possível, para o WinRE 1809, sem `certutil`, `powershell`, `curl` nem `findstr`.
+4. **Como conectar o Wi-Fi no WinRE** com `netsh wlan add profile` + `connect` (§5.2): o que pode falhar em runtime (serviço, GUID, driver, SSID/senha desconhecidos) e como obter SSID/senha com a menor digitação.
 5. **O que provar antes de tocar a máquina real** e o que só a máquina real prova.
 6. **Falhas e plano B/C** para cada passo, e **onde o plano atual do líder está errado**.
 
