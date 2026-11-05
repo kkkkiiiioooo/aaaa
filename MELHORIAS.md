@@ -1,5 +1,7 @@
 # MELHORIAS — Propostas técnicas para profissionalizar o repositório
 
+> Status das propostas (verificado no repo, 2026-11-05): ja implementadas: #1 flock em etapa.sh; #2 merge=union em .gitattributes; #3 doctor.sh --env/--json/--cache; #4 testes bats em scripts/tests/unit/ (bats nao instalado nesta maquina); #5 scripts/watchdog.sh; #7 git fsck em iniciar.sh; #9 --cache em buscar_driver.py; #10 fluxo em AGENTS.md. Feito nesta rodada: verificador de firmware (scripts/checar_firmware.py), modelo de retorno (docs/retorno/MODELO.md). Nao feito: #8 ntfy.sh, porque envia o bloqueio para um topico publico na internet.
+
 > Gerado em: 2026-11-04 | Branch: wwii | Revisão: 1.0
 
 ---

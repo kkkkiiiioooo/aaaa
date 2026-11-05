@@ -13,7 +13,7 @@
 | Etapa | Nome | Entrada | Gate de saida (objetivo) |
 |---|---|---|---|
 | E1 | Ambiente capaz de testar | clone + deps | `doctor.sh` diz T0+T1+T2 e a suíte fecha SUITE: PASS com log em `.work/logs/` |
-| E2 | Cobertura de drivers sem ID | E1 | >=1 `.cab` oficial por fabricante (Intel/Realtek/Qualcomm/Broadcom/MediaTek/Marvell) baixado, INF conferido, injetado no Winre.wim e verificado por hash |
+| E2 | Cobertura de drivers sem ID | E1 | >=1 `.cab` oficial por fabricante (Intel/Realtek/Qualcomm/Broadcom/MediaTek/Marvell) baixado, INF conferido, injetado no Winre.wim, verificado por hash E firmware exigido pelo INF presente (`python3 scripts/checar_firmware.py`) |
 | E3 | Autorrun no WinRE | E2 | PE inicia o script sozinho (`winpeshl.ini`), sem tecla, e grava log em disco |
 | E4 | Boot real do PE (T3) | E3 | ISO convertida; WinRE bootado em QEMU; log do boot lido no host |
 | E5 | Reinstalacao R3/R5 | E4 | `setup.exe` por rede reinstala C: e os drivers voltam pos-OOBE |

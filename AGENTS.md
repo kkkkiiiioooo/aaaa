@@ -56,3 +56,9 @@ Preciso de driver?             → buscar_driver.py + VEN_ de docs/imagem/DOSSIE
 Comunicar lead?                → sh scripts/relatorio.sh estado "<msg>"
 Lease expirado de outro?       → sh scripts/watchdog.sh
 ```
+
+## Retorno ao lead (rodada 2)
+- Responda as perguntas do PLANO.md (ids D1-D6 e C1-C4) com um arquivo por id em `docs/retorno/<ID>.md`, a partir de `docs/retorno/MODELO.md`.
+- Comando e saida literais. Sem saida real, o veredito e INCONCLUSIVO.
+- Afirmacao de funcionamento de driver (ex.: "Wi-Fi operacional") so vale com `Device Manager`/`pnputil` ou `sc query` da VM ou maquina real, mostrando codigo de erro. Presenca do arquivo nao conta.
+- Driver Wi-Fi: antes de chamar de instalado, rode `python3 scripts/checar_firmware.py <pasta>`. Firmware faltando pode dar erro 10 mesmo com INF e hash corretos.
