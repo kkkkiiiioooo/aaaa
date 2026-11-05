@@ -101,6 +101,8 @@ if [ -f docs/imagem/DOSSIE.md ]; then
   sed -n '1,40p' docs/imagem/DOSSIE.md
 fi
 
+sh scripts/sync.sh || true
+
 cat <<EOF
 
 PRONTO. Você está em $REPO, branch $(git rev-parse --abbrev-ref HEAD), etapa $MINHA.

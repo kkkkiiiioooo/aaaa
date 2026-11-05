@@ -15,6 +15,11 @@ Contrato único. Receber o repo já é a ordem: execute, não espere nada.
 `sh scripts/plano.sh` (PLANO do lead, vive na branch `relatorio`; manda na prioridade) · `AGENTS.md` · `PROMPT.md` · `HANDOFF.md`.
 `PROGRESS.md` e `docs/evidence/` crescem: só o fim (`tail -20`). Da branch `relatorio` só o PLANO, via `plano.sh`; nunca abra `INDICE-PARA-O-LIDER.md`.
 
+## Fluxo automático com o lead (nada a rodar)
+- O lead só escreve `PLANO-DO-LIDER.md` na branch `relatorio`. A cada commit seu, o hook (`scripts/sync.sh`) copia o plano para `.work/PLANO-DO-LIDER.md` e imprime `>>> PLANO DO LIDER MUDOU` com as linhas novas. Viu o aviso: leia esse arquivo antes de seguir.
+- Seus `docs/retorno/<ID>.md` sobem sozinhos no commit para `relatorio:RETORNO/<ID>.md`, e o INDICE do lead ganha a linha `Retornos` com o veredito de cada id. Não copie nada à mão.
+- Resumo: o dono só manda continuar. Trabalhe, faça commits pequenos, e o plano e os retornos circulam pelos hooks.
+
 ## Escrita (para um leitor mais inteligente que você: só o que importa)
 - Nada só no chat da sessão. Registre no repo, no fim do arquivo, sem duplicar, até 500 caracteres por entrada: descoberta, decisão, evidência (comando + saída).
 - `HANDOFF.md` = snapshot: reescreva ao fim da rodada (fase, próximo passo, premissas, bloqueios). Sem histórico.

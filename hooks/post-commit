@@ -41,6 +41,8 @@ mkdir -p "$LOG"
   fi
 } >> "$LOG/push.log" 2>&1
 
+case "$b" in main|0|backup|relatorio) ;; *) sh "$R/scripts/sync.sh" 2>/dev/null || true ;; esac
+
 if [ -f "$PEND" ]; then
   echo "ATENCAO: push pendente (ver .work/logs/push.log). Commit local != trabalho entregue."
 fi
