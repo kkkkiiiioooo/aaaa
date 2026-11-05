@@ -53,11 +53,14 @@ export MTOOLSRC="$MTSRC"   # mdir/mtype/mcopy/mrm passam a ver t:/ = particao 1 
 if [ ! -s "$DISK" ]; then
   say "criando disco de dados $DISK (3G, MBR + 1 particao FAT32)"
   qemu-img create -f raw "$DISK" 3G >/dev/null || die "qemu-img create"
-  printf 'o\nn\np\n1\n2048\n\n\nt\n0c\nw\n' | fdisk "$DISK" >/dev/null 2>&1 || die "fdisk"
-  losetup -a 2>/dev/null | grep -F "$DISK" | cut -d: -f1 | while read -r l; do losetup -d "$l" 2>/dev/null; done
-  LOOP=$(losetup -f -P --show "$DISK") || die "losetup"
-  mkfs.vfat -F 32 -n WWIIDS "${LOOP}p1" >/dev/null 2>&1 || die "mkfs.vfat"
-  losetup -d "$LOOP" 2>/dev/null
+  # MBR escrito em python e FAT32 por mformat com offset: nao depende de fdisk, losetup nem mkfs.vfat
+  python3 - "$DISK" <<'PY' || die "mbr"
+import struct,sys,os
+p=sys.argv[1];n=os.path.getsize(p)//512
+e=b'\x00\x20\x21\x00\x0c\xfe\xff\xff'+struct.pack('<II',2048,n-2048)
+open(p,'r+b').write(b'\x00'*446+e+b'\x00'*48+b'\x55\xaa')
+PY
+  mformat -i "$DISK@@1048576" -F -v WWIIDS ::  >/dev/null 2>&1 || die "mformat"
 fi
 mdir t:/ >/dev/null 2>&1 || die "sem FAT na particao 1 de $DISK (recrie o disco)"
 mrm t:/wwii.log >/dev/null 2>&1
@@ -73,7 +76,7 @@ mcopy "$VM/marca-host.txt" t:/host_marker.txt >/dev/null 2>&1 && say "host_marke
 MON="$VM/monitor.sock"; PIDF="$VM/qemu.pid"; SERIAL="$VM/serial.log"; LOG="$VM/qemu.log"
 rm -f "$MON" "$SERIAL" "$LOG"
 [ -f "$PIDF" ] && kill "$(cat "$PIDF")" 2>/dev/null
-FWMODE=${FWMODE:-uefi}
+FWMODE=${FWMODE:-bios}
 FW=""
 if [ "$FWMODE" = uefi ]; then
   CODE=${OVMF_CODE:-/usr/share/OVMF/OVMF_CODE_4M.fd}
