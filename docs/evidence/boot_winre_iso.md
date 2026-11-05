@@ -43,38 +43,78 @@ Cada linha é um boot real medido; veredito em `.work/chovar/resultados.tsv`.
 |---|---|---|---|
 | base | `winre-wwii-raw.iso` (boot.wim **sem compressão**, 1,03 GB) | `-cpu qemu64 -smp 3 -m 4096`, sem NIC | **BSOD em 36 s** (tela laranja, `SYSTEM_THREAD_EXCEPTION_NOT_HANDLED`) |
 | lzms | `winre-wwii.iso` (boot.wim **LZMS**, 288 MB) | idem | **sem BSOD** — 232 s em modo texto, ainda carregando |
-| gate | `winre-wwii.iso` (LZMS, drivers + autorun com persistência) | `-cpu max -smp 4 -m 4096` | em andamento (`.work/logs/e4-gate.log`) |
+| gate | `winre-wwii.iso` (LZMS, drivers + autorun com persistência) | `-cpu max -smp 4 -m 4096` | 1800 s sem BSOD e sem log (`.work/logs/e4-gate.log`) |
+| lzx2 | `winre-wwii-lzx.iso` (boot.wim **LZX**, 367 MB) | `-smp 4 -m 4096` | 1159 s sem BSOD, ainda em modo texto |
+| xp | `winre-wwii-xp.iso` (boot.wim **XPRESS**, 429 MB) | `-smp 4 -m 4096` + NIC + VNC | **BSOD em 425 s**, mesmo stop code (`e4-bsod-xpress-425s.png`) |
 
-Conclusão que muda o plano: **a tela azul não é da injeção**. O `pristine.raw.wim` (WIM original,
-sem driver nenhum e sem autorun) e o `Winre.nodrv.wim` (drivers, autorun sem `drvload`) deram a
-MESMA tela laranja, e o `boot.wim` em LZMS não deu. O que quebra é o `boot.wim` **sem compressão**
-(1,03 GB). O mecanismo **não** está medido. Uma hipótese que já caiu: o `boot.sdi` do PCAT tem
+O que está medido e o que **não** está: a tela azul aparece com o WIM **sem compressão** (36 s) e
+com **XPRESS** (425 s), e não aparece com **LZMS** (232 s / 1800 s) nem com **LZX** (1159 s). A
+correlação que eu tinha escrito antes — "o que quebra é o boot.wim sem compressão" — está
+**refutada pelo XPRESS**, que é comprimido e quebrou do mesmo jeito. As durações de observação são
+diferentes entre as linhas, então "sem BSOD" aqui não significa "bootou": nenhuma dessas duas
+chegou ao autorun. O mecanismo do BSOD continua **não medido**.
+
+O que continua de pé: **a tela azul não é da injeção**. `pristine.raw.wim` (WIM original, sem
+driver nenhum e sem autorun) e `Winre.nodrv.wim` (drivers, autorun sem `drvload`) deram a MESMA
+tela laranja. Hipótese que já caiu: o `boot.sdi` do PCAT tem
 3 170 304 bytes e é contêiner **SDI** (registros PART e WIM internos), não VHD — o campo
 "Current Size" que cheguei a ler nele (956 MB) é leitura fora de contexto, não medida. Ou seja,
 não existe ali um "tamanho de RAMDisk" declarado para estourar.
-O que está medido é a correlação (3 ISOs descomprimidas → BSOD; LZMS → nenhum BSOD em 232 s).
-Efeito colateral útil: com cache de página quente, o boot LZMS ainda é lento (CPU-bound na
-descompressão), mas é o caminho correto; `wimlib-imagex optimize --compress=None` está
-**proibido** no engolidor de teste.
+`wimlib-imagex optimize --compress=None` continua **proibido** no engolidor de teste (produz o
+caso que BSOD em 36 s).
 
-## Estado do aceite (o que falta)
+## Veredito da E4 (decisão D6 do lead, 2026-11-04 22:56 UTC-3)
 
-O gate é "PE inicia o script sozinho e grava log em disco; log lido no host". O run de 20:26–20:51 (1500 s) e o de até 20:56 não podiam produzir log por causa da descoberta 7. Rebuild com persistência incremental no autorun (item 2 abaixo) + disco preso + `--vga cirrus`: run em andamento desde 20:57 (UTC-3), timeout 3600 s, poll 60 s, `.work/logs/e4-boot2.log`.
+D6 mandava repetir **uma** vez o boot com `-hda` (e não `-hdb`) e trazer a prova por
+`-serial file:` — canal que não depende do volume FAT ser enumerado pelo PE. Foi feito
+exatamente uma vez: `scripts/autorun-wwii.cmd` agora faz `type %LOG% > COM1` em cada bloco,
+`scripts/boot-winre.sh` usa `DISKAT=hda` por padrão e grampeia a marca `autorun-wwii` em
+`.work/vm/serial.log`, e a ISO reconstruída foi `winre-wwii.iso` sha256 `72081aba…` (LZMS,
+299 253 760 bytes).
 
-Foi feito enquanto o run anda, para o gate virar verificável em qualquer cenário:
+Resultado medido (`.work/logs/e4-d6.log`, 01:14:44–01:45:04 UTC, 1800 s, `-smp 4 -m 4096`):
 
-1. **Persistência incremental no autorun** (`scripts/autorun-wwii.cmd`): cada bloco (`wpeinit`, `drvload` dos 6 drivers, `diag`, `pnputil`, `netsh wlan`, `ipconfig`, fim) chama `:persist`, que copia `X:\wwii.log` para `C:`..`H:`. Um PE que bugue no meio deixa rastro parcial em vez de nada. Teste offline: `python3 scripts/tests/unit/autorun_offline.py` → `PASS ini / PASS cmd / PASS autorun_offline`.
-2. **Reinjeção e rebuild**: `sh scripts/injetar_autorun.sh --imagem .work/wim/Winre.lote.wim` (INI reextraído confere `LaunchApps`) + `sh scripts/montar_iso_winre.sh --imagem ... --saida ...` → novo sha256 acima.
+- `serial.log` = **0 bytes** no fim dos 1800 s; a marca `autorun-wwii` nunca apareceu.
+- Disco de dados lido pelo host no fim do run: só `host_marker.txt` (3 bytes), sem `wwii.log`.
+- Ou seja: o PE **não chegou** ao `winpeshl.ini → autorun-wwii.cmd` dentro do tempo, por nenhum
+  dos dois canais independentes.
 
-Pendências para o próximo turno, na ordem:
+Consequência, conforme o próprio D6: **E4 = INCONCLUSIVA, não CONFIRMADA**. A E3 fica valendo só
+como evidência **offline** (injeção verificada no WIM: `winpeshl.ini` com `[LaunchApps]` e o
+`.cmd` presente, teste `scripts/tests/unit/autorun_offline.py` → PASS). Nada foi afirmado sobre
+"o PE roda o script sozinho em runtime". `p0423333970` foi escalado ao lead com a pergunta
+objetiva. E4 foi **liberada** (`etapa.sh liberar`) para outro agente tentar outro transporte.
 
-1. Ler o resultado de `.work/logs/e4-boot2.log`. Se aparecer `wwii.log LIDO DO DISCO`, anexar o conteúdo em `docs/evidence/` e fechar E4 com a evidência; se aparecer só um log parcial, registrar qual bloco parou (isso já é evidência de qual serviço do PE falha).
-2. **Prova visual**: trocar `-display none` por `-display vnc=127.0.0.1:<porta>` no
-   `boot-winre.sh` e chamar `python3 scripts/vncshot.py --porta <5900+N> --saida
-   .work/vm/tela-$T.png` a cada poll (o `screendump` continua como registro barato,
-   mas não é mais a prova). Feito no próximo run, porque mexer no arquivo com o
-   `sh` executando ele pode corromper o run em andamento.
-3. Se o log parcial parar em `netsh wlan` / `WlanSvc`: o suspeito continua sendo o `wcmsvc.dll` ausente (p0402412842), não o transporte — abrir problema próprio com a linha exata do log.
-4. Se não aparecer log nenhum com o disco preso: trocar o `-hdb` por `-hda` (o PE do 1809 às vezes não enumera slave IDE) e usar a tela VNC para ver onde o bootmgr parou.
-5. Reduzir o custo do ciclo: o gargalo é LZMS + TCG. Um `boot.wim` menor (extrair só o necessário) ou `--cpus 4` encurtam o teste do gate.
-6. Transporte: com iPXE confirmado no firmware deste QEMU (descoberta 10), montar um teste PXE (dnsmasq proxy + TFTP/HTTP) para a alternativa A5 de p0402452582.
+Medida nova útil que o run D6 deixou: foi a primeira vez que `ide0-hd0` **foi lido** pelo
+convidado (35 840 bytes / 70 operações) — antes o disco nem era tocado. Não é prova de autorun
+(0 escritas), mas mata a hipótese "o PE não enumera disco IDE como master".
+
+## O que já está pronto para o próximo turno de E4
+
+Ferramental (tudo commitado, nada precisa ser reescrito):
+
+- `scripts/boot-winre.sh` — boot por CD com disco de dados **sempre** preso (`DISKAT=hda` por
+  causa do D6), `--timeout/--poll/--mem/--cpus/--vga`, canal de prova duplo: leitura de
+  `t:/wwii.log` via mtools **e** grampeio da marca `autorun-wwii` em `serial.log`.
+  `DISP=vnc=127.0.0.1:N VNC=<porta>` liga a prova visual real; `--iso` aceita qualquer ISO.
+- `scripts/vncshot.py` — cliente RFB 3.8 sem dependências (ver descoberta 9).
+- `scripts/chovar-qemu.sh` — matriz de configurações com classificador de tela
+  (`bsod|logo|texto|vazio`) e TSV em `.work/chovar/resultados.tsv`.
+- `scripts/autorun-wwii.cmd` — log em `X:\wwii.log` + `type %LOG% > COM1` + cópia para
+  `C:`..`H:` a cada bloco; teste offline `python3 scripts/tests/unit/autorun_offline.py` → PASS.
+- ISOs já montadas e com hash conhecido em `.work/iso/` (LZMS `72081aba…` é a de produção;
+  LZX/XPRESS/raw só existem como controles da matriz).
+
+Pendências, na ordem de valor:
+
+1. **E4 não tem runtime gate.** Aceitar só evidência offline para E3 e perguntar ao lead
+   (dossiê `casos/p0423333970.md` na branch `relatorio`) se o aceite pode vir de outro
+   transporte — USB/PXE (iPXE confirmado, descoberta 10) ou hardware real — em vez de TCG+CD.
+2. Se o lead mand insistir em TCG: o ciclo é caro porque o bootmgr descomprime o WIM inteiro em
+   CPU. Alavancas não testadas: `-cpu max` (o engolidor ainda fixa `qemu64`, linha 107),
+   `boot.wim` menor (extrair só o necessário), e medir se LZMS **progredia** aos 1800 s — o run
+   D6 não gravou `info blockstats` nem as telas em disco, então isso está perdido; o próximo run
+   precisa gravar os dois (`.work/vm/` é sobrescrito a cada run).
+3. Se aparecer log parcial parando em `netsh wlan` / `WlanSvc`: suspeito é `wcmsvc.dll` ausente
+   (p0402412842), não o transporte — abrir problema próprio com a linha exata do log.
+4. Transporte PXE (alternativa A5 de p0402452582): dnsmasq proxy + TFTP/HTTP dentro do sandbox.
