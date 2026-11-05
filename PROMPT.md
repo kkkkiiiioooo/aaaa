@@ -24,3 +24,6 @@ Ninguém ajuda: o dono não responde nem executa nada durante o trabalho. O agen
 
 ## Regras
 Ver `AGENTS.md`.
+
+## Regra de persistência
+Não pare por conta própria: ao fim de uma tarefa pegue a próxima (AGENTS.md, "Trabalhe até se esgotar"). Ambiente é por agente: `ambientes/<nome>.md`.

@@ -14,6 +14,17 @@ Contrato único. Receber o repo já é a ordem: execute, não espere nada.
 - Executar vale mais que analisar: monte o ambiente (`sh setup.sh`, idempotente), rode, corrija, repita até validar. Tarefa longa: segundo plano com log (`nohup <cmd> > .work/logs/<nome>.log 2>&1 &`), acompanhe com `tail`.
 - Simule o mais perto possível o que não der para reproduzir e documente a diferença.
 
+## Trabalhe até se esgotar (vale para todo agente)
+- **Não pare por conta própria.** Terminou uma tarefa: pegue a próxima, sem perguntar. Ordem: `sh scripts/plano.sh` → `sh scripts/problema.sh abertos` → `sh scripts/etapa.sh status` → "Próximo passo" do `HANDOFF.md` → hipóteses do `README.md` da branch `info` (§6).
+- Só pare quando (1) o limite do SEU ambiente impedir (tempo, RAM, rede, ferramenta ausente) **ou** (2) toda alternativa viável já tiver tentativa registrada. Em ambos os casos: registre no repo (`PROGRESS.md`, `HANDOFF.md`, `ambientes/<seu-nome>.md`) o que tentou, o que bloqueou e qual é o próximo caminho.
+- Bloqueio de ambiente não é bloqueio do projeto: escale (`scripts/escalar.sh`) e siga para outra frente que seu ambiente permita.
+- Falou "pronto" sem ter esgotado as hipóteses do `info` (§6) e os problemas abertos = parou cedo. Volte.
+
+## Ambiente é por agente (não misture)
+- Cada agente roda numa máquina diferente (CPU, RAM, rede, ferramentas). Nunca atribua a um agente a medida de outro, nem generalize ("o sandbox tem X").
+- Ao começar: `sh scripts/registrar_ambiente.sh <seu-nome>` grava `ambientes/<seu-nome>.md` com o que **foi medido** e as limitações. Complete a seção "Notas do agente" com o que só você descobriu. Só edite o seu arquivo.
+- Medida de outro agente só entra com atribuição ("qoder reportou ... em boot_winre_iso.md").
+
 ## Leitura (contexto mínimo, nesta ordem, ~10 KB)
 `sh scripts/plano.sh` (PLANO do lead, vive na branch `lider`; manda na prioridade) · `AGENTS.md` · `PROMPT.md` · `HANDOFF.md`.
 `PROGRESS.md` e `docs/evidence/` crescem: só o fim (`tail -20`). Da branch `lider` só o PLANO, via `plano.sh`; nunca abra `INDICE-PARA-O-LIDER.md`.

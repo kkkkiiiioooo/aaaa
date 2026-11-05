@@ -3,6 +3,7 @@
 Recuperação do Windows sem conexões físicas.
 
 Leitura obrigatória, nesta ordem: `sh scripts/plano.sh` (plano do lead) · `AGENTS.md` · `PROMPT.md` · `HANDOFF.md`.
+Regra: trabalhe até se esgotar (ver AGENTS.md). Ambiente é por agente: `ambientes/<nome>.md`.
 Auto (sem ler nada): `sh auto.sh` (chama `setupenvclaude.sh`, setup do agente claude).
 Contexto completo para o modelo mais capaz: branch `info` (README.md).
 Entrada: `sh iniciar.sh A=<nome> P=wwii S_ARQ=<arquivo-da-passphrase>`.
