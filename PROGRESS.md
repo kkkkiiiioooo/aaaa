@@ -31,3 +31,4 @@ Offline (responde C2, D1, D4 do lead com dado lido, nao inferido): extraido o hi
 executor 2026-11-05: dl-cdn.alpinelinux.org inacessivel no sandbox (DNS). fetch-base.sh agora cai para kernel Ubuntu via apt (15 MB ok). Falta modloop/modulos (sd_mod, veth): proximo = baixar linux-modules-*-generic do apt e extrair .ko no build-initramfs.sh.
 executor 2026-11-05: T1+T2 SUITE PASS (21/0) com kernel Ubuntu. evidence: docs/evidence/t1t2_ubuntu_fallback.md
 executor 2026-11-05: criado setupenvclaude.sh (setup do agente) e branch info (README.md = prompt final, ambiente + achados + hipoteses).
+claude 2026-11-05: wlancmds.dll era premissa errada; netsh wlan existe via wlancfg.dll (hive NetSh + MUI). evidence: docs/evidence/netsh_wlan_existe.md. D1 volta a valer.

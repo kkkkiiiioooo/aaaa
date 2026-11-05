@@ -28,7 +28,7 @@ lead). E1–E3 feitas; E5 ativa (claude).
 3. E4 tem um bug de ambiente não resolvido: BSOD com WIM `raw` (36 s) e `XPRESS` (425 s), sem
    BSOD com LZMS/LZX. A correlação antiga ("é o descomprimido") está refutada; mecanismo não
    medido. Não gastar tempo aí antes de trocar de transporte.
-4. **`p0502061818` (novo, escalado) trava o D1**: `wlancmds.dll` — o contexto `wlan` do `netsh` —
+4. **p0502061818 CORRIGIDO (claude, 2026-11-05):** `netsh wlan` provavelmente EXISTE: o helper é `wlancfg.dll` (registrado em `\Microsoft\NetSh`), não `wlancmds.dll`. Ver `docs/evidence/netsh_wlan_existe.md`. D1 volta a valer; falta só runtime.
    **não existe** no WinRE 1809, então `netsh wlan ...` não funciona e o bloco `netsh wlan` do
    `autorun-wwii.cmd` é decorativo. `rundll32`/`cscript` não salvam: nenhum binário da imagem
    exporta `WlanConnect`. Decisão pendente do lead entre (a) perfil XML no store do wlansvc +
