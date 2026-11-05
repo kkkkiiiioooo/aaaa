@@ -1,20 +1,17 @@
 # RELATORIO (resumo executivo p/ o lead; <=2 KB; agentes NAO lem)
-Atualizado: 2026-11-04 (a partir de wwii, 116 commits, HANDOFF e PROBLEMAS).
+Atualizado: 2026-11-04, com casos/ detalhados.
 
-Desafio: restaurar Win10 1809 com C: formatada, sem conexao fisica, so WinRE com cmd automatico. Entregavel autoexecutavel (PROMPT.md).
+Desafio: restaurar Win10 1809 com C: formatada, sem conexao fisica, so WinRE com cmd automatico. Entregavel autoexecutavel.
 
-Estado por etapa (ETAPAS.md):
-- E1 feita: ambiente provado sem KVM/docker, SUITE 28 PASS / 0 FAIL (259s, TCG).
-- E2 feita: 6/6 fabricantes, WIM 17763 com driver injetado, sha256 17/17 IGUAL.
-- E3 feita (offline): winpeshl.ini LaunchApps + autorun-wwii.cmd, teste PASS.
-- E4 em andamento: ISO de 297 893 888 B bootada em QEMU (BIOS + etfsboot). Falta ler wwii.log no host.
+Estado: E1, E2, E3 feitas. E4 (qoder) ativa desde 22:55Z, lease de 82 min na checagem; sem processo qemu ativo e sem log local confirmado.
 
-Problemas em aberto (PROBLEMAS.md):
-- P1 p0402412842: wcmsvc.dll ausente no WinRE; driver Wi-Fi sozinho pode nao bastar. Plano B: A2 PAN.
-- P2 p0402452582: transporte sem rede/midia/copiar-colar; entregavel precisa de comandos curtissimos.
-- P3 p0423333970: prova visual com -display none falha (screendump invalido); trocar para -display vnc.
+Problemas (detalhe em casos/<id>.md):
+- p0402412842 wcmsvc.dll ausente. Tentado: nada testado. Hipotese: copiar da install.wim.
+- p0402452582 transporte manual. Tentado: nada executado em VM (SMB, VBScript/WinHTTP, ftp listados). Nova alternativa: PXE via iPXE.
+- p0423333970 boot/prova visual. Tentado: 10 medidas em docs/evidence/boot_winre_iso.md. Pendente: log do run e2.
 
 Perguntas ao lead:
-- Q1: P0423333970 (T3 em TCG, boot LZMS >=20 min): autorizar custo ou rebaixar a evidencia offline?
-- Q2: wcmsvc.dll: trazer da install.wim e testar, ou ir direto ao plano B PAN?
-- Q3: P0402452582: qual formato final de transporte (A2 PAN, particao de recuperacao ou PXE)?
+- Q1: p0423333970 — autorizar mais um run (60 min) ou rebaixar para evidencia offline?
+- Q2: p0402412842 — copiar wcmsvc.dll da install.wim ou ir direto ao PAN?
+- Q3: p0402452582 — PXE, PAN ou particao de recuperacao como formato final?
+- Q4: contagem de testes: PROGRESS diz 27/27 (PAN/fdisk) e 28/28 (suite principal). Confirmar.
