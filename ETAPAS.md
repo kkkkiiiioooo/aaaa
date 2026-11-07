@@ -49,3 +49,4 @@ E4 | agente-c3ba63ab84db | 2026-11-05T09:47Z | ativa | -
 E4 | reestruturador | 2026-11-07T05:48Z | liberada | lease de agente-c3ba63ab84db expirado apos 2641min (watchdog)
 E5 | reestruturador | 2026-11-07T05:48Z | liberada | lease de claude expirado apos 3181min (watchdog)
 E4 | mavis | 2026-11-07T12:10Z | ativa | -
+E4 | mavis | 2026-11-07T12:15Z | ativa | DESTRANCADA: PE sobe sozinho em TCG, autorun roda, host le wwii.log do disco (202s). docs/evidence/e4-boot-real-cpu-max.md

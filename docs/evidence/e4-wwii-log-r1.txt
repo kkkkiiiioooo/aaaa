@@ -1,0 +1,9 @@
+=== autorun-wwii start === 
+Sat 11/07/2026 12:17:41.41 
+persist C: 
+persist D: 
+persist C: 
+persist D: 
+drvload mrvlpcie8897.inf 
+DrvLoad: Successfully loaded X:\windows\INF\mrvlpcie8897.inf.
+persist C: 

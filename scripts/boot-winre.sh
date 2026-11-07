@@ -96,7 +96,23 @@ mdir t:/ >/dev/null 2>&1 || {
   export MTOOLSRC="$MTSRC"
 }
 mdir t:/ >/dev/null 2>&1 || die "sem FAT na particao 1 de $DISK (recrie o disco)"
-mrm t:/wwii.log >/dev/null 2>&1
+# --- o log do run ANTERIOR nao pode sobrar ---------------------------------------
+# Medido em 2026-11-07: o mtools 4.0.32 deste sandbox NAO tem o comando `mrm`
+# (o nome do mtools e `mdel`). O `mrm t:/wwii.log` falhava em silencio (rc=127,
+# stderr jogado para /dev/null) e o wwii.log VELHO continuava no disco: o gate
+# da E4 passava com log de um boot anterior (falso positivo de 202 s).
+# Agora: apaga, CONFIRMA que sumiu e, alem disso, o log lido tem que ter data
+# posterior ao inicio deste run (o PE escreve %DATE% %TIME% em UTC).
+apaga_log(){
+  mdel t:/wwii.log >/dev/null 2>&1 || mrm t:/wwii.log >/dev/null 2>&1
+  if mtype t:/wwii.log >/dev/null 2>&1; then
+    echo "[boot] ERRO: o wwii.log antigo NAO foi apagado (mtools mdel falhou?)." >&2
+    echo "[boot]       Sem isto o gate da E4 le log de outro boot: falso positivo." >&2
+    return 1
+  fi
+  return 0
+}
+apaga_log || die "nao consegui apagar o wwii.log antigo - gate seria falso positivo"
 printf 'host gravou isto ANTES do boot (%s)\n' "$(date -u +%FT%TZ)" > "$VM/marca-host.txt"
 mcopy "$VM/marca-host.txt" t:/host_marker.txt >/dev/null 2>&1 && say "host_marker.txt gravado no disco"
 
@@ -155,13 +171,35 @@ shot(){ # shot <rotulo> -> arquivo .ppm (QEMU 6.x so grava PPM)
 }
 readlog(){ # readlog <rotulo> -> .work/vm/wwii-<rotulo>.log
   rm -f "$VM/wwii-$1.log"
-  mtype t:/wwii.log > "$VM/wwii-$1.log" 2>/dev/null && [ -s "$VM/wwii-$1.log" ]
+  mtype t:/wwii.log > "$VM/wwii-$1.log" 2>/dev/null || return 1
+  [ -s "$VM/wwii-$1.log" ] || return 1
+  # o log tem que ser DESTE run: o PE escreve %DATE% %TIME% na 2a linha (UTC no sandbox)
+  python3 - "$VM/wwii-$1.log" "$START_ISO" <<'PY' || return 1
+import re, sys, datetime
+log = open(sys.argv[1], errors="replace").read()
+ref = datetime.datetime.strptime(sys.argv[2], "%Y-%m-%dT%H:%M:%SZ").replace(
+    tzinfo=datetime.timezone.utc)
+m = re.search(r"(\d{2}/\d{2}/\d{4})\s+(\d{2}:\d{2}:\d{2})", log)
+if not m:
+    print("[boot]   log sem data/hora reconhecivel: descartado", file=sys.stderr)
+    sys.exit(1)
+try:
+    dt = datetime.datetime.strptime(m.group(1) + " " + m.group(2),
+                                   "%m/%d/%Y %H:%M:%S").replace(
+        tzinfo=datetime.timezone.utc)
+except ValueError:
+    sys.exit(1)
+if dt < ref - datetime.timedelta(seconds=60):
+    print("[boot]   log de run ANTERIOR (%s < %s): descartado" % (dt, ref), file=sys.stderr)
+    sys.exit(1)
+print("[boot]   log deste run: %s" % dt, file=sys.stderr)
+PY
 }
 serialmarca(){ # canal alternativo (D6): o autorun despeja o log em COM1 e o QEMU grava em SERIAL
   [ -s "$SERIAL" ] && grep -aq 'autorun-wwii' "$SERIAL"
 }
 
-START=$(date +%s); N=0; FOUND=0; BSODSTATE=""; BSODVISTO=0
+START=$(date +%s); START_ISO=$(date -u +%Y-%m-%dT%H:%M:%SZ); N=0; FOUND=0; BSODSTATE=""; BSODVISTO=0
 while :; do
   EL=$(( $(date +%s) - START ))
   [ "$EL" -gt "$TIMEOUT" ] && { say "timeout de ${TIMEOUT}s atingido"; break; }
