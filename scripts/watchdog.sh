@@ -20,11 +20,12 @@ check_once() {
   for ET in E1 E2 E3 E4 E5 E6; do
     REC=$(awk -F' *\\| *' -v e="$ET" '$1==e {a=$2;i=$3;s=$4} END{if(a!=""&&s=="ativa")print i}' "$R/ETAPAS.md" 2>/dev/null)
     [ -z "$REC" ] && continue
+    HOLD=${REC#*|}; REC=${REC%%|*}   # dono do lease (o log de etapa grava quem RODOU o watchdog)
     INI_S=$(date -d "${REC}" +%s 2>/dev/null) || continue
     AGE_MIN=$(( (NOW_S - INI_S) / 60 ))
     if [ "$AGE_MIN" -gt "$LEASE_MIN" ]; then
       printf '[%s] LEASE EXPIRADO: %s (%s min) — liberando\n' "$(ts)" "$ET" "$AGE_MIN"
-      sh "$R/scripts/etapa.sh" liberar "$ET" "lease expirado apos ${AGE_MIN}min (watchdog)" 2>&1 || true
+      sh "$R/scripts/etapa.sh" liberar "$ET" "lease de ${HOLD} expirado apos ${AGE_MIN}min (watchdog)" 2>&1 || true
     else
       printf '[%s] %s OK (%s/%s min)\n' "$(ts)" "$ET" "$AGE_MIN" "$LEASE_MIN"
     fi
