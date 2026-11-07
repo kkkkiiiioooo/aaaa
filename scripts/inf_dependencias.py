@@ -42,6 +42,15 @@ def dependencias(caminho):
             continue
         # o nome da secao pode ter sufixo: [SourceDisksFiles.amd64], [CopyFiles.NT]
         base = secao.split(".")[0]
+        # CatalogFile pode estar em [CatalogFile] ou dentro de [Version] (os dois
+        # aparecem em INFs de verdade): o .cat tem que estar AO LADO do INF, senao
+        # o setupapi responde 0xE000022F ("driver package does not contain a catalog
+        # file") - medido no WinRE 1809 em 2026-11-07.
+        if re.match(r"(?i)^catalogfile\s*=", s):
+            nome = re.split(r"=", s, 1)[1].split(";")[0].strip()
+            if nome:
+                refs.add(nome)
+            continue
         if base == "sourcedisksfiles":
             # "Nome.sys = 1,,"  ->  nome do arquivo
             if "=" in s:
@@ -64,6 +73,16 @@ def dependencias(caminho):
             if m:
                 nome = m.group(1).split(",")[0].strip().split("\\")[-1]
                 if nome and not nome.startswith("%"):
+                    refs.add(nome)
+        elif base == "catalogfile":
+            # "CatalogFile = Netwtw06.cat" -> o .cat tem que estar AO LADO do INF:
+            # na instalacao "loose" o setupapi procura o catalogo na mesma pasta e,
+            # sem ele, responde 0xE000022F ("driver package does not contain a
+            # catalog file") - medido no WinRE 1809 em 2026-11-07.
+            m = re.search(r"catalogfile\s*=\s*(.+)$", s, re.I)
+            if m:
+                nome = m.group(1).split(";")[0].strip()
+                if nome:
                     refs.add(nome)
     return refs
 
