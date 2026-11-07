@@ -56,10 +56,19 @@ Ablação sugerida no mural (m0712244859): uma variável por vez, ~7 min por run
 
 | caminho | rede | escrita em disco | por quê |
 |---|---|---|---|
-| HTTP + `download.vbs` (VBS/ADODB) | **OK** — o PE chega no servidor | **falta** | o WinRE 1809 **não tem ADODB.Stream** (falta WinPE-MDAC) |
-| HTTP + `download-js.js` (JScript/FSO) | **OK** | funciona, com perda em 31 valores | o `ResponseBody` chega como objeto Automation (sem `.length`); o FSO em ASCII nao devolve `0x81..0x9F` |
-| FTP (`ftp.exe`) | **OK** — conecta, autentica, modo binário | **falta** | o `ftp.exe` do WinRE usa **PORT (ativo)** e **não tem switch de PASV**; NAT/slirp nao honra modo ativo |
+| **HTTP + `download-js.js` (JScript/FSO)** | **OK** | **OK — byte a byte** | **`ResponseText` (string) + FSO em modo ASCII. É o caminho que funciona** |
+| HTTP + `download.vbs` (VBS/ADODB) | OK | falta | o WinRE 1809 **não tem ADODB.Stream** (falta WinPE-MDAC) |
+| FTP (`ftp.exe`) | OK (login+binário) | falta | o `ftp.exe` do WinRE usa **PORT (ativo)** e **não tem switch de PASV**; NAT/slirp nao honra modo ativo |
 | SMB + `xcopy` | não testado | não testado | `xcopy.exe` e o serviço Workstation existem na imagem |
+
+**Prova (run R13):** o PE baixou `wwii-teste.bin` (5020 B) por HTTP, gravou em `C:` e o
+host leu o arquivo do volume do convidado: **sha256 idêntico ao original**
+(`docs/evidence/e5-download-http-pe-log.txt`, `e5-arquivo-baixado-pelo-pe.bin`).
+
+**Ressalva para o ESD (o que falta medir):** o FSO em ASCII perde os bytes `0x81..0x9F`
+(não existem no cp1252). O arquivo de teste é ASCII, então saiu perfeito; um ESD
+assinado tem bytes nessa faixa. **Caminho:** servir em **base64** e decodificar no PE
+antes de gravar (aí todos os bytes são < 0x80) — cabe no `download-js.js`.
 
 `docs/evidence/e5-transporte-download-pe.md` tem a saída literal de cada tentativa.
 **O D2 do lead precisa ser redecidido**: o caminho HTTP funciona na rede, mas o PE 1809
