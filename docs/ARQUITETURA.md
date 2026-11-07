@@ -6,10 +6,10 @@ Os agentes não precisam ler este arquivo. Ele é para o dono e para quem evolui
 
 | Arquivo (onde) | Escreve | Lê | Função |
 |---|---|---|---|
-| `PLANO-DO-LIDER.md` (branch `relatorio`) | lead | agentes, via `scripts/plano.sh` | direção, frentes e respostas por id |
-| `PROTOCOLO-DO-LIDER.md` (branch `relatorio`) | dono | lead | protocolo estável do lead |
-| `INDICE-PARA-O-LIDER.md` (branch `relatorio`) | `relatorio.sh`, `escalar.sh` | só o lead | índice com até 2 KB |
-| `casos/<id>.md` (branch `relatorio`) | `escalar.sh` | só o lead | dossiê de decisão, até 1,5 KB |
+| `PLANO-DO-LIDER.md` (branch `lider`) | lead | agentes, via `scripts/plano.sh` | direção, frentes e respostas por id |
+| `PROTOCOLO-DO-LIDER.md` (branch `lider`) | dono | lead | protocolo estável do lead |
+| `INDICE-PARA-O-LIDER.md` (branch `lider`) | `relatorio.sh`, `escalar.sh` | só o lead | índice com até 2 KB |
+| `casos/<id>.md` (branch `lider`) | `escalar.sh` | só o lead | dossiê de decisão, até 1,5 KB |
 | `PROBLEMAS.md` | agentes, via `problema.sh` | agentes (`abertos`, `buscar`) | cooperação entre pares |
 | `SUGESTOES.md` | agentes, via `sugerir.sh` | dono | evolução do processo e custo |
 | painel (`sh scripts/painel.sh`) | ninguem (so le) | dono e Claude, no inicio de cada conversa | uma pagina: etapas, parados, problemas, presença, sugestões, capacidade |
@@ -27,7 +27,7 @@ Os agentes não precisam ler este arquivo. Ele é para o dono e para quem evolui
 
 ## Princípios de custo
 
-- O lead só entra na branch `relatorio`: índice, depois só os dossiês listados.
+- O lead só entra na branch `lider`: índice, depois só os dossiês listados.
 - Escalar exige 2 tentativas registradas, para o lead não gastar com o que o agente resolveria.
 - Entradas curtas (até 300 caracteres), estado derivado das linhas, nada reescrito.
 - Leitura obrigatória dos agentes: `plano.sh`, `AGENTS.md`, `PROMPT.md`, `HANDOFF.md`.

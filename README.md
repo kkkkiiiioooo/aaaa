@@ -1,10 +1,10 @@
 # Projeto wwii
 
-Recuperação do Windows sem conexões físicas.
+Recuperação do Windows sem conexões físicas (WinRE 1809).
 
-Leitura obrigatória, nesta ordem: `sh scripts/plano.sh` (plano do lead) · `AGENTS.md` · `PROMPT.md` · `HANDOFF.md`.
-Regra: trabalhe até se esgotar (ver AGENTS.md). Ambiente é por agente: `ambientes/<nome>.md`.
-Auto (sem ler nada): `sh auto.sh` (chama `setupenvclaude.sh`, setup do agente claude).
-Contexto completo para o modelo mais capaz: branch `info` (README.md).
-Entrada: `sh iniciar.sh A=<nome> P=wwii S_ARQ=<arquivo-da-passphrase>`.
-Scripts: `scripts/README.md`. Etapas: `ETAPAS.md`.
+Entrada de agente: `sh iniciar.sh A=<nome> M=<modelo-exato> P=wwii S_ARQ=<arquivo-da-passphrase>`. Sem prompt: `sh auto.sh`.
+Leitura obrigatória, nesta ordem: `sh scripts/plano.sh` (plano do lead) · `AGENTS.md` · `PROMPT.md` · `HANDOFF.md` · `sh scripts/mural.sh ler`.
+Consulta: `docs/imagem/INVENTARIO.md` (o que existe no WinRE) · `EVALS.md` (como medir avanço e comparar modelos) · `scripts/README.md` · `ETAPAS.md`.
+Regra: trabalhe até se esgotar (AGENTS.md). Ambiente é por agente: `ambientes/<nome>.md`.
+Branches: `wwii` (trabalho) · `lider` (decisões do lead) · `info` (prompt final) · `imagem` (WIM em partes). Nunca `main`, `0`, `backup`.
+Avanço real: `sh scripts/evals.sh`. Quem citou uma ideia primeiro: `sh scripts/quem-primeiro.sh "<termo>"`.

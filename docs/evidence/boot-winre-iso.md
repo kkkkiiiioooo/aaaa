@@ -108,7 +108,7 @@ Ferramental (tudo commitado, nada precisa ser reescrito):
 Pendências, na ordem de valor:
 
 1. **E4 não tem runtime gate.** Aceitar só evidência offline para E3 e perguntar ao lead
-   (dossiê `casos/p0423333970.md` na branch `relatorio`) se o aceite pode vir de outro
+   (dossiê `casos/p0423333970.md` na branch `lider`) se o aceite pode vir de outro
    transporte — USB/PXE (iPXE confirmado, descoberta 10) ou hardware real — em vez de TCG+CD.
 2. Se o lead mand insistir em TCG: o ciclo é caro porque o bootmgr descomprime o WIM inteiro em
    CPU. Alavancas não testadas: `-cpu max` (o engolidor ainda fixa `qemu64`, linha 107),

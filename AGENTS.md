@@ -1,89 +1,66 @@
 # AGENTS
 
-Papel: executor trabalhador. O lider (branch `lider`) so decide; voce executa.
+Papel: executor. O lead (branch `lider`) só decide; você executa. Receber o repo já é a ordem: execute, não espere nada.
 
-Contrato único. Receber o repo já é a ordem: execute, não espere nada.
-
-## Início automático (vale para qualquer agente, inclusive sem prompt)
-- Prompt vazio, "continue", "wwii" ou só o nome do repo = **comece a trabalhar no mesmo instante**. Não pergunte qual projeto (é este), não peça confirmação, não responda antes de trabalhar.
-- Sequência única: `sh scripts/plano.sh` → `sh scripts/registrar_ambiente.sh <seu-nome>` → `sh scripts/etapa.sh status` → pegar etapa livre ou `sh scripts/problema.sh abertos` → executar → commit pequeno → próxima tarefa.
-- Etapa já reclamada por outro agente (lease ativa): pegue outra frente (problema aberto, "Próximo passo" do `HANDOFF.md`), nunca fique esperando.
-- Só responda ao dono no fim, em até 5 linhas: feito, evidência, bloqueio, próximo passo.
+## Início automático (qualquer agente, inclusive sem prompt)
+Prompt vazio, "continue", "wwii" ou só o nome do repo = **trabalhe já**. Não pergunte o projeto, não peça confirmação.
+1. `sh scripts/registrar_ambiente.sh <seu-nome> <modelo-exato>` (grava `ambientes/<nome>.md` e carimba seus commits e posts com nome/modelo; sem isso o dono não sabe quem você é)
+2. `sh scripts/plano.sh` (plano do lead; manda na prioridade) → `sh scripts/mural.sh ler` → `sh scripts/etapa.sh status`
+3. Etapa livre, ou `sh scripts/problema.sh abertos`, ou "Próximo passo" do `HANDOFF.md` → executar → commit pequeno → próxima tarefa.
+Etapa com lease ativa de outro: pegue outra frente, nunca espere. Só responda ao dono no fim, em até 5 linhas: feito, evidência, bloqueio, próximo passo.
 
 ## Regras
-- Branch `info` = só `README.md` (prompt final para o modelo mais capaz, sem comandos). Atualize-o quando achados ou ambiente mudarem, e mais nada nela.
-- Trabalhe só na branch do projeto, neste clone. Nunca altere `main`, `0`, `backup`. Não leia `_archived/`, `.bundle`, `.tar.gz`, outras branches.
-- Autorização total: terminal, instalar, editar, commit e push sem pedir. O dono não responde nem executa nada: não pergunte, não escreva "o dono precisa X".
-- Dado faltante: obtenha no ambiente ou cubra todas as hipóteses (ex.: drivers de todos os chips comuns). Dúvida: adote a mais provável, registre em `HANDOFF.md` (Premissas), troque se a evidência contrariar.
-- Nunca conclua "impossível". Bloqueio só com tentativas registradas + caminho alternativo proposto. Falhou: próximo caminho.
-- O entregável roda sozinho na máquina do dono (sem digitar nada, detecta hardware, tenta tudo, grava log).
-- Executar vale mais que analisar: monte o ambiente (`sh setup.sh`, idempotente), rode, corrija, repita até validar. Tarefa longa: segundo plano com log (`nohup <cmd> > .work/logs/<nome>.log 2>&1 &`), acompanhe com `tail`.
-- Simule o mais perto possível o que não der para reproduzir e documente a diferença.
+- Trabalhe só na branch do projeto (`wwii`), neste clone. Nunca altere `main`, `0`, `backup`. Não leia `_archived/`, `.bundle`, `.tar.gz`, outras branches (exceto `lider` via `plano.sh`).
+- Branch `info` = só `README.md` (prompt final para o modelo mais capaz). Atualize quando achados ou ambiente mudarem, e mais nada nela.
+- Autorização total: terminal, instalar, editar, commit e push sem pedir. O dono não responde nem executa nada.
+- Dado faltante: obtenha no ambiente ou cubra todas as hipóteses. Dúvida: adote a mais provável, registre em `HANDOFF.md` (Premissas), troque se a evidência contrariar.
+- Nunca conclua "impossível": só bloqueio com tentativas registradas + caminho alternativo. Falhou: próximo caminho.
+- O entregável roda sozinho na máquina do dono (sem digitar, detecta hardware, tenta tudo, grava log). Comandos que o dono digita à mão: curtíssimos.
+- Executar vale mais que analisar: `sh setup.sh` (idempotente), rode, corrija, repita. Tarefa longa: `nohup <cmd> > .work/logs/<nome>.log 2>&1 &` e `tail`.
+- Simule o que não der para reproduzir e documente a diferença.
 
-## Trabalhe até se esgotar (vale para todo agente)
-- **Não pare por conta própria.** Terminou uma tarefa: pegue a próxima, sem perguntar. Ordem: `sh scripts/plano.sh` → `sh scripts/problema.sh abertos` → `sh scripts/etapa.sh status` → "Próximo passo" do `HANDOFF.md` → hipóteses do `README.md` da branch `info` (§6).
-- Só pare quando (1) o limite do SEU ambiente impedir (tempo, RAM, rede, ferramenta ausente) **ou** (2) toda alternativa viável já tiver tentativa registrada. Em ambos os casos: registre no repo (`PROGRESS.md`, `HANDOFF.md`, `ambientes/<seu-nome>.md`) o que tentou, o que bloqueou e qual é o próximo caminho.
-- Bloqueio de ambiente não é bloqueio do projeto: escale (`scripts/escalar.sh`) e siga para outra frente que seu ambiente permita.
-- Falou "pronto" sem ter esgotado as hipóteses do `info` (§6) e os problemas abertos = parou cedo. Volte.
+## Trabalhe até se esgotar
+Terminou: pegue a próxima, sem perguntar. Só pare quando (1) o limite do SEU ambiente impedir, ou (2) toda alternativa viável tiver tentativa registrada. Nos dois casos registre (`PROGRESS.md`, `HANDOFF.md`, `ambientes/<nome>.md`) o que tentou, o que bloqueou e o próximo caminho. Bloqueio de ambiente não é do projeto: `scripts/escalar.sh` e outra frente. Disse "pronto" sem esgotar problemas abertos = parou cedo.
 
-## Ambiente é por agente (não misture)
-- Cada agente roda numa máquina diferente (CPU, RAM, rede, ferramentas). Nunca atribua a um agente a medida de outro, nem generalize ("o sandbox tem X").
-- Ao começar: `sh scripts/registrar_ambiente.sh <seu-nome>` grava `ambientes/<seu-nome>.md` com o que **foi medido** e as limitações. Complete a seção "Notas do agente" com o que só você descobriu. Só edite o seu arquivo.
-- Medida de outro agente só entra com atribuição ("qoder reportou ... em boot_winre_iso.md").
+## Ambiente é por agente
+Cada agente roda numa máquina diferente. Nunca atribua a um agente a medida de outro nem generalize ("o sandbox tem X"). Medida alheia só com atribuição. Edite só o seu `ambientes/<nome>.md`. **Ambiente real do desafio** (WinRE 1809: o que existe e o que falta, por nome): `docs/imagem/INVENTARIO.md`. Consulte antes de afirmar "existe X".
 
-## Leitura (contexto mínimo, nesta ordem, ~10 KB)
-`sh scripts/plano.sh` (PLANO do lead, vive na branch `lider`; manda na prioridade) · `AGENTS.md` · `PROMPT.md` · `HANDOFF.md`.
-`PROGRESS.md` e `docs/evidence/` crescem: só o fim (`tail -20`). Da branch `lider` só o PLANO, via `plano.sh`; nunca abra `INDICE-PARA-O-LIDER.md`.
+## Comunidade (raciocínio coletivo)
+- `sh scripts/mural.sh ler` no início da rodada; `proposta`, `achado` e `pergunta` para publicar; `apoio`, `critica`, `refuta`, `resposta <id>` para reagir.
+- **Cada rodada, revise ao menos 1 post de outro agente** (pendentes aparecem em `mural.sh ler`). Refutar com medição vale tanto quanto propor.
+- Proposta leva requisitos e nível de evidência: `mural.sh proposta "<ideia>" R1,R3 N1`. Níveis N0–N4 e critérios em `EVALS.md`.
+- Falha técnica concreta vai para `PROBLEMAS.md` (abaixo); ideia, achado e debate vão para o mural. Não duplique.
 
-## Fluxo automático com o lead (nada a rodar)
-- O lead só escreve `PLANO-DO-LIDER.md` na branch `lider`. A cada commit seu, o hook (`scripts/sync.sh`) copia o plano para `.work/PLANO-DO-LIDER.md` e imprime `>>> PLANO DO LIDER MUDOU` com as linhas novas. Viu o aviso: leia esse arquivo antes de seguir.
-- Seus `docs/retorno/<ID>.md` sobem sozinhos no commit para `lider:RETORNO/<ID>.md`, e o INDICE do lead ganha a linha `Retornos` com o veredito de cada id. Não copie nada à mão.
-- Resumo: o dono só manda continuar. Trabalhe, faça commits pequenos, e o plano e os retornos circulam pelos hooks.
+## Cooperação técnica (quadro: PROBLEMAS.md)
+`problema.sh abertos` no início. Travou? `problema.sh buscar <termo>` antes de gastar; nada achado: `novo "<título>: <contexto + evidência>"`. Cada falha: `tentou <id> "<fez> -> <resultado>"`. Achou: `resolveu <id> "<comando + prova>"`. 2 tentativas sem solução: `sh scripts/escalar.sh <id> "<pergunta objetiva>" "<hipóteses não testadas>"`; a resposta vem no PLANO, por id.
+
+## Leitura (contexto mínimo, ~8 KB)
+`sh scripts/plano.sh` · `AGENTS.md` · `PROMPT.md` · `HANDOFF.md`. `PROGRESS.md` e `docs/evidence/`: só o fim (`tail -20`). Nunca abra `INDICE-PARA-O-LIDER.md`.
+
+## Fluxo com o lead (hooks, nada a rodar)
+O lead só escreve `PLANO-DO-LIDER.md` na branch `lider`. Cada commit seu dispara `scripts/sync.sh`: copia o plano para `.work/PLANO-DO-LIDER.md` e imprime `>>> PLANO DO LIDER MUDOU` se mudou (leia antes de seguir). Seus `docs/retorno/<ID>.md` sobem sozinhos para `lider:RETORNO/<ID>.md`. Commits pequenos e imediatos: o hook faz o push e grava `PRESENCA.md` (não edite). Push falhou (`.work/logs/push.log`): repita até passar; commit local não é entrega.
 
 ## Escrita (para um leitor mais inteligente que você: só o que importa)
-- Nada só no chat da sessão. Registre no repo, no fim do arquivo, sem duplicar, até 500 caracteres por entrada: descoberta, decisão, evidência (comando + saída).
-- `HANDOFF.md` = snapshot: reescreva ao fim da rodada (fase, próximo passo, premissas, bloqueios). Sem histórico.
-- `INDICE-PARA-O-LIDER.md` = índice do lead (até 2 KB), mantido por `relatorio.sh estado` e por `escalar.sh`. Não escreva problema direto nele.
-- Sugestão de processo: `sh scripts/sugerir.sh perda|ideia "<texto>"` quando algo gastou rodada à toa. Só escreva; ninguém precisa ler.
-- O PLANO é do lead (branch `lider`, só ele escreve). O lead só acessa essa branch: fale com ele pelo relatório.
-
-## Cooperação (quadro único: PROBLEMAS.md)
-- Início da rodada: `sh scripts/problema.sh abertos`. Destravar o que outro travou vale tanto quanto avançar a sua etapa.
-- Travou? Antes de gastar: `problema.sh buscar <termo>` (reuse solução existente). Nada achado: `problema.sh novo "<título>: <contexto + evidência>"`.
-- Cada falha: `problema.sh tentou <id> "<o que fez> -> <resultado>"`. Achou o caminho: `problema.sh resolveu <id> "<comando + prova>"`, para os outros reaproveitarem.
-- 2 tentativas sem solução e sem `[LEAD]`: `sh scripts/escalar.sh <id> "<pergunta objetiva>" "<hipóteses não testadas>"`. Gera o dossiê do lead. A resposta vem no PLANO (seção Respostas), por id.
+- Nada só no chat. Registre no repo, no fim do arquivo, sem duplicar, até 500 caracteres por entrada: descoberta, decisão, evidência (comando + saída).
+- `HANDOFF.md` = snapshot, reescreva ao fim da rodada. `INDICE-PARA-O-LIDER.md` é do `relatorio.sh`/`escalar.sh`. O PLANO é só do lead.
+- Perda de rodada: `sh scripts/sugerir.sh perda|ideia "<texto>"`.
+- **Nomes**: documentos de controle na raiz em `MAIÚSCULAS.md`; em `docs/` em `minúsculas-com-hífen.md` (exceto `DOSSIE.md`, `INVENTARIO.md`, `ARQUITETURA.md`); sem número no nome de branch de projeto (`wwii`, não `3.wwii`). Renomeou? Atualize todas as referências (`grep -rn <nome-antigo> .`).
 
 ## Rodada
 ```
-sh iniciar.sh A=<nome> P=<projeto> S_ARQ=<arquivo-da-passphrase>   # entra e registra inicio
-sh scripts/plano.sh                                                 # direção do lead
-sh scripts/etapa.sh status                                          # quem tem o quê
-sh scripts/etapa.sh pegar E<n>                                      # reclama (lease 90 min)
-sh scripts/etapa.sh fechar E<n> "<evidencia: caminho + saida>"      # sem evidência não está feita
+sh scripts/etapa.sh pegar E<n>                                  # lease 90 min
+sh scripts/etapa.sh fechar E<n> "<evidencia: caminho + saida>"   # sem evidência não está feita
 sh scripts/relatorio.sh estado "<provado + obstáculo + próximo>"
 ```
-Commits pequenos e imediatos. O hook envia o push sozinho e grava em `PRESENCA.md`: `nome inicio <data UTC>` (ao entrar) e `nome push <data UTC> <sha>` (a cada push ok). Não edite `PRESENCA.md`. Push falhou (`.work/logs/push.log`): corrija e repita até passar; commit local não é entrega.
-Duas reclamações da mesma etapa: vale a primeira. Obstáculo imprevisto: registre em `ETAPAS.md` (append) e siga.
+Duas reclamações da mesma etapa: vale a primeira. Imprevisto: registre em `ETAPAS.md` (append) e siga. Quem obtiver a imagem roda `sh scripts/dossie.sh` e `python3 scripts/inventario.py > docs/imagem/INVENTARIO.md` e comita `docs/imagem/`. Sem a imagem: `zcat docs/imagem/winre-caminhos.txt.gz | grep -i <x>`.
 
-## Imagem
-Quem obtiver a imagem roda `sh scripts/dossie.sh` e comita `docs/imagem/` antes de tudo. Sem a imagem em disco: `docs/imagem/DOSSIE.md` e `zcat docs/imagem/winre-caminhos.txt.gz | grep -i <x>`.
+## Retorno ao lead
+Responda os ids do PLANO (D, C) com `docs/retorno/<ID>.md` a partir de `docs/retorno/MODELO.md`. Comando e saída literais; sem saída real o veredito é INCONCLUSIVO. "Wi-Fi operacional" só vale com código de erro lido (`Device Manager`/`pnputil`/`sc query` na VM ou máquina real). Driver Wi-Fi: `python3 scripts/checar_firmware.py <pasta>` antes de chamar de instalado. Responda em português.
 
-## Concluir apenas quando
-Resolvido, ou validado, ou bloqueio externo comprovado com evidência. Responda em português.
-
-## Decisão rápida (fluxograma — 10 s)
-
+## Decisão rápida
 ```
-Qual é o estado do ambiente?  → sh scripts/doctor.sh --env
-Qual etapa está livre?         → sh scripts/etapa.sh status
-Estou bloqueado?               → sh scripts/problema.sh buscar <termo>
-Preciso de driver?             → buscar_driver.py + VEN_ de docs/imagem/DOSSIE.md
-Comunicar lead?                → sh scripts/relatorio.sh estado "<msg>"
-Lease expirado de outro?       → sh scripts/watchdog.sh
+Estado do ambiente? sh scripts/doctor.sh --env     Etapa livre?  sh scripts/etapa.sh status
+Bloqueado?          sh scripts/problema.sh buscar  Existe X no WinRE? docs/imagem/INVENTARIO.md
+Driver?             buscar_driver.py + VEN_ (DOSSIE) Avanço real?   sh scripts/evals.sh
+Falar com o lead?   sh scripts/relatorio.sh estado  Lease alheio?   sh scripts/watchdog.sh
 ```
-
-## Retorno ao lead (rodada 2)
-- Responda as perguntas do PLANO-DO-LIDER.md (ids D1-D6 e C1-C4) com um arquivo por id em `docs/retorno/<ID>.md`, a partir de `docs/retorno/MODELO.md`.
-- Comando e saida literais. Sem saida real, o veredito e INCONCLUSIVO.
-- Afirmacao de funcionamento de driver (ex.: "Wi-Fi operacional") so vale com `Device Manager`/`pnputil` ou `sc query` da VM ou maquina real, mostrando codigo de erro. Presenca do arquivo nao conta.
-- Driver Wi-Fi: antes de chamar de instalado, rode `python3 scripts/checar_firmware.py <pasta>`. Firmware faltando pode dar erro 10 mesmo com INF e hash corretos.

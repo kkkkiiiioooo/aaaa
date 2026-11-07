@@ -21,7 +21,7 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-EV="$R/docs/evidence/drivers_lote.md"
+EV="$R/docs/evidence/drivers-lote.md"
 LOG="$R/.work/logs/lote-drivers.log"
 WIM="$R/.work/winre-1809.wim"
 OUT="$R/.work/drivers"

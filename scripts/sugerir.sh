@@ -13,6 +13,7 @@ case "$T" in perda|ideia) ;; *) echo 'uso: sugerir.sh perda|ideia "<texto>"'; ex
 [ -n "$X" ] || { echo 'uso: sugerir.sh perda|ideia "<texto>"'; exit 1; }
 A=$(cat "$R/.work/agente" 2>/dev/null || git -C "$R" config user.name 2>/dev/null || echo sem-nome)
 A=$(printf '%s' "$A" | tr -d ' ')
+[ -s "$R/.work/modelo" ] && A="$A/$(tr -d ' /' < "$R/.work/modelo")"   # agente/modelo
 [ -f "$F" ] || printf '# SUGESTOES (append-only; use scripts/sugerir.sh; agentes so escrevem)\n' > "$F"
 printf '%s %s %s %s\n' "$(date -u +%FT%TZ)" "$A" "$T" "$(printf '%s' "$X" | tr '\n' ' ' | cut -c1-240)" >> "$F"
 git -C "$R" add -- "$F" && git -C "$R" commit -q -m "sugestao: $T" -- "$F" 2>/dev/null || true

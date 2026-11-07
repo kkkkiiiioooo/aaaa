@@ -2,7 +2,7 @@
 """checar_firmware.py - confere se um pacote de driver traz os arquivos que o INF exige.
 
 Por que existe: driver instalado sem firmware pode dar erro 10 (o dispositivo nao inicia).
-Quem valida so o INF e o hash (drivers_lote.md) NAO pega isso.
+Quem valida so o INF e o hash (drivers-lote.md) NAO pega isso.
 
 Uso:  python3 scripts/checar_firmware.py <pasta-com-inf>
 Saida: uma linha por arquivo exigido, e codigo 0 so se nada faltar.

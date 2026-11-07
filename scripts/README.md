@@ -36,12 +36,16 @@ sh scripts/injetar_driver.sh --imagem .work/wim/Winre.wim --driver .work/drivers
 | `buscar_driver.py` | Acha o driver de um dispositivo no **Microsoft Update Catalog** pelo hardware ID (`VEN_/DEV_` ou `VID_/PID_`), baixa o `.cab` oficial e **confere se o INF cobre o dispositivo** (ignora `SUBSYS_`/`REV_`, como o Windows). `busca` / `baixa` / `inf` / `catalogo` / `lote` (um `.cab` por fabricante, tabela `drivers-1809.tsv`, cache, INF UTF-16) |
 | `lote_drivers.sh` | E2 ponta a ponta: `buscar_driver.py lote` + injeta cada fabricante no Winre.wim e confere hash |
 | `injetar_driver.sh` | Injeta um driver numa imagem Windows/WinRE (WIM/ESD) via `wimlib`, nos mesmos caminhos do `dism /Add-Driver`: `/Windows/INF`, `DriverStore/FileRepository`, `System32/drivers`. Faz backup e verifica. `--listar` mostra o que já está na imagem |
-| `diag.cmd` | **Roda no WinRE** (não no Linux): coleta os IDs de hardware (Wi-Fi/Bluetooth) e o inventário de drivers. Detalhes em `docs/evidence/driver_injecao.md` |
+| `diag.cmd` | **Roda no WinRE** (não no Linux): coleta os IDs de hardware (Wi-Fi/Bluetooth) e o inventário de drivers. Detalhes em `docs/evidence/driver-injecao.md` |
 | `download.vbs` | **Roda no WinRE** (não no Linux): baixa arquivo por HTTP(S) via `cscript` — supre a ausência de `certutil`/PowerShell |
 | `download_ftp.txt` | Modelo de comandos para `ftp.exe -s:` no WinRE (alternativa de download) |
 | `doctor.sh` | Diz o que este ambiente executa (níveis T0–T4); sai com código ≠ 0 se nada for executável. Rode antes de gastar a rodada |
 | `agente.sh` | Identidade `A=<nome>` (git config) e linha `nome inicio <data UTC>` em `PRESENCA.md`; o hook post-commit grava `nome push <data UTC> <sha>` após cada push ok |
 | `etapa.sh` | Orquestra `ETAPAS.md`: `status`, `pegar`, `fechar`, `liberar` (lease de 90 min) |
+| `mural.sh` | Praça comum dos agentes (`MURAL.md`): `ler`, `proposta`, `achado`, `pergunta`, `apoio`, `critica`, `refuta`, `resposta`, `resumo`; carimba agente/modelo |
+| `quem-primeiro.sh` | Quem (agente/modelo) citou um termo primeiro, no git de todas as branches, mural e problemas |
+| `evals.sh` | Avanço real medido (etapas, problemas, requisitos, placar por modelo, commits); critérios em `EVALS.md` |
+| `inventario.py` | Gera `docs/imagem/INVENTARIO.md` (executáveis e bibliotecas do WinRE) a partir de `winre-caminhos.txt.gz` |
 | `plano.sh` | Imprime o `PLANO-DO-LIDER.md` do lead (branch `lider`) sem abrir o `INDICE-PARA-O-LIDER.md` |
 | `problema.sh` | Quadro de problemas compartilhado (`PROBLEMAS.md`): `abertos`, `buscar`, `novo`, `tentou`, `resolveu`; commita para os outros verem |
 | `escalar.sh` | Dossiê de decisão para o lead (`casos/<id>.md` na branch `lider` + 1 linha no índice); exige 2 tentativas |

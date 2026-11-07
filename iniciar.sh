@@ -12,6 +12,7 @@
 # Variáveis:
 #   A  obrigatória — nome do agente (bate-ponto, git, evidência)
 #   S  passphrase de t.gpg; ou S_ARQ=<arquivo>. Nunca passe S em argv num pipe.
+#   M  modelo exato (ex.: claude-sonnet-5-5); entra em commits, mural e ambientes/<A>.md
 #   P  projeto por nome (wwii, iaag); padrão: wwii
 #   D 1 = dry-run: mostra o plano e não executa nada
 #   E forçar uma etapa específica (padrão: primeira livre)
@@ -71,6 +72,7 @@ git -C "$REPO" show origin/0:h.sh > "$AQUI/.h.tmp" 2>/dev/null \
   || falha "h.sh" "nao consegui extrair h.sh da branch 0"
 ( cd "$AQUI" && S="$S" A="$A" P="$P" sh .h.tmp ) || { rm -f "$AQUI/.h.tmp"; falha "h.sh"; }
 rm -f "$AQUI/.h.tmp"
+mkdir -p .work; echo "$A" > .work/agente; [ -n "${M:-}" ] && echo "$M" > .work/modelo || echo "AVISO: sem M=<modelo>; o dono nao saberá qual modelo é você"
 echo "branch: $(git rev-parse --abbrev-ref HEAD)  como: $(git config user.name || echo "?")"
 
 # ------------------------------------------------------------------- 2 setup

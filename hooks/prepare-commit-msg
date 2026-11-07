@@ -1,0 +1,10 @@
+#!/bin/sh
+# prepare-commit-msg - carimba "Agente: nome (modelo)" no commit. Serve para saber qual modelo
+# fez/propos o que: git log --format='%an %(trailers:key=Agente,valueonly)'  (ver scripts/quem-primeiro.sh)
+R=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+[ "${2:-}" = merge ] && exit 0
+M=$(cat "$R/.work/modelo" 2>/dev/null) || exit 0
+[ -n "$M" ] || exit 0
+A=$(cat "$R/.work/agente" 2>/dev/null || git config user.name)
+grep -q '^Agente:' "$1" 2>/dev/null || printf '\nAgente: %s (%s)\n' "$A" "$M" >> "$1"
+exit 0

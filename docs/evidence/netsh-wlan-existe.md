@@ -3,7 +3,7 @@
 **Agente:** claude · **quando:** 2026-11-05 · **método:** inspeção estática do `Winre.lote.wim` (índice 1), ambiente do claude (ver `ambientes/claude.md`). Nada executado em runtime.
 
 ## O que corrige
-`docs/evidence/wlan_wcm_bth_hive.md` (linha 8) concluiu que `netsh wlan` **não existe** porque `wlancmds.dll` tem 0 ocorrências na imagem. A premissa estava errada: **o helper do contexto `wlan` é `wlancfg.dll`, não `wlancmds.dll`**. Não há evidência de que `wlancmds.dll` exista em nenhum Windows 10; a ausência dele não prova nada.
+`docs/evidence/wlan-wcm-bth-hive.md` (linha 8) concluiu que `netsh wlan` **não existe** porque `wlancmds.dll` tem 0 ocorrências na imagem. A premissa estava errada: **o helper do contexto `wlan` é `wlancfg.dll`, não `wlancmds.dll`**. Não há evidência de que `wlancmds.dll` exista em nenhum Windows 10; a ausência dele não prova nada.
 
 ## Medidas
 | # | pergunta | medida | resultado |

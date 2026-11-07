@@ -14,6 +14,7 @@ R=$(cd "$(dirname "$0")/.." && pwd)
 F="${P_ARQ:-$R/PROBLEMAS.md}"
 A=$(cat "$R/.work/agente" 2>/dev/null || git -C "$R" config user.name 2>/dev/null || echo sem-nome)
 A=$(printf '%s' "$A" | tr -d ' ')
+[ -s "$R/.work/modelo" ] && A="$A/$(tr -d ' /' < "$R/.work/modelo")"   # agente/modelo
 D=$(date -u +%FT%TZ)
 M="${1:-}"
 limpa(){ printf '%s' "$*" | tr '\n' ' ' | sed 's/  */ /g' | cut -c1-300; }
