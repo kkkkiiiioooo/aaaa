@@ -54,3 +54,4 @@ E4 | mavis | 2026-11-07T12:33Z | ativa | autorun completa no PE (autorun-wwii en
 E4 | mavis | 2026-11-07T13:10Z | ativa | 6/6 drivers carregam no PE (drvload Successfully loaded); docs/evidence/e4-drivers-6-de-6-r5.txt
 E4 | mavis | 2026-11-07T13:16Z | feita | docs/evidence/e4-boot-real-cpu-max.md PE sobe sozinho em TCG, autorun completa (autorun-wwii end), host le o log; e4-autorun-completo-r2.md wlansvc sobe; e4-drivers-0x80070002.md 6/6 drivers carregam (e4-drivers-6-de-6-r5.txt)
 E5 | mavis | 2026-11-07T15:28Z | ativa | transporte de download RESOLVIDO: PE baixa por HTTP e grava byte a byte (sha256 igual ao original); falta aplicar a imagem (setup) e o ESD real; docs/evidence/e5-transporte-download-pe.md
+E5 | mavis | 2026-11-07T15:35Z | liberada | transporte resolvido; proximo (base64 no PE ou FTP com PASV) esta no HANDOFF - liberar para o proximo agente
