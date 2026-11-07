@@ -96,12 +96,22 @@ if exist %SystemRoot%\System32\ftp.exe (
   echo binary>> %SystemDrive%\ftp.txt
   echo get w w wii-teste.bin C:\wwii-ftp.bin>> %SystemDrive%\ftp.txt
   echo bye>> %SystemDrive%\ftp.txt
-  rem -p = modo PASSIVO. Sem ele o ftp.exe usa PORT (ativo) e o NAT/slirp nao
-  rem consegue a conexao de dados: medido em 2026-11-07 ("500 Illegal PORT
-  rem command / 425 Use PORT or PASV first"), com o login e o modo binario OK.
-  ftp.exe -n -p -s:%SystemDrive%\ftp.txt >> %LOG% 2>&1
+  rem medido em 2026-11-07: o ftp.exe do WinRE 1809 manda PORT (modo ATIVO) e o
+  rem NAT/slirp nao honra a conexao de dados ("500 Illegal PORT command / 425 Use
+  rem PORT or PASV first"), com login e modo binario OK. O ftp.exe nao tem switch
+  de modo passivo nesta versao.
+  ftp.exe -n -s:%SystemDrive%\ftp.txt >> %LOG% 2>&1
 ) else (
   echo ftp.exe AUSENTE na imagem >> %LOG%
+)
+call :persist
+
+rem --- D2: download em JScript (grava binario sem ADODB, que nao existe no 1809) ---
+echo --- download HTTP JS (D2) --- >> %LOG%
+if exist %SystemRoot%\System32\download-js.js (
+  cscript //nologo %SystemRoot%\System32\download-js.js %URL% C:\wwii-js.bin >> %LOG% 2>&1
+) else (
+  echo download-js.js AUSENTE na imagem >> %LOG%
 )
 call :persist
 

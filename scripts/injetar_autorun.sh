@@ -22,6 +22,8 @@ mkdir -p "$R/.work/injetar"
   # D2 do lead: o transporte do ESD e HTTP (cscript + WinHttpRequest). O WinRE 1809
   # nao tem certutil nem powershell, entao o download.vbs e o unico caminho.
   printf 'add %s /Windows/System32/download.vbs\n' "$R/scripts/download.vbs"
+  # downloader em JScript: grava binario sem ADODB (que nao existe no WinRE 1809)
+  printf 'add %s /Windows/System32/download-js.js\n' "$R/scripts/download-js.js"
 } > "$CMDFILE"
 
 echo "[autorun] atualizando $IMAGEM"
@@ -32,10 +34,10 @@ fi
 # verifica
 LISTA=$(wimlib-imagex dir "$IMAGEM" 1 2>/dev/null)
 ok=0
-for p in /Windows/System32/winpeshl.ini /Windows/System32/autorun-wwii.cmd /Windows/System32/diag.cmd /Windows/System32/download.vbs; do
+for p in /Windows/System32/winpeshl.ini /Windows/System32/autorun-wwii.cmd /Windows/System32/diag.cmd /Windows/System32/download.vbs /Windows/System32/download-js.js; do
   if echo "$LISTA" | grep -qi "$p"; then echo "[autorun] OK $p"; ok=$((ok+1)); else echo "[autorun] FALTA $p"; fi
 done
-[ "$ok" -eq 4 ] || exit 1
+[ "$ok" -eq 5 ] || exit 1
 
 # confere que o INI injetado cita autorun-wwii
 mkdir -p "$R/.work/verif-autorun"
