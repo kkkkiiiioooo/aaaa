@@ -1,0 +1,19 @@
+=== autorun-wwii start === 
+Sat 11/07/2026 13:07:31.58 
+persist C: 
+persist D: 
+persist C: 
+persist D: 
+drvload netwtw06.inf 
+DrvLoad: Successfully loaded X:\windows\INF\netwtw06.inf.
+drvload netrtwlane.inf 
+DrvLoad: Successfully loaded X:\windows\INF\netrtwlane.inf.
+drvload netathr10x.inf 
+DrvLoad: Successfully loaded X:\windows\INF\netathr10x.inf.
+drvload bcmwdi.inf 
+DrvLoad: Successfully loaded X:\windows\INF\bcmwdi.inf.
+drvload mtkwl6ex.inf 
+DrvLoad: Successfully loaded X:\windows\INF\mtkwl6ex.inf.
+drvload mrvlpcie8897.inf 
+DrvLoad: Successfully loaded X:\windows\INF\mrvlpcie8897.inf.
+persist C: 

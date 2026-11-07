@@ -43,10 +43,12 @@ def dependencias(caminho):
         # o nome da secao pode ter sufixo: [SourceDisksFiles.amd64], [CopyFiles.NT]
         base = secao.split(".")[0]
         # CatalogFile pode estar em [CatalogFile] ou dentro de [Version] (os dois
-        # aparecem em INFs de verdade): o .cat tem que estar AO LADO do INF, senao
-        # o setupapi responde 0xE000022F ("driver package does not contain a catalog
+        # aparecem em INFs de verdade), e pode ter sufixo de plataforma
+        # ("CatalogFile.NTamd64=BCM43XX64.CAT" - o Broadcom usa um catalogo
+        # 32-bit e outro 64-bit). O .cat tem que estar AO LADO do INF, senao o
+        # setupapi responde 0xE000022F ("driver package does not contain a catalog
         # file") - medido no WinRE 1809 em 2026-11-07.
-        if re.match(r"(?i)^catalogfile\s*=", s):
+        if re.match(r"(?i)^catalogfile(\.[^=]*)?\s*=", s):
             nome = re.split(r"=", s, 1)[1].split(";")[0].strip()
             if nome:
                 refs.add(nome)
