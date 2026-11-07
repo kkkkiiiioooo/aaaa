@@ -106,3 +106,52 @@ assinado isso corrompe o arquivo.
 | HTTP + `download-js.js` (JScript) | **OK** | funciona, com perda em 31 valores de byte | `ResponseBody` vem nulo no JScript |
 | FTP (`ftp.exe`) | **OK** (login + binário) | **falta** (modo ativo x NAT) | não há switch de PASV |
 | SMB + `xcopy` | não testado | não testado | `xcopy.exe` e o serviço Workstation existem na imagem |
+
+---
+
+## RESOLVIDO: o PE baixa por HTTP e grava o arquivo **byte a byte** (run R13)
+
+O caminho que funciona dentro do WinRE 1809 é **HTTP + `ResponseText` + FSO em modo
+ASCII** (`scripts/download-js.js`):
+
+```
+--- download HTTP JS (D2) ---
+winhttp status=200
+winhttp ResponseText: 5020 chars
+ok: C:\wwii-js.bin (5020 bytes, via winhttp-text)
+```
+
+E o **host confirma** (o arquivo foi lido do volume FAT do convidado pelo `mcopy`):
+
+```
+$ sha256sum /tmp/wwii-js.bin .work/www/wwii-teste.bin
+cd678b0d1aa9ff92af1227d989e79d9a1d06877dd5b13cf1823c7f337516e5dc  /tmp/wwii-js.bin
+cd678b0d1aa9ff92af1227d989e79d9a1d06877dd5b13cf1823c7f337516e5dc  .work/www/wwii-teste.bin
+*** IDENTICO ***
+```
+
+### Por que `ResponseText` e não `ResponseBody`
+
+No JScript do WinRE 1809, `http.ResponseBody` vem como um objeto Automation
+(`typeof` = `unknown`) **sem `.length` e sem `Item()` utilizável** — envolver em
+`VBArray` dá "VBArray expected" e indexar dá objeto vazio (medido em 4 runs).
+`http.ResponseText` devolve o corpo como **string**, e a escrita com
+`Scripting.FileSystemObject` em modo ASCII (1 caractere = 1 byte) grava o conteúdo
+correto: o sha256 do arquivo baixado pelo PE é **igual** ao do original.
+
+### A ressalva que importa para o ESD (o que falta medir)
+
+O FSO em modo ASCII mapeia cada caractere para 1 byte do cp1252. Os bytes
+`0x81..0x9F` **não têm** representação no cp1252 e saem como `?` (0x3F). O arquivo de
+teste é ASCII, então saiu perfeito; **um ESD (binário, assinado) tem bytes nessa
+faixa** e sairia corrompido.
+
+Duas saídas para isso (nenhuma testada ainda):
+
+1. servir o conteúdo **em base64** e decodificar no PE antes de gravar — o FSO
+   continua gravando bytes, mas agora todos os valores são < 0x80 (ASCII), então
+   não há perda;
+2. FTP com PASV (falta um cliente que faça PASV dentro do PE).
+
+A opção 1 é a mais barata e cabe no `download-js.js` (um `base64` do VBScript/JScript
+embutido + a escrita ASCII). **É o próximo passo natural da E5.**
