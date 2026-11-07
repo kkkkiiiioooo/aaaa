@@ -85,6 +85,26 @@ if exist %SystemRoot%\System32\download.vbs (
 )
 call :persist
 
+rem --- D2 do lead, PLANO B: ftp.exe ---
+rem Medido em 2026-11-07: o download.vbs (HTTP) CHEGA no servidor dentro do PE, mas
+rem nao consegue gravar o corpo da resposta: o WinRE 1809 nao tem ADODB.Stream
+rem (falta WinPE-MDAC). O ftp.exe existe na imagem e grava binario nativamente.
+echo --- download FTP (D2 plano B) --- >> %LOG%
+if exist %SystemRoot%\System32\ftp.exe (
+  echo open 10.0.2.2> %SystemDrive%\ftp.txt
+  echo user anonymous anonymous>> %SystemDrive%\ftp.txt
+  echo binary>> %SystemDrive%\ftp.txt
+  echo get w w wii-teste.bin C:\wwii-ftp.bin>> %SystemDrive%\ftp.txt
+  echo bye>> %SystemDrive%\ftp.txt
+  rem -p = modo PASSIVO. Sem ele o ftp.exe usa PORT (ativo) e o NAT/slirp nao
+  rem consegue a conexao de dados: medido em 2026-11-07 ("500 Illegal PORT
+  rem command / 425 Use PORT or PASV first"), com o login e o modo binario OK.
+  ftp.exe -n -p -s:%SystemDrive%\ftp.txt >> %LOG% 2>&1
+) else (
+  echo ftp.exe AUSENTE na imagem >> %LOG%
+)
+call :persist
+
 echo === autorun-wwii end === >> %LOG%
 call :persist
 endlocal
