@@ -67,6 +67,24 @@ echo --- ipconfig --- >> %LOG%
 ipconfig /all >> %LOG% 2>&1
 call :persist
 
+rem --- D2 do lead: download HTTP (cscript + WinHttpRequest) ---
+rem O WinRE 1809 nao tem certutil nem powershell (conferido por nome exato), entao o
+rem transporte do ESD e o scripts/download.vbs. A URL vem de um arquivo
+rem (wwii-url.txt) em qualquer volume; sem ele, usa a URL do ambiente emulado
+rem (10.0.2.2 = o host do QEMU na rede slirp).
+echo --- download HTTP (D2) --- >> %LOG%
+set URL=
+if exist C:\wwii-url.txt set /p URL=<C:\wwii-url.txt
+if not defined URL if exist X:\wwii-url.txt set /p URL=<X:\wwii-url.txt
+if not defined URL set URL=http://10.0.2.2:8000/wwii-teste.bin
+echo url: %URL% >> %LOG%
+if exist %SystemRoot%\System32\download.vbs (
+  cscript //nologo %SystemRoot%\System32\download.vbs %URL% C:\wwii-download.bin >> %LOG% 2>&1
+) else (
+  echo download.vbs AUSENTE na imagem >> %LOG%
+)
+call :persist
+
 echo === autorun-wwii end === >> %LOG%
 call :persist
 endlocal

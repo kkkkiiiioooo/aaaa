@@ -109,3 +109,47 @@ velho não é gate.**
    baixados do catálogo, INF conferido, injetado no WIM) para fechar o log inteiro
    (`netsh wlan show drivers`, `ipconfig /all`) — o critério de aceite do D1.
 3. Com o log completo em mãos, seguir para E5 (aplicar imagem em disco virtual).
+
+---
+
+## ABLAÇÃO (2026-11-07, run `e4-abl-qemu64`): o modelo de CPU **não** é a causa do BSOD
+
+Mesma ISO (`winre-v4.iso`), mudando **uma** variável em relação ao run que funcionou:
+
+```sh
+DISP=vnc=127.0.0.1:1 VNC=5901 sh scripts/boot-winre.sh \
+  --iso .work/iso/winre-v4.iso --timeout 700 --poll 15 \
+  --mem 2048 --cpus 2 --cpu qemu64 --bsod --blockstats
+```
+
+Resultado: **o PE sobe, o autorun roda e os 6 drivers carregam** — igual ao run com
+`-cpu max` (log literal em `docs/evidence/e4-ablacao-qemu64.txt`):
+
+```
+=== autorun-wwii start ===
+Sat 11/07/2026 13:19:49.36
+...
+drvload netwtw06.inf      DrvLoad: Successfully loaded ...
+drvload netrtwlane.inf    DrvLoad: Successfully loaded ...
+drvload netathr10x.inf    DrvLoad: Successfully loaded ...
+drvload bcmwdi.inf        DrvLoad: Successfully loaded ...
+drvload mtkwl6ex.inf      DrvLoad: Successfully loaded ...
+drvload mrvlpcie8897.inf  DrvLoad: Successfully loaded ...
+```
+
+**Conclusão:** o BSOD antigo **não** vem do `-cpu qemu64`. Ele vem de **`-smp 3/4`**
+(vários vCPUs emulado = MTTCG, que é lento e é a suspeita principal) **ou** de
+**`-m 4096`** — as duas linhas que deram BSOD na matriz antiga (`base` com `-smp 3` e
+`xp` com `-smp 4`) são exatamente as que usavam mais de 2 vCPUs, e a linha `gate`
+(`-smp 4`, mas LZMS, que nunca chegou ao kernel) não deu BSOD só porque não chegou lá.
+
+| configuração | resultado |
+|---|---|
+| `-cpu max -smp 2 -m 2048` | PE sobe, autorun roda, 6/6 drivers (R5) |
+| `-cpu qemu64 -smp 2 -m 2048` | PE sobe, autorun roda, 6/6 drivers (ablação) |
+| `-cpu qemu64 -smp 3 -m 4096` (matriz antiga) | **BSOD em 36 s** (WIM `raw`) |
+| `-cpu qemu64 -smp 4 -m 4096` (matriz antiga) | **BSOD em 425 s** (WIM XPRESS) |
+
+**Para quem for repetir:** use `-smp 1` ou `-smp 2` e **não** `-m 4096` em máquina de
+3 GB (o QEMU chega a 2,66 GB de RSS e o OOM killer do host mata o QEMU). O `-cpu max`
+não é necessário — mas também não atrapalha.
