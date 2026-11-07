@@ -2,7 +2,7 @@
 Snapshot (reescreva ao fim de cada rodada, sem histórico). Histórico: `PROGRESS.md` (só o fim). Última reescrita: 2026-11-07, mavis (MiniMax-M3.1-Flash).
 
 ## Fase
-**E4 resolvida no essencial. E2 refeita de verdade (runtime).**
+**E4 resolvida no essencial. E2 refeita de verdade (runtime). E5 começada.**
 O WinRE 1809 sobe sozinho em QEMU TCG, o `autorun-wwii.cmd` roda **inteiro** e o host lê
 o log do disco. **Os 6 drivers da E2 carregam no PE** (`DrvLoad: Successfully loaded` 6/6).
 
@@ -10,7 +10,9 @@ o log do disco. **Os 6 drivers da E2 carregam no PE** (`DrvLoad: Successfully lo
 - E4: PE sobe sozinho + autorun completo + log lido pelo host (N3).
 - E2 refeita: 6/6 `.cab` oficiais, INFs conferidos, **injetados de forma carregável** e
   **carregados de fato no PE**.
-- E5 e E6 livres. Nada bloqueia o próximo passo.
+- E5 **começada**: o transporte de download dentro do PE foi medido até o fim (ver
+  "E5: o transporte" abaixo). O que falta é a **escrita binária** do arquivo no PE.
+- E6 livre. Nada bloqueia o próximo passo.
 
 ## O que era o bloqueio da E4 (e como foi destravada)
 
@@ -50,10 +52,26 @@ Ablação sugerida no mural (m0712244859): uma variável por vez, ~7 min por run
 - Descartado por medição: a injeção (WIM pristine dava o mesmo BSOD) e a compressão do
   WIM (raw e XPRESS quebravam; LZMS e LZX não alcançavam o ponto do crash na janela).
 
+## E5: o transporte de download dentro do PE (medido, não suposto)
+
+| caminho | rede | escrita em disco | por quê |
+|---|---|---|---|
+| HTTP + `download.vbs` (VBS/ADODB) | **OK** — o PE chega no servidor | **falta** | o WinRE 1809 **não tem ADODB.Stream** (falta WinPE-MDAC) |
+| HTTP + `download-js.js` (JScript/FSO) | **OK** | funciona, com perda em 31 valores | o `ResponseBody` chega como objeto Automation (sem `.length`); o FSO em ASCII nao devolve `0x81..0x9F` |
+| FTP (`ftp.exe`) | **OK** — conecta, autentica, modo binário | **falta** | o `ftp.exe` do WinRE usa **PORT (ativo)** e **não tem switch de PASV**; NAT/slirp nao honra modo ativo |
+| SMB + `xcopy` | não testado | não testado | `xcopy.exe` e o serviço Workstation existem na imagem |
+
+`docs/evidence/e5-transporte-download-pe.md` tem a saída literal de cada tentativa.
+**O D2 do lead precisa ser redecidido**: o caminho HTTP funciona na rede, mas o PE 1809
+não tem primitivo de escrita binária confiável. Opções: FTP com PASV (falta um cliente
+que faça PASV dentro do PE), injetar o MDAC na imagem, ou servir o ESD de um jeito que
+o PE grave sem perda.
+
 ## Próximo passo (nesta ordem)
 
-1. **E5**: aplicar a imagem em disco virtual a partir do PE (D2/D3 do lead: HTTP para
-   baixar o ESD + export de drivers antes do wipe). O caminho está aberto: o PE roda.
+1. **E5**: fechar a escrita binária no PE (ver tabela acima) e então aplicar a imagem em
+   disco virtual a partir do PE (D2/D3 do lead: baixar o ESD + export de drivers antes
+   do wipe). O caminho está aberto: o PE roda e tem rede.
 2. **Ablação do BSOD** (para o registro do BSOD antigo): uma variável por vez.
 3. **Para a máquina do dono**: os drivers já carregam; falta provar a **interface** Wi-Fi
    (o QEMU não tem hardware Wi-Fi) e resolver o **transporte** do WIM modificado até a
