@@ -18,7 +18,7 @@ check_once() {
   NOW_S=$(date +%s)
   printf '[%s] watchdog verificando etapas...\n' "$(ts)"
   for ET in E1 E2 E3 E4 E5 E6; do
-    REC=$(awk -F' *\\| *' -v e="$ET" '$1==e {a=$2;i=$3;s=$4} END{if(a!=""&&s=="ativa")print i}' "$R/ETAPAS.md" 2>/dev/null)
+    REC=$(awk -F' *\\| *' -v e="$ET" '$1==e {a=$2;i=$3;s=$4} END{if(a!=""&&s=="ativa")print i "|" a}' "$R/ETAPAS.md" 2>/dev/null)
     [ -z "$REC" ] && continue
     HOLD=${REC#*|}; REC=${REC%%|*}   # dono do lease (o log de etapa grava quem RODOU o watchdog)
     INI_S=$(date -d "${REC}" +%s 2>/dev/null) || continue
