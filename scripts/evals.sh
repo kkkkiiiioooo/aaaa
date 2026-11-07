@@ -7,7 +7,7 @@ R=$(cd "$(dirname "$0")/.." && pwd); cd "$R" || exit 1
 
 echo "== ETAPAS (gate = evidencia, nao reclamacao)"
 sh scripts/etapa.sh status 2>/dev/null | awk '/^E[0-9]/{
-  e=($0~/ feita/)?"feita":($0~/EXPIRADA/)?"expirada":($0~/LIVRE/)?"livre":"ativa"; c[e]++; printf "  %s %s\n",$1,e}
+  e=($0~/ feita/)?"feita":($0~/EXPIRADA/)?"expirada":($0~/LIVRE|liberada/)?"livre":"ativa"; c[e]++; printf "  %s %s\n",$1,e}
   END{printf "  total: feita=%d ativa=%d expirada=%d livre=%d\n",c["feita"],c["ativa"],c["expirada"],c["livre"]}'
 
 echo "== PROBLEMAS"
