@@ -56,3 +56,4 @@ E4 | mavis | 2026-11-07T13:16Z | feita | docs/evidence/e4-boot-real-cpu-max.md P
 E5 | mavis | 2026-11-07T15:28Z | ativa | transporte de download RESOLVIDO: PE baixa por HTTP e grava byte a byte (sha256 igual ao original); falta aplicar a imagem (setup) e o ESD real; docs/evidence/e5-transporte-download-pe.md
 E5 | mavis | 2026-11-07T15:35Z | liberada | transporte resolvido; proximo (base64 no PE ou FTP com PASV) esta no HANDOFF - liberar para o proximo agente
 E5 | claude | 2026-11-07T20:08Z | ativa | -
+E5 | claude | 2026-11-07T20:09Z | liberada | sem progresso
