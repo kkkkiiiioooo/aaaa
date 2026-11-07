@@ -29,12 +29,29 @@ VGA=${VGA:-std}
 # cliente VNC instalado). Sem VNC definido, o script segue funcionando so com screendump.
 DISP=${DISP:-none}
 VNC=${VNC:-}
+# --- variaveis de diagnostico (2026-11-07, mavis) --------------------------------
+# CPU: modelo de CPU do QEMU. O padrao antigo e qemu64; a E4 mediu BSOD com ele.
+#      `-cpu max` e a alternativa (so ela destrava o boot). Medir e o que importa.
+CPU=${CPU:-qemu64}
+# BLOCKSTATS=1: grava `info blockstats` a cada poll (mede onde o boot travou).
+BLOCKSTATS=${BLOCKSTATS:-0}
+# BSOD=1: classifica cada quadro (scripts/detectar-bsod.py); ao ver a tela laranja
+#         manda a seta para a direita pelo monitor, que vira a PAGINA TECNICA do
+#         bugcheck (codigo hex, parametros e modulo culpado). Sem isso so temos o
+#         nome do stop code, que nao identifica driver.
+BSOD=${BSOD:-0}
+# DEBUGCON=<arquivo>: saida do debug port do QEMU (so util com `debug on` no BCD).
+DEBUGCON=${DEBUGCON:-}
 while [ $# -gt 0 ]; do
   case "$1" in
     --iso) ISO="$2"; shift 2;; --disk) DISK="$2"; shift 2;;
     --timeout) TIMEOUT="$2"; shift 2;; --poll) POLL="$2"; shift 2;;
     --mem) MEM="$2"; shift 2;; --cpus) CPUS="$2"; shift 2;;
     --vga) VGA="$2"; shift 2;;
+    --cpu) CPU="$2"; shift 2;;
+    --blockstats) BLOCKSTATS=1; shift;;
+    --bsod) BSOD=1; shift;;
+    --debugcon) DEBUGCON="$2"; shift 2;;
     *) echo "opcao desconhecida: $1"; exit 2;;
   esac
 done
@@ -50,6 +67,12 @@ command -v socat >/dev/null 2>&1 || die "falta socat (para o monitor do QEMU)"
 mkdir -p "$VM" "$(dirname "$DISK")"
 
 # --- mtools enxergando a particao 1 do arquivo-bruto (sem loop, sem mount) ---
+# `partition=1` e o jeito bonito, mas o mtools 4.0.32 deste sandbox responde
+# "Big disks not supported on this architecture" para QUALQUER imagem com
+# partition= (medido em 100M/512M/1G/2G/3G, 2026-11-07). O mesmo volume lido com
+# `offset=` funciona. Entao: tenta partition=1 e cai para offset= (1 MB = LBA 2048,
+# que e o inicio da particao que o proprio script grava no MBR).
+OFFSET=1048576
 MTSRC="$VM/mtoolsrc"
 printf 'mtools_skip_check=1\ndrive t:\n  file="%s"\n  partition=1\n' "$DISK" > "$MTSRC"
 export MTOOLSRC="$MTSRC"   # mdir/mtype/mcopy/mrm passam a ver t:/ = particao 1 do disco
@@ -67,6 +90,11 @@ open(p,'r+b').write(b'\x00'*446+e+b'\x00'*48+b'\x55\xaa')
 PY
   mformat -i "$DISK@@1048576" -F -v WWIIDS ::  >/dev/null 2>&1 || die "mformat"
 fi
+mdir t:/ >/dev/null 2>&1 || {
+  say "mtools recusou partition=1; usando offset=$OFFSET"
+  printf 'mtools_skip_check=1\ndrive t:\n  file="%s"\n  offset=%s\n' "$DISK" "$OFFSET" > "$MTSRC"
+  export MTOOLSRC="$MTSRC"
+}
 mdir t:/ >/dev/null 2>&1 || die "sem FAT na particao 1 de $DISK (recrie o disco)"
 mrm t:/wwii.log >/dev/null 2>&1
 printf 'host gravou isto ANTES do boot (%s)\n' "$(date -u +%FT%TZ)" > "$VM/marca-host.txt"
@@ -102,14 +130,17 @@ say "subendo QEMU TCG ($FWMODE) mem=${MEM}MB cpus=${CPUS} timeout=${TIMEOUT}s"
 DISKAT=${DISKAT:-hda}
 MEDIA="-boot order=d -cdrom $ISO -$DISKAT $DISK"
 [ -n "${DISK_BOOT:-}" ] && MEDIA="-boot order=c -hda $DISK_BOOT -hdb $DISK"
+DBGCON=""
+[ -n "$DEBUGCON" ] && DBGCON="-debugcon file:$DEBUGCON"
 setsid sh -c "exec qemu-system-x86_64 \
   -name wwii-e4 -pidfile $PIDF \
-  -m $MEM -smp $CPUS -cpu qemu64 \
+  -m $MEM -smp $CPUS -cpu $CPU \
   $FW \
   $MEDIA \
   -netdev user,id=n0,dhcpstart=10.0.2.15 -device e1000,netdev=n0,mac=52:54:00:00:04:04 \
   -display "$DISP" -vga "$VGA" \
   -serial file:$SERIAL \
+  $DBGCON \
   -monitor unix:$MON,server,nowait" > "$LOG" 2>&1 < /dev/null &
 sleep 8
 QP=$(cat "$PIDF" 2>/dev/null || pgrep -f 'wwii-e4' | head -1)
@@ -130,7 +161,7 @@ serialmarca(){ # canal alternativo (D6): o autorun despeja o log em COM1 e o QEM
   [ -s "$SERIAL" ] && grep -aq 'autorun-wwii' "$SERIAL"
 }
 
-START=$(date +%s); N=0; FOUND=0
+START=$(date +%s); N=0; FOUND=0; BSODSTATE=""; BSODVISTO=0
 while :; do
   EL=$(( $(date +%s) - START ))
   [ "$EL" -gt "$TIMEOUT" ] && { say "timeout de ${TIMEOUT}s atingido"; break; }
@@ -138,8 +169,34 @@ while :; do
   N=$((N+1)); T=$(printf '%03d' "$N")
   shot "$T" && say "${EL}s: tela capturada (shot-$T.ppm)"
   if [ -n "$VNC" ]; then
-    python3 "$R/scripts/vncshot.py" --porta "$VNC" --saida "$VM/tela-$T.png" >/dev/null 2>&1 \
+    python3 "$R/scripts/vncshot.py" --porta "$VNC" --saida "$VM/tela-$T.ppm" >/dev/null 2>&1 \
+      && python3 "$R/scripts/ppm2png.py" "$VM/tela-$T.ppm" "$VM/tela-$T.png" >/dev/null 2>&1 \
       && say "${EL}s: tela VNC -> tela-$T.png"
+  fi
+  # --- diagnostico do bugcheck e do travamento ---------------------------------
+  # blockstats: onde o convidado parou de ler/escrever (mede, nao supoe).
+  [ "$BLOCKSTATS" = 1 ] && { mon "info blockstats" >> "$VM/blockstats.log" 2>/dev/null; }
+  # bugcheck: a tela laranja do Win10 1809 so mostra o NOME do stop code. A seta para
+  # a direita vira a pagina tecnica, que traz codigo hex, parametros e modulo culpado.
+  if [ "$BSOD" = 1 ]; then
+    FRAME=""
+    [ -s "$VM/tela-$T.ppm" ] && FRAME="$VM/tela-$T.ppm"
+    [ -z "$FRAME" ] && [ -s "$VM/shot-$T.ppm" ] && FRAME="$VM/shot-$T.ppm"
+    if [ -n "$FRAME" ]; then
+      ST=$(python3 "$R/scripts/detectar-bsod.py" "$FRAME" 2>/dev/null)
+      [ "$ST" != "$BSODSTATE" ] && { say "${EL}s: estado da tela = ${ST}"; BSODSTATE="$ST"; }
+      if [ "$ST" = bsod ] && [ "$BSODVISTO" = 0 ]; then
+        BSODVISTO=1
+        say "${EL}s: *** BUGCHECK DETECTADO *** -> mandando seta para a direita (pagina tecnica)"
+        mon "sendkey right" >/dev/null 2>&1; sleep 3
+        mon "sendkey right" >/dev/null 2>&1; sleep 2
+        if [ -n "$VNC" ]; then
+          python3 "$R/scripts/vncshot.py" --porta "$VNC" --saida "$VM/tecnico-$T.ppm" >/dev/null 2>&1 \
+            && python3 "$R/scripts/ppm2png.py" "$VM/tecnico-$T.ppm" "$VM/tecnico-$T.png" >/dev/null 2>&1 \
+            && say "${EL}s: pagina tecnica -> tecnico-$T.png"
+        fi
+      fi
+    fi
   fi
   if readlog "$T"; then
     FOUND=1
