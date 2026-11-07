@@ -27,7 +27,7 @@ Restaurar o Windows numa partição **C: formatada**, **sem cabos, pendrives ou 
 
 ## 3. O que o WinRE 1809 realmente tem — [MEDIDO]
 
-Fonte: `docs/evidence/winre_1809_evidencia.md`, `docs/evidence/wlan_wcm_bth_hive.md`. Imagem real: `Core_en-us.esd` índice 2 (WindowsPE, 17763), 21 230 arquivos; lista completa em `docs/imagem/winre-caminhos.txt.gz` (branch `wwii`).
+Fonte: `docs/evidence/winre-1809-evidencia.md`, `docs/evidence/wlan-wcm-bth-hive.md`. Imagem real: `Core_en-us.esd` índice 2 (WindowsPE, 17763), 21 230 arquivos; lista completa em `docs/imagem/winre-caminhos.txt.gz` (branch `wwii`).
 
 | Item | Estado | Consequência |
 |---|---|---|
@@ -37,7 +37,7 @@ Fonte: `docs/evidence/winre_1809_evidencia.md`, `docs/evidence/wlan_wcm_bth_hive
 | TCP/IP (`dnsapi`, `dhcpcsvc`, `iphlpapi`) | presente | IP/DNS/DHCP funcionam |
 | `certutil.exe`, `powershell.exe`, `bitsadmin.exe` | **ausentes** | runbook antigo com `certutil -urlcache` está errado |
 | `netsh.exe`, `netshell.dll`, `wlancfg.dll` | presentes | mas veja a linha seguinte |
-| `wlancfg.dll` registrado como helper do netsh (hive `\Microsoft\NetSh`: `wlancfg=wlancfg.dll`), importa `NETSH.EXE`+`wlanapi.dll`, e o `en-US/wlancfg.dll.mui` traz a ajuda de `connect`/`add profile`/`export`/`show` | presente | **`netsh wlan ...` provavelmente EXISTE** `[MEDIDO estático]`; runtime não provado. Fonte: `wwii:docs/evidence/netsh_wlan_existe.md` |
+| `wlancfg.dll` registrado como helper do netsh (hive `\Microsoft\NetSh`: `wlancfg=wlancfg.dll`), importa `NETSH.EXE`+`wlanapi.dll`, e o `en-US/wlancfg.dll.mui` traz a ajuda de `connect`/`add profile`/`export`/`show` | presente | **`netsh wlan ...` provavelmente EXISTE** `[MEDIDO estático]`; runtime não provado. Fonte: `wwii:docs/evidence/netsh-wlan-existe.md` |
 | `wlancmds.dll` | ausente (0 ocorrências) | **não é o helper do `wlan`**; a conclusão anterior do executor "netsh wlan inexistente" partiu dessa premissa errada e foi **corrigida** em 2026-11-05 |
 | `wlansvc.dll`, `wlanapi.dll`, `wlanmsm.dll`, `wlansec.dll`, `nwifi.sys`, `vwififlt.sys`, `WdiWiFi.sys`, `ndisuio.sys` | presentes | pilha WLAN existe, falta a interface de linha de comando |
 | Serviço `WlanSvc` | `Start=2` (auto), `ServiceDll=wlansvc.dll`, depende de `nativewifip`, `RpcSs`, `Ndisuio` | sem dependência de `wcmsvc` |
@@ -53,10 +53,10 @@ Correções ao que o enunciado e os planos supunham: o WinRE 1809 **traz** a pil
 
 ## 4. O que já foi construído e provado — [MEDIDO]
 
-- **E2 — drivers (6/6 fabricantes):** um `.cab` oficial por fabricante (Intel AC 8265 `VEN_8086&DEV_24FD`, Realtek RTL8822BE, Qualcomm QCA6174, Broadcom BCM4365, MediaTek MT7921, Marvell 88W8897) baixado do Catálogo Microsoft Update, INF conferido (são **UTF-16LE**), injetado no `Winre.wim` e re-extraído com hash idêntico (17/17). `Winre.wim` 254 MB → 274 MB. Fonte: `docs/evidence/drivers_lote.md`. **Limite:** `wimlib` só grava arquivos; o registro no DriverStore/hive só acontece com `dism /Add-Driver` ou `drvload` na máquina real. O PnP escolhe entre os 6.
-- **E3 — autorun offline:** `winpeshl.ini` com `[LaunchApps]` (sobe o script e depois a GUI) + `autorun-wwii.cmd` + `diag.cmd` (somente leitura) dentro do `Winre.lote.wim`. Teste `scripts/tests/unit/autorun_offline.py` PASS. **Só prova que os arquivos estão na imagem; não prova que o PE executa.** Fonte: `docs/evidence/autorun_winpe.md`.
-- **Suíte Linux (T1+T2), PASS 21/0:** fdisk real (partição de recuperação **sobrevive** ao formatar C:; md5 idêntico antes/depois) e **PAN simulado** com namespaces + `veth` (PC→celular→rede externa, caso negativo e restauração). Prova só a lógica no kernel Linux, **não** Bluetooth nem Windows. Fonte: `docs/evidence/ambiente-teste-pan-fdisk.md`, `docs/evidence/t1t2_ubuntu_fallback.md`.
-- **ISO de boot do WinRE montada do próprio WIM** (sem ADK/UUP): `scripts/montar_iso_winre.sh`. Descobertas que custaram tentativas: `etfsboot.com` exige `-boot-load-size 8` (com 4 dá `Code: 5`); o `bootmgr` PCAT vai na **raiz** e o identificador ISO9660 precisa ser exatamente `BOOTMGR;1` (xorriso grava `BOOTMGR.;1`, foi corrigido por patch); `bootfix.bin` **não** entra na ISO (senão pede tecla); UEFI/OVMF falhou 3 vezes (`No mapping`/`Not Found`) com este QEMU. Fonte: `docs/evidence/boot_winre_iso.md`.
+- **E2 — drivers (6/6 fabricantes):** um `.cab` oficial por fabricante (Intel AC 8265 `VEN_8086&DEV_24FD`, Realtek RTL8822BE, Qualcomm QCA6174, Broadcom BCM4365, MediaTek MT7921, Marvell 88W8897) baixado do Catálogo Microsoft Update, INF conferido (são **UTF-16LE**), injetado no `Winre.wim` e re-extraído com hash idêntico (17/17). `Winre.wim` 254 MB → 274 MB. Fonte: `docs/evidence/drivers-lote.md`. **Limite:** `wimlib` só grava arquivos; o registro no DriverStore/hive só acontece com `dism /Add-Driver` ou `drvload` na máquina real. O PnP escolhe entre os 6.
+- **E3 — autorun offline:** `winpeshl.ini` com `[LaunchApps]` (sobe o script e depois a GUI) + `autorun-wwii.cmd` + `diag.cmd` (somente leitura) dentro do `Winre.lote.wim`. Teste `scripts/tests/unit/autorun_offline.py` PASS. **Só prova que os arquivos estão na imagem; não prova que o PE executa.** Fonte: `docs/evidence/autorun-winpe.md`.
+- **Suíte Linux (T1+T2), PASS 21/0:** fdisk real (partição de recuperação **sobrevive** ao formatar C:; md5 idêntico antes/depois) e **PAN simulado** com namespaces + `veth` (PC→celular→rede externa, caso negativo e restauração). Prova só a lógica no kernel Linux, **não** Bluetooth nem Windows. Fonte: `docs/evidence/ambiente-teste-pan-fdisk.md`, `docs/evidence/t1t2-ubuntu-fallback.md`.
+- **ISO de boot do WinRE montada do próprio WIM** (sem ADK/UUP): `scripts/montar_iso_winre.sh`. Descobertas que custaram tentativas: `etfsboot.com` exige `-boot-load-size 8` (com 4 dá `Code: 5`); o `bootmgr` PCAT vai na **raiz** e o identificador ISO9660 precisa ser exatamente `BOOTMGR;1` (xorriso grava `BOOTMGR.;1`, foi corrigido por patch); `bootfix.bin` **não** entra na ISO (senão pede tecla); UEFI/OVMF falhou 3 vezes (`No mapping`/`Not Found`) com este QEMU. Fonte: `docs/evidence/boot-winre-iso.md`.
 
 ## 5. O que NÃO está resolvido
 
@@ -109,8 +109,8 @@ Quem mediu o quê, **com atribuição**:
 | Agente | O que foi reportado | Fonte |
 |---|---|---|
 | **claude** (executor atual) | Ubuntu 24.04.5, 1 CPU, 3 990 MB RAM, ~8 GB de disco, sem KVM, sem módulo `vfat`, QEMU 8.2.2, wimlib 1.14.4. Rede: apt, pypi, npm e github respondem; **Alpine CDN, uupdump.net, learn.microsoft.com e o catálogo do Windows Update não respondem**. Tem busca web e leitura de páginas fora do bash. | `wwii:ambientes/claude.md` (medido em 2026-11-05) |
-| **qoder** | 7 940 MB RAM, 3 CPUs, sem KVM, QEMU 6.2.0, SeaBIOS 1.15.0; todos os boots do WinRE (E4) foram feitos nessa máquina | `docs/evidence/boot_winre_iso.md` |
-| **stackai** | alcançou o Catálogo Microsoft Update e baixou os 6 `.cab` de driver (E2) | `docs/evidence/drivers_lote.md` |
+| **qoder** | 7 940 MB RAM, 3 CPUs, sem KVM, QEMU 6.2.0, SeaBIOS 1.15.0; todos os boots do WinRE (E4) foram feitos nessa máquina | `docs/evidence/boot-winre-iso.md` |
+| **stackai** | alcançou o Catálogo Microsoft Update e baixou os 6 `.cab` de driver (E2) | `docs/evidence/drivers-lote.md` |
 
 Consequência: o que o **claude** não consegue baixar (ESD, `wlancmds.dll`, drivers novos) pode ser possível em outro agente. O boot do WinRE em TCG foi medido **só no ambiente do qoder**; no do claude (1 CPU) nem foi tentado.
 
@@ -162,3 +162,5 @@ Pense em todas as possibilidades, inclusive as que contradizem o executor e o l�
 > Pesquisa profunda complementar: branch `pesquisador`, arquivo `PROMPT-PESQUISA.md`. Antes de decidir, confira se já há `RESULTADO-PESQUISA.md` lá.
 >
 > Outras regras: nunca declarar "impossível" sem tentativas registradas; marcar claramente o que é medido e o que é hipótese; nada destrutivo na máquina do dono antes do D5.
+
+> Inventario completo do ambiente real (todos os executaveis e bibliotecas, presente/ausente): `docs/imagem/INVENTARIO.md` no ramo `wwii`.
