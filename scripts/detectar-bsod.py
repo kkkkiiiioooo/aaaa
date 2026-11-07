@@ -52,20 +52,52 @@ def ler_ppm(caminho):
 
 
 def classificar(w, h, px):
-    laranja = branco = preto = 0
+    """Separa a tela de bugcheck da tela do OOBE do WinPE.
+
+    Medido em 2026-11-07 (1024x768, VNC do QEMU):
+      - BSOD: cor dominante (215,120,0) em 97% da tela + o QR code (bloco branco)
+      - OOBE do WinPE ("Choose your keyboard layout"): cor dominante (178,103,32)
+        em 100% da tela, **sem** bloco branco grande (so texto fino)
+
+    So olhar "laranja" nao basta: o OOBE do WinPE 1809 e laranja tambem. O que
+    distingue o BSOD e o QR code (bloco branco grande) e o tom mais saturado
+    do fundo (R>=195 e B<=45).
+    """
+    contagem = {}
     total = w * h
     for i in range(0, total * 3, 3):
-        r, g, b = px[i], px[i + 1], px[i + 2]
-        # laranja do BSOD do Win10 1809: fundo #E85B04 aprox
+        k = (px[i], px[i + 1], px[i + 2])
+        contagem[k] = contagem.get(k, 0) + 1
+    dom = max(contagem.items(), key=lambda kv: kv[1])[0]
+    frac_dom = contagem[dom] / total
+
+    laranja = branco = 0
+    for (r, g, b), c in contagem.items():
         if r >= 150 and 20 <= g <= 140 and b <= 70:
-            laranja += 1
+            laranja += c
         elif r >= 200 and g >= 200 and b >= 200:
-            branco += 1
-        elif r <= 40 and g <= 40 and b <= 40:
-            preto += 1
+            branco += c
     lo = laranja / total
     br = branco / total
-    return lo, br, preto / total
+    qr = bloco_branco(w, h, px)
+    return dom, frac_dom, lo, br, qr
+
+
+def bloco_branco(w, h, px, janela=80, passo=4):
+    """Maior quantidade de pixels brancos numa janela janela x janela (amostragem grossa)."""
+    melhor = 0
+    for yy in range(0, max(1, h - janela), passo):
+        for xx in range(0, max(1, w - janela), passo):
+            c = 0
+            for y2 in range(yy, min(yy + janela, h), passo):
+                base = (y2 * w + xx) * 3
+                for x2 in range(xx, min(xx + janela, w), passo):
+                    i = base + x2 * 3
+                    if px[i] >= 200 and px[i + 1] >= 200 and px[i + 2] >= 200:
+                        c += 1
+            if c > melhor:
+                melhor = c
+    return melhor
 
 
 def main():
@@ -79,15 +111,20 @@ def main():
         print("leitura falhou: %s" % e, file=sys.stderr)
         print("normal")
         return 0
-    lo, br, pr = classificar(w, h, px)
-    if lo >= 0.30:
+    dom, frac_dom, lo, br, qr = classificar(w, h, px)
+    bsod = False
+    if dom[0] >= 195 and 90 <= dom[1] <= 150 and dom[2] <= 45 and frac_dom >= 0.60:
+        bsod = True          # fundo do bugcheck: laranja saturado e uniforme
+    if lo >= 0.90 and qr >= 40:
+        bsod = True          # laranja quase total + bloco branco grande (QR code)
+    if bsod:
         print("bsod")
     elif br >= 0.50:
         print("tecnico")
     else:
         print("normal")
-    print("quadro %dx%d  laranja=%.2f  branco=%.2f  preto=%.2f" % (w, h, lo, br, pr),
-          file=sys.stderr)
+    print("quadro %dx%d  dominante=%s(%.0f%%)  laranja=%.2f  branco=%.2f  qr_max=%d" % (
+        w, h, dom, frac_dom * 100, lo, br, qr), file=sys.stderr)
     return 0
 
 

@@ -26,6 +26,7 @@
 #   sh scripts/injetar_driver.sh --imagem .work/wim/Winre.wim --listar
 set -u
 
+R=$(cd "$(dirname "$0")/.." && pwd)
 WORK="${WORK:-.work}"
 IMAGEM=""; DRIVER=""; INDICE=1; INF_ESPEC=""; LISTAR=0
 SAIDA=""
@@ -100,15 +101,15 @@ for inf in $INFS; do
   say "  -> /Windows/INF/$base"
   printf 'add %s /Windows/INF/%s\n' "$inf" "$base" >> "$CMDFILE"
 
-  # pacote do driver no DriverStore: inf + .sys + .cat + .dll da mesma pasta
-  # (o comando "add" do wimlib cria os diretorios intermediarios, nao ha "mkdir")
+  # pacote do driver no DriverStore: o pacote INTEIRO (inf + sys + cat + dll + firmware
+  # .dat/.bin/.msc/.txt). Medido em 2026-11-07 no WinRE 1809: a versao antiga copiava
+  # so .inf/.sys/.cat/.dll/.exe, e o drvload falhava com 0x80070002 (ERROR_FILE_NOT_FOUND)
+  # em 5 dos 6 drivers - o INF pede em [SourceDisksFiles] o firmware que ficava de fora
+  # (Netwfw06.dat, rtldata.txt, rtlCoInst.*, varios *.bin e *.msc). O unico que carregava
+  # (mrvlpcie8897) e o unico que precisa so do .sys.
   say "  -> $repo/"
   for f in "$dir"/*; do
     [ -f "$f" ] || continue
-    case "$f" in
-      *.inf|*.sys|*.cat|*.dll|*.exe|*.inf_loc) ;;
-      *) continue;;
-    esac
     fb=$(basename "$f")
     printf 'add %s %s/%s\n' "$f" "$repo" "$fb" >> "$CMDFILE"
     # o .sys do driver tambem vai para System32/drivers (e o que o boot carrega)
@@ -116,6 +117,14 @@ for inf in $INFS; do
       *.sys)
         printf 'add %s /Windows/System32/drivers/%s\n' "$f" "$fb" >> "$CMDFILE";;
     esac
+  done
+  # os arquivos que o INF exige tambem vao ao lado do INF em /Windows/INF: e a
+  # instalacao "loose", e e assim que o drvload acha o firmware em runtime.
+  REFS=$(python3 "$R/scripts/inf_dependencias.py" "$inf" 2>/dev/null)
+  for ref in $REFS; do
+    src=$(find "$dir" -maxdepth 1 -iname "$ref" | head -1)
+    [ -n "$src" ] || { say "  AVISO: INF pede '$ref' e o pacote nao tem"; continue; }
+    printf 'add %s /Windows/INF/%s\n' "$src" "$ref" >> "$CMDFILE"
   done
   n_inf=$((n_inf+1))
 done
@@ -150,6 +159,21 @@ for inf in $INFS; do
   else
     say "  [FALTA] /Windows/INF/$base"; falha=1
   fi
+done
+# todo arquivo que o INF exige tem que estar no pacote do DriverStore E ao lado do INF:
+# sem isso o drvload falha com 0x80070002 em runtime (medido em 2026-11-07).
+for inf in $INFS; do
+  base=$(basename "$inf" | tr 'A-Z' 'a-z')
+  dir=$(dirname "$inf")
+  hash=$(sha1sum "$inf" 2>/dev/null | cut -c1-16)
+  repo="/Windows/System32/DriverStore/FileRepository/${base%.inf}.inf_amd64_${hash}"
+  for ref in $(python3 "$R/scripts/inf_dependencias.py" "$inf" 2>/dev/null); do
+    if echo "$LISTA" | grep -qi "$repo/$ref$"; then
+      say "  [OK] $repo/$ref"
+    else
+      say "  [FALTA] $repo/$ref (o INF exige; sem isso o drvload da 0x80070002)"; falha=1
+    fi
+  done
 done
 # o .sys tem que estar em System32/drivers
 while IFS= read -r f; do

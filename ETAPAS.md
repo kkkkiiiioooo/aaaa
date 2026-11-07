@@ -50,3 +50,4 @@ E4 | reestruturador | 2026-11-07T05:48Z | liberada | lease de agente-c3ba63ab84d
 E5 | reestruturador | 2026-11-07T05:48Z | liberada | lease de claude expirado apos 3181min (watchdog)
 E4 | mavis | 2026-11-07T12:10Z | ativa | -
 E4 | mavis | 2026-11-07T12:15Z | ativa | DESTRANCADA: PE sobe sozinho em TCG, autorun roda, host le wwii.log do disco (202s). docs/evidence/e4-boot-real-cpu-max.md
+E4 | mavis | 2026-11-07T12:33Z | ativa | autorun completa no PE (autorun-wwii end), host le 19727 B, wlansvc sobe; docs/evidence/e4-autorun-completo-r2.md
