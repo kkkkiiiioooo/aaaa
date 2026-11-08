@@ -1,0 +1,35 @@
+#!/bin/sh
+# post-commit - publica o commit na ref PRIVADA do agente e registra o resultado.
+#
+# Diferenca em relacao a v2: nao faz pull --rebase, nao cria segundo commit e nao
+# toca a branch do projeto. refs/agents/<nome> so este agente escreve, entao o push
+# nunca conflita e nunca para o trabalho. A branch do projeto e atualizada pelo
+# Integrador (bin/integrar.sh), com teste verde.
+set -u
+[ -n "${MM_GUARDA:-}" ] && exit 0
+MM_GUARDA=1; export MM_GUARDA
+
+R=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+mkdir -p "$R/.work/logs"
+AG=$(cat "$R/.work/agente" 2>/dev/null || git config user.name 2>/dev/null)
+AG=${AG:-sem-nome}
+PEND="$R/.work/push-pendente"
+
+# branch de configuracao nao publica nada
+case "$(git branch --show-current 2>/dev/null)" in
+  main|0|template|backup) exit 0 ;;
+esac
+
+{
+  echo "--- $(date -u +%FT%TZ) $(git rev-parse --short HEAD)"
+  if git push -q --force-with-lease origin "HEAD:refs/agents/$AG" 2>&1; then
+    echo "ok refs/agents/$AG"
+    rm -f "$PEND"
+  else
+    echo "FALHA refs/agents/$AG"
+    : > "$PEND"
+  fi
+} >> "$R/.work/logs/push.log" 2>&1
+
+[ -f "$PEND" ] && echo "ATENCAO: push pendente (.work/logs/push.log). Commit local nao e entrega. Rode: sh bin/publicar.sh"
+exit 0

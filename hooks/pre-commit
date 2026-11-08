@@ -1,0 +1,14 @@
+#!/bin/sh
+# pre-commit - barra commit em branch de configuracao e exige .work/agente.
+# Curto de proposito: roda em todo commit.
+set -u
+b=$(git branch --show-current 2>/dev/null)
+case "$b" in
+  main|0|template|backup)
+    [ -n "${OK:-}" ] || { echo "pre-commit: '$b' e configuracao. Use a branch do projeto (ou OK=1)."; exit 1; }
+    ;;
+esac
+if [ ! -s .work/agente ] && [ -z "$(git config user.name)" ]; then
+  echo "pre-commit: identidade ausente. Rode: sh iniciar.sh A=<nome> ..."; exit 1
+fi
+exit 0

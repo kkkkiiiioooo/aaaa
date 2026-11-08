@@ -1,0 +1,29 @@
+#!/bin/sh
+# pre-push - o portao local: nao deixa subir commit que viola o protocolo.
+#
+# E o unico gate que funciona sem servidor (workflow agendado no GitHub nao bloqueia
+# push). Escape consciente: PULAR_LINT=1 git push (registre o motivo no commit).
+set -u
+[ -n "${PULAR_LINT:-}" ] && { echo "pre-push: lint pulado (PULAR_LINT=1)"; exit 0; }
+
+R=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+LINT=""
+for c in "$R/protocolo-lint.sh" "$R/.work/protocolo-lint.sh"; do
+  [ -f "$c" ] && { LINT=$c; break; }
+done
+[ -n "$LINT" ] || { echo "pre-push: protocolo-lint.sh ausente (rode sh h.sh de novo)"; exit 0; }
+
+B=$(git branch --show-current 2>/dev/null)
+BASE=origin/main
+git rev-parse -q --verify "$BASE" >/dev/null 2>&1 || BASE=$(git rev-list --max-parents=0 HEAD | tail -1)
+
+sh "$LINT" --range "$BASE..HEAD" > "$R/.work/logs/lint-pre-push.log" 2>&1
+rc=$?
+if [ $rc -ne 0 ]; then
+  tail -20 "$R/.work/logs/lint-pre-push.log"
+  echo
+  echo "pre-push BLOQUEADO: corrija as violacoes acima (log: .work/logs/lint-pre-push.log)"
+  echo "  escape consciente: PULAR_LINT=1 git push   (e registre o motivo no commit)"
+  exit 1
+fi
+exit 0

@@ -1,0 +1,12 @@
+#!/bin/sh
+# prepare-commit-msg - carimba Agent-Name: <nome> (protocolo v3).
+# A identidade vem de .work/agente (gravado pelo h.sh a partir de A=<nome>), com
+# fallback no git user.name. Nunca reescreve um trailer que ja existe.
+set -u
+[ "${2:-}" = merge ] && exit 0
+R=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+A=$(cat "$R/.work/agente" 2>/dev/null || git config user.name 2>/dev/null)
+printf '%s' "$A" | grep -q '[^[:space:]]' || exit 0
+grep -qiE '^Agent-Name:' "$1" 2>/dev/null && exit 0
+printf '\nAgent-Name: %s\n' "$A" >> "$1"
+exit 0
