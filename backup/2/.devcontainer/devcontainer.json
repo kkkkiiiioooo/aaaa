@@ -1,0 +1,39 @@
+{
+  "name": "Tiny11 Core",
+  "service": "windows",
+  "containerEnv": {
+    "VERSION": "xp"
+  },
+  "forwardPorts": [
+    8006,
+    3000,
+    3001,
+    6901
+  ],
+  "portsAttributes": {
+    "8006": {
+      "label": "noVNC (dockur)",
+      "protocol": "http"
+    },
+    "3001": {
+      "label": "KasmVNC HTTPS (nginx)",
+      "protocol": "https"
+    },
+    "3000": {
+      "label": "Web (KasmVNC via nginx)",
+      "protocol": "http",
+      "onAutoForward": "notify"
+    },
+    "6901": {
+      "label": "KasmVNC direto",
+      "protocol": "http"
+    }
+  },
+  "otherPortsAttributes": {
+    "onAutoForward": "ignore"
+  },
+  "dockerComposeFile": "codespaces.yml",
+  "workspaceFolder": "/workspaces/windows",
+//  "postStartCommand": "bash /workspaces/windows/.devcontainer/setup.sh",
+  "initializeCommand": "docker system prune --all --force"
+}

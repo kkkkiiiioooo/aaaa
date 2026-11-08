@@ -7,7 +7,6 @@ services:
       DISK_SIZE: "max"
       CPU_CORES: "max"
       DISK_MINIMUM: "1G"
-      DISPLAY: "vnc"
     devices:
       - /dev/kvm
       - /dev/net/tun
@@ -16,6 +15,7 @@ services:
     ports:
       - 8006:8006
       - 3000:3000
+      - 3001:3001
       - 6901:6901
       - 3389:3389/tcp
       - 3389:3389/udp
