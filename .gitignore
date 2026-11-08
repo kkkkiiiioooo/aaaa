@@ -1,3 +1,18 @@
 .work/
 __pycache__/
 *.pyc
+
+# credencial: nunca no historico (ja apareceu em db95fc2)
+.git-credentials
+.git-credentials.*
+.s
+*.token
+
+# artefatos grandes: Release, nao git (bin/artefatos.sh / obter_imagem.sh)
+*.wim
+*.wim.part-*
+*.esd
+*.iso
+*.tar.xz
+*.bundle
+.lint-tmp.*

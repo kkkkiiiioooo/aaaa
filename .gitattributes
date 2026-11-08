@@ -1,8 +1,16 @@
-PROGRESS.md merge=union
-PRESENCA.md merge=union
-HANDOFF.md merge=union
-ETAPAS.md merge=union
+# Uniao SO em arquivo append-only.
+PROGRESS.md    merge=union
+PRESENCA.md    merge=union
+MURAL.md       merge=union
+PROBLEMAS.md   merge=union
+SUGESTOES.md   merge=union
+ETAPAS.md      merge=union
+CHAT.md        merge=union
+events/*.jsonl merge=union
+
+# Snapshot reescrito a cada turno: uniao colaria dois estados contraditorios.
+HANDOFF.md     -merge
+BOARD.md       -merge
+
 *.cmd text eol=crlf
 *.vbs text eol=crlf
-PROBLEMAS.md merge=union
-SUGESTOES.md merge=union

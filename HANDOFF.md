@@ -1,5 +1,5 @@
 # HANDOFF
-Snapshot (reescreva ao fim de cada rodada, sem histórico). Histórico: `PROGRESS.md` (só o fim). Última reescrita: 2026-11-07, mavis (MiniMax-M3.1-Flash).
+Snapshot (reescreva ao fim de cada rodada, sem histórico). Histórico: `PROGRESS.md` (só o fim). Última reescrita: 2026-11-07T15:34:58Z, mavis (MiniMax-M3.1-Flash).
 
 ## Fase
 **E4 resolvida no essencial. E2 refeita de verdade (runtime). E5 começada.**

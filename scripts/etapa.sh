@@ -65,6 +65,23 @@ ET=${2:-}
 [ -n "$ET" ] || { echo "uso: etapa.sh <status|pegar|fechar|liberar> E<n>"; exit 1; }
 case "$ET" in E[1-6]) ;; *) echo "etapa invalida: $ET"; exit 1 ;; esac
 
+
+# --- cadeado de verdade: ref no servidor -------------------------------------
+# O flock abaixo so vale nesta maquina. A criacao de refs/claims/<etapa> e atomica
+# no GitHub: dois agentes, dois hosts, um ganha e o outro recebe rejeicao.
+claim_dono() { # $1=etapa ; deixa FETCH_HEAD no claim e imprime o dono
+  git ls-remote origin "refs/claims/$1" 2>/dev/null | grep -q . || return 0
+  git fetch -q origin "refs/claims/$1" 2>/dev/null || return 0
+  git log -1 --format='%(trailers:key=Agent-Name,valueonly)' FETCH_HEAD 2>/dev/null | tr -d '\n'
+}
+claim_idade() { # minutos desde o commit do claim
+  ts=$(git log -1 --format=%ct FETCH_HEAD 2>/dev/null) || return 1
+  [ -n "$ts" ] || return 1
+  echo $(( ( $(date -u +%s) - ts ) / 60 ))
+}
+pega_ref() { git push -q --force-with-lease="refs/claims/$1:" origin "HEAD:refs/claims/$1" 2>/dev/null; }
+solta_ref() { git push -q origin ":refs/claims/$1" 2>/dev/null; }
+
 case "$1" in
   pegar)
     st=$(awk -F' *\\| *' -v e="$ET" '$1==e {s=$4} END{print s}' "$F")
@@ -79,14 +96,38 @@ case "$1" in
         exit 1
       fi
     fi
+    dono=$(claim_dono "$ET")
+    if [ -n "$dono" ] && [ "$dono" != "$A" ]; then
+      idade=$(claim_idade)
+      if [ -n "${idade:-}" ] && [ "$idade" -gt "$LEASE_MIN" ]; then
+        echo "$ET estava com $dono mas o lease venceu (${idade}min) - tomando"
+      else
+        echo "$ET esta com $dono (${idade:-?}min). Escolha outra frente."
+        exit 1
+      fi
+    elif [ "$dono" = "$A" ]; then
+      echo "$ET ja e sua"; exit 0
+    fi
+    if ! pega_ref "$ET"; then
+      echo "$ET: outra reclamacao venceu a corrida (cadeado do servidor). Escolha outra."
+      exit 1
+    fi
     (flock -x 9; printf '%s | %s | %s | ativa | -\n' "$ET" "$A" "$NOW" >> "$F") 9>"$LOCK"
-    echo "reclamada: $ET por $A as $NOW (lease ${LEASE_MIN}min)"
+    echo "reclamada: $ET por $A as $NOW (lease ${LEASE_MIN}min, cadeado remoto)"
     ;;
   fechar)
+    dono=$(claim_dono "$ET")
+    [ -z "$dono" ] || [ "$dono" = "$A" ] || [ -n "${FORCAR:-}" ] || {
+      echo "$ET esta com $dono, nao com voce. Combine, ou FORCAR=1 se for deliberado."; exit 1; }
+    solta_ref "$ET"
     (flock -x 9; printf '%s | %s | %s | feita | %s\n' "$ET" "$A" "$NOW" "${3:-ver docs/evidence/}" >> "$F") 9>"$LOCK"
     echo "fechada: $ET por $A"
     ;;
   liberar)
+    dono=$(claim_dono "$ET")
+    [ -z "$dono" ] || [ "$dono" = "$A" ] || [ -n "${FORCAR:-}" ] || {
+      echo "$ET esta com $dono, nao com voce. Combine, ou FORCAR=1 se for deliberado."; exit 1; }
+    solta_ref "$ET"
     (flock -x 9; printf '%s | %s | %s | liberada | %s\n' "$ET" "$A" "$NOW" "${3:-sem progresso}" >> "$F") 9>"$LOCK"
     echo "liberada: $ET"
     ;;

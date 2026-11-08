@@ -1,5 +1,30 @@
 # AGENTS
 
+## Protocolo v3 (adotado nesta branch)
+
+A mecânica canônica está em `PROTOCOLO.md`. O que mudou na prática:
+
+| Antes | Agora |
+|---|---|
+| `flock` local no `ETAPAS.md` | cadeado em `refs/claims/E<n>` — atômico entre hosts |
+| push só na branch do projeto | cada commit também publica em `refs/agents/<nome>` (nunca conflita) |
+| `HANDOFF.md` com `merge=union` | `HANDOFF.md` é snapshot (conflito explícito); recado por agente em `HANDOFF/<nome>.md` |
+| `MURAL.md` sem união | `MURAL.md merge=union` (era o arquivo mais disputado) |
+| regras só em prosa | `protocolo-lint.sh` + `hooks/pre-push` verificam |
+
+Comandos novos (a toolchain vem da branch `0` em `.work/bin/`, não é copiada aqui):
+
+    sh bin/reivindicar.sh <ID>                     # cadeado do servidor
+    sh bin/liberar.sh <ID> feita "<evidência>"     # solta o cadeado, com prova
+    sh bin/publicar.sh                             # publica em refs/agents/<nome>
+    sh bin/protocolo.sh status                     # versão, cadeados, pendências
+    sh bin/metricas.sh                             # who/when/how long, derivado do git
+
+`ETAPAS.md`, `MURAL.md` e `PROBLEMAS.md` continuam valendo: o cadeado mudou de lugar,
+o log não. As regras inegociáveis estão em `PROTOCOLO.md`.
+
+## Papel
+
 Papel: executor. O lead (branch `lider`) só decide; você executa. Receber o repo já é a ordem: execute, não espere nada.
 
 ## Início automático (qualquer agente, inclusive sem prompt)

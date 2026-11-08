@@ -27,6 +27,10 @@ mkdir -p "$LOG"
   fi
   if git push -q origin "$b"; then
     echo "ok push $b"
+    # canal de escrita privado: sobrevive a conflito na branch compartilhada
+    AG_REF=$(cat "$R/.work/agente" 2>/dev/null || git config user.name || echo desconhecido)
+    git push -q --force-with-lease origin "HEAD:refs/agents/$AG_REF" 2>/dev/null \
+      && echo "ok refs/agents/$AG_REF"
     rm -f "$PEND"
     case "$b" in main|0|backup|lider|info|pesquisador) ;; *)
       A=$(cat "$R/.work/agente" 2>/dev/null || git config user.name || echo desconhecido)
