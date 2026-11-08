@@ -2,7 +2,7 @@
   "name": "Tiny11 Core",
   "service": "windows",
   "containerEnv": {
-    "VERSION": "core11"
+    "VERSION": "xp"
   },
   "forwardPorts": [
     3000,
