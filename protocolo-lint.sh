@@ -48,9 +48,11 @@ for c in $(git rev-list "$RANGE" 2>/dev/null); do
 done
 
 # ---------------------------------------------------------------- 2 branch
-# Regra: main e 0 sao configuracao; nao recebem commit de trabalho.
+# Regra: main e vitrine (so README). Commit de trabalho nela e sempre engano.
+# Em 0/template/backup o commit e legitimo (evolucao do protocolo), mas exige OK=1
+# no pre-commit: sao branches de configuracao, nao de projeto.
 case "$BR" in
-  main|0) falha B1 "commit em '$BR' (branch de configuracao); use uma branch de projeto" ;;
+  main) falha B1 "commit em 'main' (branch de vitrine); use uma branch de projeto" ;;
 esac
 
 # ---------------------------------------------------------------- 3 data/hora
