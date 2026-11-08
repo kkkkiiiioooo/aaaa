@@ -1,24 +1,16 @@
 #!/bin/sh
-# iniciar.sh — ponto de entrada único de um agente. Zero contexto prévio.
+# iniciar.sh - ponto de entrada de um agente. Zero contexto previo.
 #
-#   sh iniciar.sh R=https://github.com/<dono>/aaaa.git A=<nome> S=<passphrase> P=wwii
+#   A=<nome> P=<projeto> S_ARQ=<arquivo-da-passphrase> sh iniciar.sh
+#   curl -fsSL .../0/iniciar.sh | sh -s -- A=<nome> P=<projeto> S_ARQ=<arquivo>
 #
-# R é opcional (já aponta para este repo). Faz em sequência, parando na 1ª falha:
-#   1 h.sh          credencial + branch do projeto + hooks + identidade
-#   2 setup.sh      dependências, bate-ponto, diagnóstico T0..T4
-#   3 etapa.sh      reclama a primeira etapa livre (ou retoma a que já é sua)
-#   4 relatorio.sh  publica a linha que o lead lê
-#
-# Variáveis:
-#   A  obrigatória — nome do agente (bate-ponto, git, evidência)
-#   S  passphrase de t.gpg; ou S_ARQ=<arquivo>. Nunca passe S em argv num pipe.
-#   P  projeto por nome (wwii, iaag); padrão: wwii
-#   D 1 = dry-run: mostra o plano e não executa nada
-#   E forçar uma etapa específica (padrão: primeira livre)
+# Variaveis:
+#   A     obrigatoria — nome do agente (assinatura dos commits, eventos, PRESENCA)
+#   P     projeto por nome (wwii, iaag); sem P, lista os existentes
+#   S     passphrase (preferir S_ARQ: argv aparece em `ps`)
+#   D     1 = dry-run
 set -eu
 
-# aceita A=<nome> P=<projeto> tanto como ambiente quanto como argumento posicional
-# (com `curl ... | sh -s -- A=n P=p` o stdin ja esta tomado pelo proprio script)
 for kv in "$@"; do
   case "$kv" in
     *=*) export "$kv" ;;
@@ -26,15 +18,15 @@ for kv in "$@"; do
   esac
 done
 
-AQUI=$(cd "$(dirname "$0")" && pwd)
+AQUI=$(cd "$(dirname "$0")" 2>/dev/null && pwd)
 R=${R:-https://github.com/kkkkiiiioooo/aaaa.git}
-P=${P:-wwii}
+P=${P:-}
 D=${D:-0}
 
 [ -n "${A:-}" ] || { echo "iniciar.sh: falta A=<nome do agente>"; exit 2; }
 if [ -z "${S:-}" ] && [ -n "${S_ARQ:-}" ] && [ -r "$S_ARQ" ]; then S=$(head -1 "$S_ARQ"); fi
 if [ -z "${S:-}" ] && [ ! -t 0 ]; then S=$(head -1); fi
-if [ -z "${S:-}" ]; then printf 'Passphrase de t.gpg: '; S=$(head -1); fi
+if [ -z "${S:-}" ]; then printf 'Passphrase do t.gpg: '; S=$(head -1); fi
 [ -n "$S" ] || { echo "iniciar.sh: sem passphrase"; exit 2; }
 
 passo() { printf '\n===== %s =====\n' "$1"; }
@@ -42,58 +34,42 @@ falha() { printf '\nPARADO em %s: %s\n' "$1" "${2:-}"; exit 1; }
 
 if [ "$D" = 1 ]; then
   printf 'dry-run — faria:\n'
-  printf '  1 git clone %s -> %s/aaaa ; sh h.sh (A=%s P=%s)\n' "$R" "$AQUI" "$A" "$P"
-  printf '  2 sh setup.sh   (dependências + bate-ponto + doctor)\n'
-  printf '  3 sh scripts/etapa.sh pegar ${E:-primeira livre}\n'
-  printf '  4 sh scripts/relatorio.sh "<linha>"\n'
+  printf '  1 clone --filter=blob:none %s -> %s/aaaa\n' "$R" "$AQUI"
+  printf '  2 h.sh  (credencial + branch %s + toolchain .work/bin + identidade A=%s)\n' "${P:-<lista>}" "$A"
+  printf '  3 setup.sh (se o projeto tiver; senao, nada)\n'
+  printf '  4 bin/protocolo.sh status\n'
   exit 0
 fi
 
-# ---------------------------------------------------------------- 1 bootstrap
 REPO="$AQUI/aaaa"
 if [ ! -d "$REPO/.git" ]; then
-  passo "1/4 clone"
-  git clone "$R" "$REPO" >/dev/null 2>&1 || falha "clone"
+  passo "1/3 clone"
+  git clone -q --filter=blob:none "$R" "$REPO" 2>/dev/null || git clone -q "$R" "$REPO" || falha "clone"
 fi
-cd "$REPO"
 
-passo "1/4 credencial + branch"
-# h.sh e executado a partir do PAI do clone: ele deriva o destino de onde esta,
-# e executado de dentro de aaaa/ criaria aaaa/aaaa/.
-git -C "$REPO" fetch origin 0 >/dev/null 2>&1 || true
-git -C "$REPO" show origin/0:h.sh > "$AQUI/.h.tmp" 2>/dev/null \
-  || git -C "$REPO" show origin/main:h.sh > "$AQUI/.h.tmp" 2>/dev/null \
-  || falha "h.sh" "nao consegui extrair h.sh da branch 0"
-( cd "$AQUI" && S="$S" A="$A" P="$P" sh .h.tmp ) || { rm -f "$AQUI/.h.tmp"; falha "h.sh"; }
+passo "1/3 credencial + branch + toolchain"
+git -C "$REPO" fetch -q origin 0 >/dev/null 2>&1 || true
+git -C "$REPO" show origin/0:h.sh > "$AQUI/.h.tmp" 2>/dev/null || falha "h.sh" "nao consegui extrair h.sh da branch 0"
+# A_AGENTE e o nome que o h.sh le. Antes passavamos so A: identidade nunca era definida.
+( cd "$AQUI" && S="$S" A_AGENTE="$A" P="$P" sh .h.tmp ) || { rm -f "$AQUI/.h.tmp"; falha "h.sh"; }
 rm -f "$AQUI/.h.tmp"
-echo "branch: $(git rev-parse --abbrev-ref HEAD)  como: $(git config user.name || echo "?")"
+cd "$REPO"
+[ "$(git config user.name)" = "$A" ] || falha "identidade" "git user.name != $A (commits sairiam sem assinatura)"
+echo "branch: $(git rev-parse --abbrev-ref HEAD)  como: $A"
 
-# ------------------------------------------------------------------- 2 setup
-passo "2/4 ambiente"
-sh setup.sh || falha "setup.sh" "ambiente incompleto — leia o diagnóstico acima antes de escrever código"
+passo "2/3 ambiente"
+if [ -f setup.sh ]; then sh setup.sh || echo "[aviso] setup.sh retornou erro — leia a saida acima antes de codar"
+else echo "sem setup.sh neste projeto (nada a instalar)"; fi
 
-# ------------------------------------------------------------ 3 reclamar etapa
-passo "3/4 etapa"
-sh scripts/etapa.sh status
-# autoridade de estado e o etapa.sh; aqui so lemos a saida dele
-ST=$(sh scripts/etapa.sh status)
-MINHA=${E:-}
-if [ -z "$MINHA" ]; then
-  MINHA=$(printf '%s\n' "$ST" | sed -n "s/^MINHA ETAPA: \(E[0-9]*\).*/\1/p" | head -1)
-  [ -n "$MINHA" ] || MINHA=$(printf '%s\n' "$ST" | sed -n "s/^LIVRES para reclamacao: //p" | head -1 | awk '{print $1}')
-fi
-[ -n "$MINHA" ] || falha "etapa" "nenhuma etapa livre — pergunte ao lead"
-sh scripts/etapa.sh pegar "$MINHA" || falha "etapa $MINHA"
-
-# ----------------------------------------------------------------- 4 relatório
-passo "4/4 relatório do lead"
-N=$(sh scripts/doctor.sh 2>/dev/null | sed -n "s/^EXECUTAVEL AGORA: //p" | head -1); [ -n "$N" ] || N="ver doctor.sh"
-sh scripts/relatorio.sh "$A | $MINHA | rodando | ambiente: $N | proximo: ver ETAPAS.md" || true
+passo "3/3 estado"
+[ -f .work/bin/protocolo.sh ] && sh .work/bin/protocolo.sh status || {
+  echo "toolchain ausente em .work/bin — rode de novo: sh h.sh"; }
 
 cat <<EOF
 
-PRONTO. Você está em $REPO, branch $(git rev-parse --abbrev-ref HEAD), etapa $MINHA.
-  leia   : AGENTS.md -> PLANO.md -> ETAPAS.md
-  trabalho: scripts/etapa.sh fechar $MINHA "<evidencia: caminho + saida>"
-  status : sh scripts/etapa.sh status
+PRONTO. $REPO, branch $(git rev-parse --abbrev-ref HEAD), agente $A.
+  ler    : PROTOCOLO.md -> TASK.md -> sh bin/protocolo.sh status
+  pegar  : sh bin/reivindicar.sh <ID>
+  fechar : sh bin/liberar.sh <ID> feita "<evidencia: caminho + saida>"
+  publicar: sh bin/publicar.sh   (commit ja publica em refs/agents/$A)
 EOF

@@ -1,0 +1,20 @@
+.work/
+__pycache__/
+*.pyc
+
+# credencial: nunca no historico (ja apareceu uma vez em db95fc2, com 1 byte)
+.git-credentials
+.git-credentials.*
+.s
+*.token
+
+# artefatos grandes: vao para Release, nao para o git (bin/artefatos.sh)
+*.wim
+*.wim.part-*
+*.esd
+*.iso
+*.tar.xz
+*.bundle
+
+# temporarios de script
+.lint-tmp.*
