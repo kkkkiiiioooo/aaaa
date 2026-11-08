@@ -1,0 +1,373 @@
+{
+    "docker_build_ubuntu_resolute": {
+        "image": "ubuntu:resolute",
+        "features": {
+            "docker-in-docker": {
+                "moby": false
+            }
+        }
+    },
+    "install_moby_on_ubuntu_resolute": {
+        "image": "ubuntu:resolute",
+        "features": {
+            "docker-in-docker": {
+                "moby": true
+            }
+        }
+    },
+    "docker_iptables_switch_at_install": {
+        "image": "mcr.microsoft.com/devcontainers/base:debian",
+        "features": {
+            "docker-in-docker": {
+                "moby": "false",
+                "iptablesSwitchAtRuntime": false
+            }
+        },
+        "initializeCommand": "sudo modprobe ip_tables"
+    },
+    // DO NOT REMOVE: This scenario is used by the docker-in-docker-daemon-startup-bulk-test workflow
+    "docker_iptables_switch_at_runtime": {
+        "image": "mcr.microsoft.com/devcontainers/base:debian",
+        "features": {
+            "docker-in-docker": {
+                "moby": "false",
+                "iptablesSwitchAtRuntime": true
+            }
+        },
+        "initializeCommand": "sudo modprobe ip_tables"
+    },
+    "docker_iptables_switch_at_runtime_non_root": {
+        "build": {
+            "dockerfile": "Dockerfile"
+        },
+        "containerUser": "codespace",
+        "remoteUser": "codespace",
+        "features": {
+            "common-utils": {
+                "username": "codespace",
+                "userUid": "1000",
+                "userGid": "1000"
+            },
+            "docker-in-docker": {
+                "moby": "false",
+                "iptablesSwitchAtRuntime": true
+            }
+        }
+    },
+    "docker_with_default_iptables": {
+        "image": "mcr.microsoft.com/devcontainers/base:debian",
+        "features": {
+            "docker-in-docker": {
+                "moby": "false"
+            }
+        },
+        "initializeCommand": "sudo modprobe --remove --remove-holders --wait 1000 ip_tables"
+    },
+    "docker_with_legacy_iptables": {
+        "image": "mcr.microsoft.com/devcontainers/base:debian",
+        "features": {
+            "docker-in-docker": {
+                "moby": "false"
+            }
+        },
+        "initializeCommand": "sudo modprobe ip_tables"
+    },
+    "docker_with_default_iptables_ubuntu": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "docker-in-docker": {
+                "moby": "false"
+            }
+        },
+        "initializeCommand": "sudo modprobe --remove --remove-holders --wait 1000 ip_tables"
+    },
+    "docker_with_legacy_iptables_ubuntu": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "docker-in-docker": {
+                "moby": "false"
+            }
+        },
+        "initializeCommand": "sudo modprobe ip_tables"
+    },        
+    "overlayfs_containerd_root": {
+        "image": "mcr.microsoft.com/devcontainers/base:noble",
+        "features": {
+            "docker-in-docker": {
+                "version": "latest",
+                "moby": true
+            }
+        }
+    },     
+    "docker_build_fallback_compose": {
+        "image": "ubuntu:noble",
+        "features": {
+            "docker-in-docker": {
+                "version": "latest",
+                "dockerDashComposeVersion": "latest"
+            }
+        }
+    },
+    "dockerIp6tablesDisabledTest": {
+        "image": "ubuntu:noble",
+        "features": {
+            "docker-in-docker": {
+                "version": "27.0.3",
+                "disableIp6tables": true
+            }
+        }
+    },
+    "dockerDefaultAddressPool": {
+        "image": "mcr.microsoft.com/devcontainers/javascript-node:3-22",
+        "remoteUser": "node",
+        "features": {
+            "docker-in-docker": {
+                "dockerDefaultAddressPool": "base=192.168.0.0/16,size=24"
+            }
+        }
+    },
+    "dockerHostGatewayIP": {
+        "image": "mcr.microsoft.com/devcontainers/javascript-node:3-22",
+        "remoteUser": "node",
+        "features": {
+            "docker-in-docker": {
+                "dockerHostGatewayIP": "192.168.0.1"
+            }
+        }
+    },
+    "azureDnsAutoDetectionEnabled": {
+        "image": "mcr.microsoft.com/devcontainers/javascript-node:3-22",
+        "remoteUser": "node",
+        "features": {
+            "docker-in-docker": {
+                "azureDnsAutoDetection": true
+            }
+        }
+    },
+    "azureDnsAutoDetectionDisabled": {
+        "image": "mcr.microsoft.com/devcontainers/javascript-node:3-22",
+        "remoteUser": "node",
+        "features": {
+            "docker-in-docker": {
+                "azureDnsAutoDetection": false
+            }
+        }
+    },
+    "docker_build": {
+        "image": "mcr.microsoft.com/devcontainers/javascript-node:3-22",
+        "features": {
+            "docker-in-docker": {
+                "version": "latest",
+                "moby": "false",
+                "dockerDashComposeVersion": "v2"
+            }
+        },
+        "remoteUser": "node"
+    },
+    "docker_build_with_compose_switch": {
+        "image": "mcr.microsoft.com/devcontainers/javascript-node:3-22",
+        "features": {
+            "docker-in-docker": {
+                "version": "latest",
+                "moby": "false",
+                "dockerDashComposeVersion": "v2",
+                "installDockerComposeSwitch": true
+            }
+        },
+        "remoteUser": "node"
+    },    
+    "docker_build_2": {
+        "image": "ubuntu:noble",
+        "features": {
+            "docker-in-docker": {
+                "version": "latest",
+                "installDockerBuildx": true,
+                "moby": "false",
+                "dockerDashComposeVersion": "v2"
+            }
+        }
+    },
+    "docker_build_older": {
+        "image": "mcr.microsoft.com/devcontainers/javascript-node:3-22",
+        "features": {
+            "docker-in-docker": {
+                "version": "23",
+                "moby": "false",
+                "dockerDashComposeVersion": "v2"
+            }
+        },
+        "remoteUser": "node"
+    },
+    "docker_build_no_compose": {
+        "image": "mcr.microsoft.com/devcontainers/base:debian",
+        "features": {
+            "docker-in-docker": {
+                "moby": false,
+                "dockerDashComposeVersion": "none"
+            }
+        },
+        "remoteUser": "vscode"
+    },
+    "docker_build_no_compose_moby": {
+        "image": "mcr.microsoft.com/devcontainers/base:bookworm",
+        "features": {
+            "docker-in-docker": {
+                "moby": true,
+                "dockerDashComposeVersion": "none"
+            }
+        },
+        "remoteUser": "vscode"
+    },
+    "docker_buildx": {
+        "image": "mcr.microsoft.com/devcontainers/base:bookworm",
+        "features": {
+            "docker-in-docker": {
+                "moby": false,
+                "installDockerBuildx": true
+            }
+        }
+    },
+    "docker_python_bookworm": {
+        "image": "mcr.microsoft.com/devcontainers/base:2.1.8-bookworm",
+        "features": {
+            "docker-in-docker": {
+                "moby": true,
+                "installDockerBuildx": true,
+                "dockerDashComposeVersion": "v2"
+            }
+        }
+    },
+    "docker_compose_v1": {
+        "image": "mcr.microsoft.com/devcontainers/base:noble",
+        "features": {
+            "docker-in-docker": {
+                "moby": true,
+                "installDockerBuildx": true,
+                "dockerDashComposeVersion": "v1"
+            }
+        }
+    },
+    "docker_compose_v2": {
+        "image": "mcr.microsoft.com/devcontainers/base:noble",
+        "features": {
+            "docker-in-docker": {
+                "moby": true,
+                "installDockerBuildx": true,
+                "dockerDashComposeVersion": "v2"
+            }
+        }
+    },
+    "docker_compose_latest_moby": {
+        "image": "mcr.microsoft.com/devcontainers/base:noble",
+        "features": {
+            "docker-in-docker": {
+                "moby": true,
+                "installDockerBuildx": true,
+                "dockerDashComposeVersion": "latest"
+            }
+        }
+    },
+    "docker_compose_latest_no_moby": {
+        "image": "mcr.microsoft.com/devcontainers/base:noble",
+        "features": {
+            "docker-in-docker": {
+                "moby": false,
+                "installDockerBuildx": true,
+                "dockerDashComposeVersion": "latest"
+            }
+        }
+    },
+    "docker_build_fallback_buildx": {
+        "image": "ubuntu:noble",
+        "features": {
+            "docker-in-docker": {
+                "version": "latest",
+                "installDockerBuildx": true
+            }
+        }
+    },
+    "install_on_debian_trixie": {
+        "image": "debian:trixie",
+        "features": {
+            "docker-in-docker": {
+                "moby": false
+            }
+        }
+    },
+    "docker_specific_moby_buildx": {
+        "image": "ubuntu:noble",
+        "features": {
+            "docker-in-docker": {
+                "mobyBuildxVersion": "0.14.0"
+            }
+        }
+    },
+    "pin_docker-ce_version_moby_false": {
+        "image": "mcr.microsoft.com/devcontainers/base:debian",
+        "features": {
+            "docker-in-docker": {
+                "version": "28.4.0",
+                "moby": "false",
+                "mobyBuildxVersion": "latest",
+                "dockerDashComposeVersion": "none",
+                "azureDnsAutoDetection": "true",
+                "dockerDefaultAddressPool": "",
+                "installDockerBuildx": "true",
+                "installDockerComposeSwitch": "true",
+                "disableIp6tables": "false"
+            }
+        }
+    },
+    // DO NOT REMOVE: This scenario is used by the docker-in-docker-daemon-startup-bulk-test workflow
+    "docker_with_on_create_command": {
+        "image": "mcr.microsoft.com/devcontainers/base:debian",
+        "features": {
+            "docker-in-docker": {
+                "version": "latest",
+                "moby": "false"
+            }
+        },
+        "remoteUser": "vscode",
+        "onCreateCommand": "docker ps && sleep 5s && docker ps"
+    },
+    "azure_linux": {
+        "image": "mcr.microsoft.com/azurelinux/base/core:3.0",
+        "features": {
+            "docker-in-docker": {
+                "version": "latest",
+                "moby": "true",
+                "azureDnsAutoDetection": false
+            }
+        }
+    },
+    "azure_linux_docker_ce": {
+        "image": "mcr.microsoft.com/azurelinux/base/core:3.0",
+        "features": {
+            "docker-in-docker": {
+                "version": "latest",
+                "moby": "false",
+                "azureDnsAutoDetection": false
+            }
+        }
+    },
+    "cbl_mariner": {
+        "image": "mcr.microsoft.com/cbl-mariner/base/core:2.0",
+        "features": {
+            "docker-in-docker": {
+                "version": "latest",
+                "moby": "true",
+                "azureDnsAutoDetection": false
+            }
+        }
+    },
+    "cbl_mariner_docker_ce": {
+        "image": "mcr.microsoft.com/cbl-mariner/base/core:2.0",
+        "features": {
+            "docker-in-docker": {
+                "version": "latest",
+                "moby": "false",
+                "azureDnsAutoDetection": false
+            }
+        }
+    }
+}

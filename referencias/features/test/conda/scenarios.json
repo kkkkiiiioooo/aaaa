@@ -1,0 +1,63 @@
+{
+    "install_conda_patched_packages_with_codespace": {
+        "build": {
+            "dockerfile": "Dockerfile"
+        },
+        "containerUser": "codespace",
+        "remoteUser": "codespace",
+        "features": {
+            "common-utils": {
+                "username": "codespace",
+                "userUid": "1000",
+                "userGid": "1000"
+            },
+            "conda": {}
+        }
+    },
+    "install_conda_patched_packages": {
+        "image": "mcr.microsoft.com/devcontainers/base:noble",
+        "remoteUser": "vscode",
+        "features": {
+            "conda": {}
+        }
+    },
+    "install_conda_patched_packages_with_root": {
+        "image": "ubuntu:noble",
+        "features": {
+            "conda": {}
+        }
+    },
+    "install_conda": {
+        "image": "mcr.microsoft.com/devcontainers/base:noble",
+        "features": {
+            "conda": {
+                "version": "latest",
+                "addCondaForge": "true"
+            }
+        }
+    },
+    "install_conda_package_after_upgrade": {
+        "image": "mcr.microsoft.com/devcontainers/base:noble",
+        "features": {
+            "conda": {}
+        }
+    },
+    "conda_channel_creation": {
+        "image": "mcr.microsoft.com/devcontainers/base:noble",
+        "features": {
+            "conda": {}
+        }
+    },
+    "install_conda_package_after_upgrade_with_root": {
+        "image": "ubuntu:noble",
+        "features": {
+            "conda": {}
+        }
+    },
+    "conda_channel_creation_with_root": {
+        "image": "ubuntu:noble",
+        "features": {
+            "conda": {}
+        }
+    }
+}

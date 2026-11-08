@@ -1,0 +1,89 @@
+{
+    "id": "common-utils",
+    "version": "2.7.1",
+    "name": "Common Utilities",
+    "documentationURL": "https://github.com/devcontainers/features/tree/main/src/common-utils",
+    "description": "Installs a set of common command line utilities, Oh My Zsh!, and sets up a non-root user.",
+    "options": {
+        "installZsh": {
+            "type": "boolean",
+            "default": true,
+            "description": "Install ZSH?"
+        },
+        "configureZshAsDefaultShell": {
+            "type": "boolean",
+            "default": false,
+            "description": "Change default shell to ZSH?"
+        },
+        "installOhMyZsh": {
+            "type": "boolean",
+            "default": true,
+            "description": "Install Oh My Zsh!?"
+        },
+        "installOhMyZshConfig": {
+            "type": "boolean",
+            "default": true,
+            "description": "Allow installing the default dev container .zshrc templates?"
+        },
+        "ohMyZshTheme": {
+            "type": "string",
+            "default": "devcontainers",
+            "description": "Oh My Zsh theme to use (e.g., 'robbyrussell', 'agnoster', 'fino'). Default is 'devcontainers'."
+        },
+        "upgradePackages": {
+            "type": "boolean",
+            "default": true,
+            "description": "Upgrade OS packages?"
+        },
+        "username": {
+            "type": "string",
+            "proposals": [
+                "devcontainer",
+                "vscode",
+                "codespace",
+                "none",
+                "automatic"
+            ],
+            "default": "automatic",
+            "description": "Enter name of a non-root user to configure or none to skip"
+        },
+        "userUid": {
+            "type": "string",
+            "proposals": [
+                "1001",
+                "automatic"
+            ],
+            "default": "automatic",
+            "description": "Enter UID for non-root user"
+        },
+        "userGid": {
+            "type": "string",
+            "proposals": [
+                "1001",
+                "automatic"
+            ],
+            "default": "automatic",
+            "description": "Enter GID for non-root user"
+        },
+        "addGroups": {
+            "type": "string",
+            "default": "",
+            "description": "Comma-separated list of additional groups to add the non-root user to. Groups are created if needed."
+        },
+        "sudoers": {
+            "type": "boolean",
+            "default": true,
+            "description": "Add non-root user to passwordless sudoers?"
+        },
+        "nonFreePackages": {
+            "type": "boolean",
+            "default": false,
+            "description": "Add packages from non-free Debian repository? (Debian only)"
+        },
+        "installSsl": {
+            "type": "boolean",
+            "default": true,
+            "description": "Install SSL?"
+        }
+    }
+}

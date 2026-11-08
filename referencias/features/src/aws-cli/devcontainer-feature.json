@@ -1,0 +1,44 @@
+{
+    "id": "aws-cli",
+    "version": "1.2.0",
+    "name": "AWS CLI",
+    "documentationURL": "https://github.com/devcontainers/features/tree/main/src/aws-cli",
+    "description": "Installs the AWS CLI along with needed dependencies. Useful for base Dockerfiles that often are missing required install dependencies like gpg.",
+    "options": {
+        "version": {
+            "type": "string",
+            "proposals": [
+                "latest"
+            ],
+            "default": "latest",
+            "description": "Select or enter an AWS CLI version."
+        },
+        "verbose": {
+            "type": "boolean",
+            "default": true,
+            "description": "Suppress verbose output."
+        },
+        "installSessionManagerPlugin": {
+            "type": "boolean",
+            "default": false,
+            "description": "Install the AWS Session Manager plugin, selecting the package for the container OS and architecture."
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "AmazonWebServices.aws-toolkit-vscode"
+            ],
+            "settings": {
+                "github.copilot.chat.codeGeneration.instructions": [
+                    {
+                        "text": "This dev container includes the AWS CLI along with needed dependencies pre-installed and available on the `PATH`, along with the AWS Toolkit extensions for AWS development."
+                    }
+                ]
+            }
+        }
+    },
+    "installsAfter": [
+        "ghcr.io/devcontainers/features/common-utils"
+    ]
+}

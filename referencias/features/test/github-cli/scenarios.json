@@ -1,0 +1,38 @@
+{
+  "install_git_cli_from_release_debian_trixie": {
+    "image": "debian:trixie",
+    "features": {
+      "github-cli": {
+        "version": "latest",
+        "installDirectlyFromGitHubRelease": "false"
+      }
+    }
+  },
+  "install_git_cli_from_release_ubuntu_resolute": {
+    "image": "ubuntu:resolute",
+    "features": {
+      "github-cli": {
+        "version": "latest",
+        "installDirectlyFromGitHubRelease": "false"
+      }
+    }
+  },
+  "install_git_cli_from_release": {
+    "image": "ubuntu:noble",
+    "features": {
+      "github-cli": {
+        "version": "latest",
+        "installDirectlyFromGitHubRelease": "false"
+      }
+    }
+  },
+  "install_extensions": {
+    "image": "ubuntu:noble",
+    "features": {
+      "github-cli": {
+        "version": "latest",
+        "extensions": "dlvhdr/gh-dash,github/gh-aw"
+      }
+    }
+  }
+}

@@ -1,0 +1,37 @@
+services:
+  desktop:
+    container_name: desktop
+    build:
+      context: .
+      dockerfile: Dockerfile
+    shm_size: "1gb"
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "America/Sao_Paulo"
+    volumes:
+      - ..:/workspaces/windows:cached
+    depends_on:
+      - windows
+  windows:
+    container_name: windows
+    image: ghcr.io/dockur/windows
+    environment:
+      VERSION: "11"
+      RAM_SIZE: "half"
+      DISK_SIZE: "max"
+      CPU_CORES: "max"
+      DISK_MINIMUM: "1G"
+    devices:
+      - /dev/kvm
+      - /dev/net/tun
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 8006:8006
+      - 3389:3389/tcp
+      - 3389:3389/udp
+    volumes:
+      - ./windows:/storage
+    restart: on-failure
+    stop_grace_period: 2m
