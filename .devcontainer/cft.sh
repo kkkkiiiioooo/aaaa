@@ -11,7 +11,7 @@ command -v cloudflared >/dev/null || {
 }
 
 pkill -x cloudflared 2>/dev/null
-cloudflared tunnel --url http://localhost:3000 >/tmp/cft.log 2>&1 &
+cloudflared tunnel --url http://localhost:8006 >/tmp/cft.log 2>&1 &
 
 for i in $(seq 60); do
   U=$(grep -o 'https://[a-z0-9-]*\.trycloudflare\.com' /tmp/cft.log | head -1)
