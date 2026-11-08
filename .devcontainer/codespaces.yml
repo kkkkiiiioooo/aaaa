@@ -15,6 +15,8 @@ services:
       - NET_ADMIN
     ports:
       - 8006:8006
+      - 3000:3000
+      - 6901:6901
       - 3389:3389/tcp
       - 3389:3389/udp
     volumes:
