@@ -47,7 +47,8 @@ HP=$(freeport ${HP:-3000}); SP=$(freeport ${SP:-3001})
 
 # 3) KasmVNC (Xvnc) sem SSL/auth (nginx/tunel cuidam disso)
 [ -n "$RUN" ] || {
-  nohup setsid Xvnc $K \
+  W=/usr/share/kasmvnc/www; [ -d $W ] || W=$(ls -d /usr/share/kasmvnc/www /usr/local/share/kasmvnc/www 2>/dev/null | head -1)
+  nohup setsid Xvnc $K ${W:+-httpd $W} \
     -PublicIP 127.0.0.1 -disableBasicAuth -SecurityTypes None -AlwaysShared \
     -http-header Cross-Origin-Embedder-Policy=require-corp \
     -http-header Cross-Origin-Opener-Policy=same-origin \
