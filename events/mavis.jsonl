@@ -1,1 +1,2 @@
 {"ts":"2026-11-08T21:56:47Z","ag":"mavis","tipo":"note","id":"T0","texto":"protocolo v3 inicializado"}
+{"ts":"2026-11-08T21:56:52Z","ag":"mavis","tipo":"claim","id":"E1","texto":"corrige base da range do lint: merge-base em vez de origin/main fixo"}
