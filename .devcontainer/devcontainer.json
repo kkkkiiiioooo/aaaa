@@ -4,12 +4,19 @@
   "containerEnv": {
     "VERSION": "core11"
   },
-  "forwardPorts": [6901],
+  "forwardPorts": [
+    3000,
+    6901
+  ],
   "portsAttributes": {
-    "6901": {
-      "label": "Web (KasmVNC)",
+    "3000": {
+      "label": "Web (KasmVNC via nginx)",
       "protocol": "http",
       "onAutoForward": "notify"
+    },
+    "6901": {
+      "label": "KasmVNC direto",
+      "protocol": "http"
     }
   },
   "otherPortsAttributes": {
