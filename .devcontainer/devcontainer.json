@@ -24,6 +24,6 @@
   },
   "dockerComposeFile": "codespaces.yml",
   "workspaceFolder": "/workspaces/windows",
-  "postStartCommand": "bash /workspaces/windows/.devcontainer/setup.sh",
+//  "postStartCommand": "bash /workspaces/windows/.devcontainer/setup.sh",
   "initializeCommand": "docker system prune --all --force"
 }
