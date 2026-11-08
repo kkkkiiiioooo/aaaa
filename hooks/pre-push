@@ -11,7 +11,13 @@ LINT=""
 for c in "$R/protocolo-lint.sh" "$R/.work/protocolo-lint.sh"; do
   [ -f "$c" ] && { LINT=$c; break; }
 done
-[ -n "$LINT" ] || { echo "pre-push: protocolo-lint.sh ausente (rode sh h.sh de novo)"; exit 0; }
+# projeto sem copia local: extrai da branch 0 (fonte unica no .work, gitignored)
+if [ -z "$LINT" ]; then
+  mkdir -p "$R/.work"
+  git show origin/0:protocolo-lint.sh > "$R/.work/protocolo-lint.sh" 2>/dev/null \
+    && chmod 755 "$R/.work/protocolo-lint.sh" && LINT="$R/.work/protocolo-lint.sh"
+fi
+[ -n "$LINT" ] || { echo "pre-push: protocolo-lint.sh ausente (sem branch 0?)"; exit 0; }
 
 B=$(git branch --show-current 2>/dev/null)
 BASE=origin/main
