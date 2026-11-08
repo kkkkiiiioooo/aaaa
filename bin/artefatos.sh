@@ -17,7 +17,7 @@ M="$R/artefatos/manifest.tsv"
 D="$R/.work/downloads"
 mkdir -p "$D"
 
-linha() { grep -P "^\\Q$1\\E\t" "$M" 2>/dev/null | head -1 || awk -F'\t' -v n="$1" '$1==n' "$M" 2>/dev/null | head -1; }
+linha() { awk -F'\t' -v n="$1" '$1==n {print; exit}' "$M" 2>/dev/null; }
 
 case "${1:-listar}" in
   listar)
@@ -46,6 +46,19 @@ case "${1:-listar}" in
     fi
     echo "ok: $D/$n  sha256=$got"
     ;;
+  juntar)
+    # concatena <base>.part-NN ja baixados e confere o sha256 do arquivo final
+    b=${2:-}; [ -n "$b" ] || { echo "uso: artefatos.sh juntar <nome-final>"; exit 2; }
+    h=$(linha "$b" | cut -f3)
+    lista=$(ls "$D/$b".part-* 2>/dev/null | sort)
+    [ -n "$lista" ] || { echo "nenhuma parte de $b em $D"; exit 1; }
+    cat $lista > "$D/$b"
+    got=$(sha256sum "$D/$b" | cut -d' ' -f1)
+    if [ -n "$h" ] && [ "$h" != "-" ] && [ "$got" != "$h" ]; then
+      echo "SHA256 DIVERGENTE em $b"; echo "  esperado: $h"; echo "  obtido  : $got"; exit 1
+    fi
+    echo "ok: $D/$b  sha256=$got"
+    ;;
   conferir)
     [ -f "$M" ] || { echo "sem manifesto"; exit 0; }
     fail=0
@@ -65,5 +78,5 @@ case "${1:-listar}" in
     echo "enviado. registre no manifesto:"
     printf '%s\t%s\t%s\n' "$n" "$(gh release view artefatos --json assets -q ".assets[]|select(.name==\"$n\")|.url")" "$(sha256sum "$f" | cut -d' ' -f1)"
     ;;
-  *) echo "uso: artefatos.sh listar|baixar <nome>|conferir|publicar <arquivo> [nome]"; exit 2 ;;
+  *) echo "uso: artefatos.sh listar|baixar <nome>|juntar <nome>|conferir|publicar <arquivo> [nome]"; exit 2 ;;
 esac

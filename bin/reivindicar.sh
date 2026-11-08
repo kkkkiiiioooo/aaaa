@@ -18,6 +18,16 @@ ID=${1:-}
 printf '%s' "$ID" | grep -qE '^[A-Z][A-Za-z]?[0-9]+$' || { echo "ID invalido: $ID (ex.: E2, T1)"; exit 2; }
 case "$ID" in */*) echo "ID invalido: $ID"; exit 2 ;; esac
 
+# pre-checagem (so para mensagem boa e para nao criar commit que sera descartado):
+# o cadeado de verdade e o push CAS do passo 2.
+if git ls-remote origin "refs/claims/$ID" 2>/dev/null | grep -q .; then
+  git fetch -q origin "refs/claims/$ID" 2>/dev/null
+  dono=$(git log -1 --format='%(trailers:key=Agent-Name,valueonly)' FETCH_HEAD 2>/dev/null | tr -d '\n')
+  if [ "$dono" = "$AG" ]; then echo "$ID ja e sua (claim vivo)"; exit 0; fi
+  echo "JA REIVINDICADA: $ID esta com ${dono:-outro agente}. Escolha outra."
+  exit 1
+fi
+
 mkdir -p events .work/logs
 LOG="events/$AG.jsonl"
 TS=$(date -u +%FT%TZ)

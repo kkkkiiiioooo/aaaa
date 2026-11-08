@@ -15,11 +15,27 @@ EV=${3:-ver docs/evidence/}
 [ -n "$ID" ] || { echo "uso: liberar.sh <ID> [feita|liberada] [evidencia]"; exit 2; }
 case "$TIPO" in feita|liberada) ;; *) echo "tipo invalido: $TIPO (feita|liberada)"; exit 2 ;; esac
 
-# fechar exige evidencia: a regra do projeto e "sem evidencia nao esta feito"
-if [ "$TIPO" = feita ] && [ "$EV" = "ver docs/evidence/" ]; then
-  echo "recusado: 'feita' exige evidencia (arquivo + saida do comando)."
-  echo "  ex.: sh bin/liberar.sh $ID feita \"docs/evidence/e4.md: PASS=21 FAIL=0\""
+# fechar exige evidencia e devolver exige motivo: o proximo agente precisa saber por que
+if [ "$EV" = "ver docs/evidence/" ]; then
+  if [ "$TIPO" = feita ]; then
+    echo "recusado: 'feita' exige evidencia (arquivo + saida do comando)."
+    echo "  ex.: sh bin/liberar.sh $ID feita \"docs/evidence/e4.md: PASS=21 FAIL=0\""
+  else
+    echo "recusado: 'liberada' exige motivo (o que tentou e por que parou)."
+    echo "  ex.: sh bin/liberar.sh $ID liberada \"sem KVM nesta maquina: qemu sem -enable-kvm\""
+  fi
   exit 1
+fi
+
+# dono do cadeado: fechar/liberar tarefa alheia exige FORCAR=1 (registrado)
+if git ls-remote origin "refs/claims/$ID" 2>/dev/null | grep -q .; then
+  git fetch -q origin "refs/claims/$ID" 2>/dev/null
+  dono=$(git log -1 --format='%(trailers:key=Agent-Name,valueonly)' FETCH_HEAD 2>/dev/null | tr -d '\n')
+  if [ -n "$dono" ] && [ "$dono" != "$AG" ] && [ -z "${FORCAR:-}" ]; then
+    echo "recusado: $ID esta com $dono, nao com voce."
+    echo "  combine com o dono, ou assuma explicitamente: FORCAR=1 sh bin/liberar.sh $ID liberada \"<motivo>\""
+    exit 1
+  fi
 fi
 
 mkdir -p events .work/logs
