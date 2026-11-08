@@ -2,7 +2,7 @@
 # Manual, faz tudo: setup.sh (KasmVNC+nginx+visualizador) + Cloudflare Tunnel (3000) + abre no $BROWSER.
 # Uso: bash /workspaces/windows/.devcontainer/cft.sh
 D=$(dirname "$(readlink -f "$0")")
-bash "$D/setup.sh"
+#bash "$D/setup.sh"
 
 A=$(dpkg --print-architecture)
 command -v cloudflared >/dev/null || {
@@ -11,7 +11,7 @@ command -v cloudflared >/dev/null || {
 }
 
 pkill -x cloudflared 2>/dev/null
-nohup cloudflared tunnel --url http://localhost:3000 >/tmp/cft.log 2>&1 &
+cloudflared tunnel --url http://localhost:3000 >/tmp/cft.log 2>&1 &
 
 for i in $(seq 60); do
   U=$(grep -o 'https://[a-z0-9-]*\.trycloudflare\.com' /tmp/cft.log | head -1)
