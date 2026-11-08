@@ -1,18 +1,20 @@
 #!/bin/bash
-# jwm.sh - troca o openbox por JWM (~0,5 MB) com barra, menu "Menu" e lista de apps automatica.
-# Roda DENTRO do container, depois do kasmweb.sh (ou do setup.sh). Idempotente.
-# Uso: bash /workspaces/windows/.devcontainer/jwm.sh
+# jwm.sh - troca o openbox por JWM com barra, menu e lista de apps automatica. Portatil e idempotente.
+# Roda depois do kasmweb.sh (le o display em /tmp/kasm.env). Funciona como root ou com sudo.
 export DEBIAN_FRONTEND=noninteractive
-K=:1
+R=; [ "$(id -u)" = 0 ] || { command -v sudo >/dev/null && R=sudo || { echo "precisa de root ou sudo"; exit 1; }; }
+[ -f /tmp/kasm.env ] && . /tmp/kasm.env
+K=${K:-:1}
+[ -e /tmp/.X11-unix/X${K#:} ] || { echo "display $K nao existe: rode kasmweb.sh antes"; exit 1; }
 
-# 1) pacotes minimos (jwm + terminal xterm)
+# 1) pacotes minimos
 command -v jwm >/dev/null && command -v xterm >/dev/null || {
-  apt-get update -qq
-  apt-get install -y -qq --no-install-recommends jwm xterm
+  $R apt-get update -qq
+  $R apt-get install -y -qq --no-install-recommends jwm xterm || { echo "falha apt jwm"; exit 1; }
 }
 
-# 2) gerador do menu: le /usr/share/applications/*.desktop e imprime XML do JWM
-cat > /usr/local/bin/jwm-apps <<'EOF'
+# 2) gerador do menu a partir dos .desktop
+$R tee /usr/local/bin/jwm-apps >/dev/null <<'EOF'
 #!/bin/sh
 echo '<JWM>'
 for f in /usr/share/applications/*.desktop; do
@@ -30,9 +32,9 @@ done | sort -f -t'|' -k1,1 | awk -F'|' '{
 }'
 echo '</JWM>'
 EOF
-chmod +x /usr/local/bin/jwm-apps
+$R chmod +x /usr/local/bin/jwm-apps
 
-# 3) configuracao: barra embaixo, botao Menu, relogio; o viewer do Windows fica maximizado sem borda
+# 3) configuracao
 cat > ~/.jwmrc <<'EOF'
 <?xml version="1.0"?>
 <JWM>
@@ -59,18 +61,23 @@ cat > ~/.jwmrc <<'EOF'
 </JWM>
 EOF
 
-# 4) troca de WM: para openbox/jwm antigos, reinicia o viewer SEM -FullScreen (para a barra aparecer)
+# 4) troca de WM e viewer SEM -FullScreen (a barra aparece); mata so o que e nosso
 pkill -x openbox 2>/dev/null
 pkill -x jwm 2>/dev/null
-pkill -f 'while :; do' 2>/dev/null     # laco antigo do viewer (setup.sh/kasmweb.sh)
-pkill -f xtigervncviewer 2>/dev/null
+pkill -f viewer-loop.sh 2>/dev/null
+pkill -x xtigervncviewer 2>/dev/null
 sleep 1
-DISPLAY=$K nohup jwm >/tmp/jwm.log 2>&1 &
+DISPLAY=$K nohup setsid jwm >/tmp/jwm.log 2>&1 &
 sleep 1
-nohup bash -c "while :; do
-  DISPLAY=$K xtigervncviewer localhost:5900 -SecurityTypes None -Shared
+cat > /tmp/viewer-loop.sh <<EOF
+#!/bin/bash
+while :; do
+  DISPLAY=$K xtigervncviewer ${VNC:-localhost:5900} -SecurityTypes None -Shared
   sleep 3
-done" >/tmp/viewer.log 2>&1 &
+done
+EOF
+chmod +x /tmp/viewer-loop.sh
+nohup setsid /tmp/viewer-loop.sh >/tmp/viewer.log 2>&1 &
 
 sleep 2
 pgrep -x jwm >/dev/null && echo "JWM rodando em $K (menu: botao Menu ou clique no fundo). Logs: /tmp/jwm.log /tmp/viewer.log" \
