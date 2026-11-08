@@ -1,5 +1,5 @@
 {
-  "name": "Windows 11 Pro + KasmVNC + desktop-lite",
+  "name": "Tiny11 Core + KasmVNC + desktop-lite",
   "service": "desktop",
   "dockerComposeFile": "codespaces.yml",
   "workspaceFolder": "/workspaces/windows",
@@ -11,7 +11,7 @@
     "3001": { "label": "KasmVNC https (nginx)", "protocol": "https" },
     "6080": { "label": "desktop-lite noVNC", "protocol": "http" },
     "5901": { "label": "desktop-lite TigerVNC" },
-    "windows:8006": { "label": "Windows (dockur)", "protocol": "http" }
+    "windows:8006": { "label": "Tiny11 Core (dockur)", "protocol": "http" }
   },
   "otherPortsAttributes": {
     "onAutoForward": "ignore"
