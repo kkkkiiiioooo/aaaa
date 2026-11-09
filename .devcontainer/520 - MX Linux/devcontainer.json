@@ -1,0 +1,19 @@
+{
+  "name": "MX Linux (QEMU)",
+  "service": "qemu",
+  "containerEnv": {
+    "BOOT": "mx"
+  },
+  "forwardPorts": [8006],
+  "portsAttributes": {
+    "8006": {
+      "label": "Web",
+      "onAutoForward": "notify"
+    }
+  },
+  "otherPortsAttributes": {
+    "onAutoForward": "ignore"
+  },
+  "dockerComposeFile": "../qemu.yml",
+  "initializeCommand": "docker system prune --all --force"
+}
