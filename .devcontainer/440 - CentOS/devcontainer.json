@@ -1,0 +1,19 @@
+{
+  "name": "CentOS (QEMU)",
+  "service": "qemu",
+  "containerEnv": {
+    "BOOT": "centos"
+  },
+  "forwardPorts": [8006],
+  "portsAttributes": {
+    "8006": {
+      "label": "Web",
+      "onAutoForward": "notify"
+    }
+  },
+  "otherPortsAttributes": {
+    "onAutoForward": "ignore"
+  },
+  "dockerComposeFile": "../qemu.yml",
+  "initializeCommand": "docker system prune --all --force"
+}
