@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>htmlai</title>
+<link rel="icon" href="assets/favicon.svg">
+<link rel="stylesheet" href="src/css/style.css">
+</head>
+<body>
+<aside id="left">
+  <h2>Playground</h2>
+  <label>Modelo <select id="model"></select></label>
+  <label>System prompt <textarea id="sys" rows="9"></textarea></label>
+  <label>temperature <input id="temperature" type="number" step="0.1" min="0" max="2"></label>
+  <label>top_p <input id="top_p" type="number" step="0.1" min="0" max="1"></label>
+  <label>max_tokens <input id="max_tokens" type="number"></label>
+  <label>seed <input id="seed" type="number"></label>
+  <label>Passos máx. do agente <input id="steps" type="number" min="1"></label>
+  <label>Caracteres máx. por resultado <input id="maxres" type="number" min="500"></label>
+  <label><input id="stream" type="checkbox"> Streaming</label>
+  <h2>Histórico</h2>
+  <button id="new">Novo chat</button>
+  <ul id="hist"></ul>
+  <div id="usage"></div>
+  <progress id="bar" max="100" value="0"></progress>
+  <button id="clear">Limpar todos os dados</button>
+</aside>
+<main>
+  <div id="chat"></div>
+  <div id="composer">
+    <textarea id="input" rows="2" placeholder="Mensagem (Enter envia, Shift+Enter quebra linha)"></textarea>
+    <button id="send">Enviar</button>
+    <button id="stop">Parar</button>
+  </div>
+</main>
+<aside id="right">
+  <h2>MCP</h2>
+  <div id="servers"></div>
+  <h2>Adicionar MCP</h2>
+  <input id="mname" placeholder="Nome">
+  <input id="murl" placeholder="URL (https://…/mcp)">
+  <input id="mhdr" placeholder='Headers JSON (opcional)'>
+  <button id="madd">Adicionar</button>
+</aside>
+<script src="src/js/storage.js" defer></script>
+<script src="src/js/md.js" defer></script>
+<script src="src/js/api.js" defer></script>
+<script src="src/js/mcp.js" defer></script>
+<script src="src/js/agent.js" defer></script>
+<script src="src/js/ui.js" defer></script>
+<script src="src/js/app.js" defer></script>
+</body>
+</html>

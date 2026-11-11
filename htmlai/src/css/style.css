@@ -1,0 +1,39 @@
+:root{--bg:#000;--fg:#fff;--mut:#888;--line:#333;--sel:#2563eb;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{display:grid;grid-template-columns:290px 1fr 300px;background:var(--bg);color:var(--fg);font:14px/1.45 ui-monospace,Menlo,Consolas,monospace}
+aside{padding:12px;overflow:auto;border-color:var(--line);border-style:solid;border-width:0 1px 0 0}
+#right{border-width:0 0 0 1px}
+main{display:flex;flex-direction:column;min-width:0;height:100%}
+h2{font-size:13px;text-transform:uppercase;color:var(--mut);margin:14px 0 6px}
+label{display:block;margin:6px 0;color:var(--mut)}
+input,select,textarea,button{width:100%;background:var(--bg);color:var(--fg);border:1px solid var(--line);padding:6px;font:inherit;border-radius:0;margin-top:3px}
+input[type=checkbox]{width:auto;margin:0 6px 0 0;accent-color:var(--sel)}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:none;border-color:var(--sel)}
+button{cursor:pointer;width:auto}
+button:hover{border-color:var(--fg)}
+#left button,#right button{margin:4px 4px 0 0}
+progress{width:100%;height:6px;accent-color:var(--sel)}
+ul{list-style:none;margin:6px 0;padding:0}
+li{display:flex;border:1px solid transparent;border-left:3px solid transparent}
+li span{flex:1;padding:4px 6px;cursor:pointer;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+li.on{border-left-color:var(--sel);background:#111}
+li button{border:0;margin:0}
+#chat{flex:1;overflow:auto;padding:12px}
+.msg{white-space:pre-wrap;border:1px solid var(--line);padding:8px 10px;margin:8px 0}
+.msg:empty{display:none}
+.msg.user{border-color:var(--fg)}
+.note{color:var(--mut);margin:8px 0}
+details{border:1px solid var(--line);margin:8px 0}
+summary{cursor:pointer;padding:4px 8px;color:var(--mut)}
+details[open]>summary{border-bottom:1px solid var(--line)}
+pre{margin:0;padding:8px;overflow:auto;max-height:340px;white-space:pre-wrap;word-break:break-word}
+code{background:#111;padding:0 3px}
+a{color:var(--fg)}
+#composer{display:flex;gap:6px;padding:8px;border-top:1px solid var(--line)}
+#composer textarea{margin:0;flex:1}
+#send{border-color:var(--sel)}
+.srv{border:1px solid var(--line);padding:6px;margin:6px 0}
+.srv small{color:var(--mut)}
+.srv label{margin:2px 0;color:var(--fg)}
+@media(max-width:900px){body{display:block;height:auto}aside{border-width:0 0 1px}main{height:80vh}}
