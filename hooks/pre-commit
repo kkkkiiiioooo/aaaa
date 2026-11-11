@@ -4,7 +4,7 @@
 # Versao versionada: .git/hooks NAO e clonado pelo git, entao o hook so existe se
 # alguem rodar o setup. Este arquivo vive no repo e e ativado por
 #   git config core.hooksPath hooks
-# (feito por setup.sh / scripts/agente.sh).
+# (feito por setup/common/hooks.sh).
 set -u
 R=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 b=$(git branch --show-current 2>/dev/null || echo "")

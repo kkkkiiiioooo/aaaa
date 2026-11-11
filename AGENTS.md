@@ -41,7 +41,7 @@ Etapa com lease ativa de outro: pegue outra frente, nunca espere. Só responda a
 - Dado faltante: obtenha no ambiente ou cubra todas as hipóteses. Dúvida: adote a mais provável, registre em `HANDOFF.md` (Premissas), troque se a evidência contrariar.
 - Nunca conclua "impossível": só bloqueio com tentativas registradas + caminho alternativo. Falhou: próximo caminho.
 - O entregável roda sozinho na máquina do dono (sem digitar, detecta hardware, tenta tudo, grava log). Comandos que o dono digita à mão: curtíssimos.
-- Executar vale mais que analisar: `sh setup.sh` (idempotente), rode, corrija, repita. Tarefa longa: `nohup <cmd> > .work/logs/<nome>.log 2>&1 &` e `tail`.
+- Executar vale mais que analisar: `sh setup.sh [agente]` (idempotente; só `GH_TOKEN` se faltar credencial; ver `setup/README.md`), rode, corrija, repita. Tarefa longa: `nohup <cmd> > .work/logs/<nome>.log 2>&1 &` e `tail`.
 - Simule o que não der para reproduzir e documente a diferença.
 
 ## Trabalhe até se esgotar
