@@ -1,10 +1,10 @@
 # Ambiente do agente: claude
-Modelo: Sonnet55
-Medido em 2026-11-07T20:08:08Z por claude. **So vale para este agente.** Outro agente tem outro ambiente: nao misture.
+Modelo: Claude Sonnet 5.5
+Medido em 2026-11-11T19:30:55Z por claude. **So vale para este agente.** Outro agente tem outro ambiente: nao misture.
 
 ## Maquina
-- SO: Ubuntu 24.04.5 LTS | kernel: Linux 6.18.44-fc-v310 | arq: x86_64 | usuario: root
-- CPUs: 1 | RAM: 3990 MB | disco livre: 9903 MB | KVM: NAO
+- SO: Ubuntu 24.04.5 LTS | kernel: Linux 6.18.44-fc-v378 | arq: x86_64 | usuario: root
+- CPUs: 1 | RAM: 3990 MB | disco livre: 9618 MB | KVM: NAO
 - modulo vfat no kernel: NAO
 
 ## Ferramentas (OK = presente, -- = ausente)
