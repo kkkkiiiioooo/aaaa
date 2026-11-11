@@ -24,6 +24,8 @@ mkdir -p "$R/.work/injetar"
   printf 'add %s /Windows/System32/download.vbs\n' "$R/scripts/download.vbs"
   # downloader em JScript: grava binario sem ADODB (que nao existe no WinRE 1809)
   printf 'add %s /Windows/System32/download-js.js\n' "$R/scripts/download-js.js"
+  printf 'add %s /Windows/System32/teste-fso-binario.js\n' "$R/scripts/teste-fso-binario.js"
+  printf 'add %s /Windows/System32/teste-msxml-binario.js\n' "$R/scripts/teste-msxml-binario.js"
 } > "$CMDFILE"
 
 echo "[autorun] atualizando $IMAGEM"
@@ -34,10 +36,10 @@ fi
 # verifica
 LISTA=$(wimlib-imagex dir "$IMAGEM" 1 2>/dev/null)
 ok=0
-for p in /Windows/System32/winpeshl.ini /Windows/System32/autorun-wwii.cmd /Windows/System32/diag.cmd /Windows/System32/download.vbs /Windows/System32/download-js.js; do
+for p in /Windows/System32/winpeshl.ini /Windows/System32/autorun-wwii.cmd /Windows/System32/diag.cmd /Windows/System32/download.vbs /Windows/System32/download-js.js /Windows/System32/teste-fso-binario.js /Windows/System32/teste-msxml-binario.js; do
   if echo "$LISTA" | grep -qi "$p"; then echo "[autorun] OK $p"; ok=$((ok+1)); else echo "[autorun] FALTA $p"; fi
 done
-[ "$ok" -eq 5 ] || exit 1
+[ "$ok" -eq 7 ] || exit 1
 
 # confere que o INI injetado cita autorun-wwii
 mkdir -p "$R/.work/verif-autorun"

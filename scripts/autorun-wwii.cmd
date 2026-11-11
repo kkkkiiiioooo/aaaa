@@ -94,7 +94,7 @@ if exist %SystemRoot%\System32\ftp.exe (
   echo open 10.0.2.2> %SystemDrive%\ftp.txt
   echo user anonymous anonymous>> %SystemDrive%\ftp.txt
   echo binary>> %SystemDrive%\ftp.txt
-  echo get w w wii-teste.bin C:\wwii-ftp.bin>> %SystemDrive%\ftp.txt
+  echo get wwii-teste.bin C:\wwii-ftp.bin>> %SystemDrive%\ftp.txt
   echo bye>> %SystemDrive%\ftp.txt
   rem medido em 2026-11-07: o ftp.exe do WinRE 1809 manda PORT (modo ATIVO) e o
   rem NAT/slirp nao honra a conexao de dados ("500 Illegal PORT command / 425 Use
@@ -107,9 +107,27 @@ if exist %SystemRoot%\System32\ftp.exe (
 call :persist
 
 rem --- D2: download em JScript (grava binario sem ADODB, que nao existe no 1809) ---
+echo --- fso unicode pack (E5 escrita binaria) --- >> %LOG%
+if exist %SystemRoot%\System32\teste-fso-binario.js (
+  cscript //nologo %SystemRoot%\System32\teste-fso-binario.js C:\fso-t >> %LOG% 2>&1
+) else (
+  echo teste-fso-binario.js AUSENTE na imagem >> %LOG%
+)
+call :persist
+
+echo --- msxml binario (E5 ResponseBody sem ADODB) --- >> %LOG%
+if exist %SystemRoot%\System32\teste-msxml-binario.js (
+  cscript //nologo %SystemRoot%\System32\teste-msxml-binario.js C:\msxml-t >> %LOG% 2>&1
+) else (
+  echo teste-msxml-binario.js AUSENTE na imagem >> %LOG%
+)
+call :persist
+
 echo --- download HTTP JS (D2) --- >> %LOG%
 if exist %SystemRoot%\System32\download-js.js (
   cscript //nologo %SystemRoot%\System32\download-js.js %URL% C:\wwii-js.bin >> %LOG% 2>&1
+  cscript //nologo %SystemRoot%\System32\download-js.js http://10.0.2.2:8000/wwii-256.bin.b64 C:\wwii-256.bin b64 >> %LOG% 2>&1
+  cscript //nologo %SystemRoot%\System32\download-js.js http://10.0.2.2:8000/wwii-256.bin C:\wwii-256.raw unicode >> %LOG% 2>&1
 ) else (
   echo download-js.js AUSENTE na imagem >> %LOG%
 )

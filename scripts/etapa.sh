@@ -79,7 +79,15 @@ claim_idade() { # minutos desde o commit do claim
   [ -n "$ts" ] || return 1
   echo $(( ( $(date -u +%s) - ts ) / 60 ))
 }
-pega_ref() { git push -q --force-with-lease="refs/claims/$1:" origin "HEAD:refs/claims/$1" 2>/dev/null; }
+pega_ref() {
+  # lease expirado: o ref ainda existe. force-with-lease vazio so cria ref novo.
+  old=$(git ls-remote origin "refs/claims/$1" 2>/dev/null | awk '{print $1}')
+  if [ -n "$old" ]; then
+    git push -q --force-with-lease="refs/claims/$1:$old" origin "HEAD:refs/claims/$1" 2>/dev/null
+  else
+    git push -q --force-with-lease="refs/claims/$1:" origin "HEAD:refs/claims/$1" 2>/dev/null
+  fi
+}
 solta_ref() { git push -q origin ":refs/claims/$1" 2>/dev/null; }
 
 case "$1" in
