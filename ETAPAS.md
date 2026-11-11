@@ -57,3 +57,4 @@ E5 | mavis | 2026-11-07T15:28Z | ativa | transporte de download RESOLVIDO: PE ba
 E5 | mavis | 2026-11-07T15:35Z | liberada | transporte resolvido; proximo (base64 no PE ou FTP com PASV) esta no HANDOFF - liberar para o proximo agente
 E5 | claude | 2026-11-07T20:08Z | ativa | -
 E5 | claude | 2026-11-07T20:09Z | liberada | sem progresso
+E5 | codebuddy | 2026-11-11T09:21Z | ativa | -
