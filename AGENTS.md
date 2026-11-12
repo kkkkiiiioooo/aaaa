@@ -23,7 +23,7 @@ Etapa com lease ativa de outro: pegue outra frente, nunca espere. Só responda a
 - Dado faltante: obtenha no ambiente ou cubra todas as hipóteses. Dúvida: adote a mais provável, registre em `HANDOFF.md` (Premissas), troque se a evidência contrariar.
 - Nunca conclua "impossível": só bloqueio com tentativas registradas + caminho alternativo. Falhou: próximo caminho.
 - O entregável roda sozinho na máquina do dono (sem digitar, detecta hardware, tenta tudo, grava log). Comandos que o dono digita à mão: curtíssimos.
-- Executar vale mais que analisar: `sh setup.sh [agente]` (idempotente; só `GH_TOKEN` se faltar credencial; ver `setup/README.md`), rode, corrija, repita. Tarefa longa: `nohup <cmd> > .work/logs/<nome>.log 2>&1 &` e `tail`.
+- Executar vale mais que analisar: `sh setup.sh [agente]` (rápido por padrão; `T=1 sh setup.sh` instala qemu/wimlib/kernel para testar; idempotente; só `GH_TOKEN` se faltar credencial; ver `setup/README.md`), rode, corrija, repita. Tarefa longa: `nohup <cmd> > .work/logs/<nome>.log 2>&1 &` e `tail`.
 - Simule o que não der para reproduzir e documente a diferença.
 
 ## Trabalhe até se esgotar
@@ -41,13 +41,14 @@ Cada agente roda numa máquina diferente. Nunca atribua a um agente a medida de 
 ## Cooperação técnica (quadro: PROBLEMAS.md)
 `problema.sh abertos` no início. Travou? `problema.sh buscar <termo>` antes de gastar; nada achado: `novo "<título>: <contexto + evidência>"`. Cada falha: `tentou <id> "<fez> -> <resultado>"`. Achou: `resolveu <id> "<comando + prova>"`. 2 tentativas sem solução: `sh scripts/escalar.sh <id> "<pergunta objetiva>" "<hipóteses não testadas>"`; a resposta vem no PLANO, por id.
 
-## Leitura (contexto mínimo, ~11 KB)
+## Leitura (contexto mínimo, ~18 KB)
 `sh scripts/plano.sh` · `AGENTS.md` · `PROMPT.md` · `HANDOFF.md`. `PROGRESS.md` e `docs/evidence/`: só o fim (`tail -20`). Nunca abra `INDICE-PARA-O-LIDER.md`.
 
 ## Fluxo com o lead (hooks, nada a rodar)
 O lead só escreve `PLANO-DO-LIDER.md` na branch `lider`. Cada commit seu dispara `scripts/sync.sh`: copia o plano para `.work/PLANO-DO-LIDER.md` e imprime `>>> PLANO DO LIDER MUDOU` se mudou (leia antes de seguir). Seus `docs/retorno/<ID>.md` sobem sozinhos para `lider:RETORNO/<ID>.md`. Commits pequenos e imediatos: o hook faz o push e grava `PRESENCA.md` (não edite). Push falhou (`.work/logs/push.log`): repita até passar; commit local não é entrega.
 
 ## Escrita (para um leitor mais inteligente que você: só o que importa)
+- **`PROMPT.md` é o prompt vivo e único** (≤ 9 KB, sem histórico): se você descobrir algo que muda o entendimento, corrija a seção certa no mesmo commit. Pacote de drivers e ambiente do WinRE moram nele.
 - Nada só no chat. Registre no repo, no fim do arquivo, sem duplicar, até 500 caracteres por entrada: descoberta, decisão, evidência (comando + saída).
 - `HANDOFF.md` = snapshot, reescreva ao fim da rodada. `INDICE-PARA-O-LIDER.md` é do `relatorio.sh`/`escalar.sh`. O PLANO é só do lead.
 - Perda de rodada: `sh scripts/sugerir.sh perda|ideia "<texto>"`.

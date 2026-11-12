@@ -12,6 +12,6 @@ sh setup/common/credentials.sh || exit 1
 sh setup/common/hooks.sh
 sh setup/common/deps.sh || echo "[setup] AVISO: deps com erro - veja acima"
 S=setup/agents/$N.sh; [ -f "$S" ] || S=setup/agents/default.sh
-sh "$S"
+if [ -n "${T:-}" ]; then sh "$S"; else echo "[setup] modo rapido (sem instalar qemu/wimlib). Para testar: T=1 sh setup.sh"; fi
 A=$N sh scripts/agente.sh entrou
 sh scripts/doctor.sh

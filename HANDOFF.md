@@ -9,6 +9,7 @@ Snapshot (reescreva ao fim de cada rodada, sem historico). Historico: `PROGRESS.
 - Este agente (stackai, 1991 MB): T3 inviavel. Entregou o caminho de escrita binaria + testes para o proximo boot.
 
 ## Fatos que nao refazer
+- Drivers: ver `PROMPT.md` ("Drivers que já temos"). O lote de 6 fabricantes (E2) foi chute sem HWID; o HWID provável é DEV_43EC (Broadcom).
 - E2–E5 mediram com host e NIC do QEMU (slirp). Nenhuma prova ainda de transferência só por teclado/tela.
 - FSO ASCII perde 0x81/8D/8F/90/9D no cp1252. Empacotar ResponseText **nao** recupera o que o transporte ja comeu.
 - certutil e ADODB.Stream ausentes. msxml3.dll e msxml6.dll **existem**.
@@ -18,6 +19,7 @@ Snapshot (reescreva ao fim de cada rodada, sem historico). Historico: `PROGRESS.
 
 ## Proximo passo (nesta ordem)
 0. **E6 (prioridade, sem rede)**: PE em QEMU com `-nic none`; bytes entram só por `sendkey` (monitor) ou `send-key` (QMP); reconstruir no PE só com ferramentas de `docs/imagem/INVENTARIO.md`; conferir sha256 lendo o disco da VM pelo host. Medir bytes/s, teto de tamanho e perda por caractere (0x81..0x9F). Sem isso, E5 não vale para a máquina real.
+0b. **Teste da hipótese do nvram** (offline, sem boot): o menor delta é `bcm94356wlpagbl_P3_150828M.txt` = 5361 B (digitável). Escrever INF mínimo (~1–2 KB) para DEV_43EC apontando o `.sys` e o firmware já presentes no WinRE + o nvram, e medir o que o `drvload` devolve na VM. Hipótese N0, não medida.
 1. **Agente com mem>=3072**: `python3 scripts/servir_e5.py --porta 8000`, boot E4, ler `C:\fso-t.u`, `C:\msxml-t.u`, `C:\wwii-256.bin` (+ `.len`). Gate: 256 bytes 0x00..0xFF sha256 igual.
 2. Se Unicode/MSXML N3: baixar ESD por Range (D2) e `dism /apply-image` em disco virtual (D3 export-driver antes do wipe).
 3. Ablacao BSOD (uma var por vez) — registro, nao bloqueia E5.

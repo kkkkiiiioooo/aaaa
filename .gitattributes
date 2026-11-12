@@ -14,3 +14,6 @@ BOARD.md       -merge
 
 *.cmd text eol=crlf
 *.vbs text eol=crlf
+
+# drivers: binarios/INF UTF-16, sem conversao de fim de linha
+drivers/** -text

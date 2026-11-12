@@ -1,5 +1,7 @@
 # DESAFIO: Recuperação do Windows sem conexões físicas
 
+> Prompt vivo: este arquivo (≤ 9 KB, sem histórico) basta para entender o problema. Descobriu algo que muda o entendimento (dispositivo, ambiente, canal, driver)? Atualize a seção certa no mesmo commit.
+
 ## Objetivo
 Restaurar o Windows em uma partição C: formatada, sem cabos, pendrives ou adaptadores físicos.
 
@@ -18,6 +20,43 @@ Restaurar o Windows em uma partição C: formatada, sem cabos, pendrives ou adap
 - Prova que falta: transferir um **binário intacto** por esse canal. E2–E5 usaram o host (wimlib) e a NIC do QEMU: provam que o driver carrega e que o download funciona **com rede**, não o cenário real.
 - Toda proposta diz **por qual canal os bytes chegam** e quantas teclas custa. Sem isso, está errada.
 - Cubra também: driver já presente em disco no próprio PC (partições OEM/recuperação/EFI) e Bluetooth como canal (o enunciado diz que o driver carrega; `docs/evidence/wlan-wcm-bth-hive.md` mediu 0 arquivos `bth` no WinRE: confronte).
+
+## Dispositivo (fatos e fonte)
+- Aparelho: Xiaomi Mi Pad 2 (versão Windows), 16 ou 64 GB (dono; README de github.com/brianwoo/mipad2-win10-howto). De fábrica: Windows 10 build 10586; hoje 1809. Demais especificações do dono **não estão no repositório**: se aparecerem, registre aqui.
+- Wi-Fi: "Broadcom 802.11ac Wireless PCIE Full Dongle Adapter". README (Passo 7): o Windows instala o driver da Microsoft e o Wi-Fi não funciona; escolhendo o driver da Broadcom, funciona. O INF oficial cobre PCI\VEN_14E4&DEV_ 4355 4364 43A3 43BA 43C3 43EC 43EF 440D. Chip provável BCM4356 (DEV_43EC): o pacote traz `4356a2rtecdc.bin` e `bcm94356wlpagbl_P3_150828M.txt`. Não confirmado no aparelho.
+- Bluetooth: Broadcom por UART (ACPI\BCM2Exx; firmware `BCM4356A2_*.hcd`).
+
+## Drivers que já temos (extraídos em `drivers/`, detalhes e hashes em `drivers/README.md`)
+| Tipo | Pasta | Versão |
+|---|---|---|
+| A. Microsoft/inbox (o que o Windows instala sozinho; **já está no WinRE**) | `drivers/winre-inbox/wifi-wdi-pcie` | 1.558.53.25 (2017) · DEV 4355, 43EC |
+| B. Oficial Wi-Fi (pacote do aparelho) | `drivers/mipad2-oficial/wifi` | 1.558.14.0 (2015) · 8 DEVs · traz nvram |
+| B. Oficial Bluetooth (UART) | `drivers/mipad2-oficial/bt-uart` | 12.0.1.731 (2015) |
+- **Achado (medido)**: o INF inbox não cita nvram (.txt), `bcmihv*.dll` nem CatalogFile; o oficial cita os três. O WinRE já tem `.sys` e firmware do 4356, mas não o nvram da placa (**5361 B**). Hipótese N0: o erro 10 vem de faltar o nvram. Se for, o que falta levar é pequeno.
+- Falta o driver mais novo do Catálogo da Microsoft para DEV_43EC: este ambiente bloqueia catalog.update.microsoft.com. O "lote de 6 fabricantes" (E2) foi chute sem HWID; está superado.
+
+## Ambiente do WinRE (o que existe por padrão; fonte: docs/imagem/INVENTARIO.md)
+### Identidade
+- Windows 10 build 17763 (1809), edicao Core (Home), en-us; imagem WinRE = indice 2 do ESD (UUP dump).
+- Cuidado: o WinRE do dono pode ter sido alterado pelo OEM e ser Pro (componentes mudam). Nao verificado.
+- Contagem: 187 executaveis unicos (.exe/.com), 1168 DLLs unicas, 392 drivers .sys, 987 .inf (UTF-16LE: grep ASCII engana).
+
+### Ferramentas de linha de comando: PRESENTE / AUSENTE
+- **rede** — PRESENTES: netsh ipconfig ping net net1 ftp tracert route arp nbtstat netstat hostname pathping
+  AUSENTES: tftp telnet nslookup getmac curl wget bitsadmin certutil
+- **script/exec** — PRESENTES: cmd cscript wscript mshta rundll32 regsvr32 wmic more find xcopy robocopy expand
+  AUSENTES: powershell schtasks start sort findstr tar where timeout
+- **driver** — PRESENTES: drvload pnputil dism wpeutil wpeinit drvcfg drvinst newdev driverquery InfDefaultInstall
+  AUSENTES: devcon
+- **disco/boot** — PRESENTES: diskpart bcdedit bcdboot bootsect bootrec chkdsk format fsutil mountvol convert mbr2gpt attrib icacls takeown manage-bde
+  AUSENTES: setup
+- **sistema** — PRESENTES: reg regedit net sfc notepad
+  AUSENTES: sc tasklist taskkill whoami shutdown systeminfo msiexec setx
+- Observacao: `format`, `more`, `xcopy`, `sort`, `find` etc. podem ser `.com`/`.exe` ou builtin do cmd; "ausente" aqui = sem arquivo na lista.
+- `wpeinit`/`wpeutil`: o PE usa `winpeshl.ini` ([LaunchApps]); sem `wpeinit` a rede do PE nao sobe sozinha (ver docs/evidence/autorun-winpe.md).
+
+### Executáveis (187 únicos, sem extensão)
+abortpxe arp atbroker attrib audiodg autochk autoconv bcdboot bcdedit bfsvc bmrui bootcfg bootmgr bootrec bootsect chcp chkdsk chkntfs cloudrecsvc cmd compact comppkgsrv conhost convert convertvhd credentialuibroker cscript csrss devicecensus diagnosticshub.standardcollector.service diskpart diskraid dism dismhost dllhost dllhst3g dnscacheugc doskey dpapimig driverquery drvcfg drvinst drvload dtdump eap3host esentutl etfsboot expand find finger fixmapi fltmc fontdrvhost format fsutil ftp hdlscom1 hdlscom2 hh hostname icacls infdefaultinstall ipconfig iscsicli lodctr lsass manage-bde mbr2gpt mcbuilder mdsched memtest mighost mode mofcomp more mountvol mrinfo mshta muiunattend narrator nbtstat ndadmin net net1 netbtugc netcfg netcfgnotifyobjecthost netiougc netsh netstat newdev notepad ntoskrnl ntprint openwith pacjsworker pathping ping pkgmgr pnpunattend pnputil poqexec powercfg print pxeboot rasautou rdrleakdiag recdisc recenv recover refsutil reg regedit regedt32 register-cimprovider regsvr32 repair-bde replace resetengine resetenginterfaces resetpluginhost robocopy route rstrui rundll32 runexehelper sacsess sapisvr scrcons services setupplatform sfc smss spatialaudiolicensesrv startrep subst svchost sxstrace sysreset tabtip takeown taskmgr tcpsvcs tifilefetcher tiworker tracert tree trustedinstaller ucsvc unlodctr unsecapp userinit vds vdsldr verifier verifiergui vssvc wallpaperhost wbadmin wbemtest wbengine wdscapture wdsclient wdsmcast wdsnbp werfault werfaultsecure wermgr wevtutil wimserv wininit winload winlogon winmgmt winpeshl winresume wlanext wmiadap wmiapsrv wmic wmiprvse wowreg32 wpeinit wpeutil wpr wscript xcopy
 
 ## Requisitos
 - R1 rede no WinRE (adaptador sem erro 10, IP válido) · R2 driver Wi-Fi instalado e operacional · R3 reinstalar o Windows sem mídia física (boot até a tela inicial) · R4 Bluetooth PAN (celular/PC) · R5 drivers preservados após reinstalação.
