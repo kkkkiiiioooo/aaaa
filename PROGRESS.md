@@ -13,3 +13,5 @@ Versão completa (49 linhas, 15 KB): `git show 42d65cc:PROGRESS.md`. Detalhe por
 - 2026-11-07: reestruturação do projeto (mural, evals, quem-primeiro, modelo por agente).
 - 2026-11-11: E5 escrita binária N1 no host (download-js.js: MSXML ResponseBody ou base64+FSO Unicode); falta boot com ≥3 GB para medir. Ev: e5-escrita-binaria-pe.md.
 - 2026-11-12: enxugamento: removidos logs brutos, PNGs duplicados, painel.sh e download_ftp.txt; PROGRESS, README e AGENTS reduzidos.
+- 2026-11-12: E5 FEITA (N3, brianwoo-auto): 256 B sha256 ok 5/5 caminhos no PE real (b64, MSXML bin.hex, ResponseText+FSO Unicode); Arguments.Count nao existe em JScript; FSO ASCII Write quebra com 0..255; BOM FF FE universal; boot TCG exige XPRESS. Ev: e5-escrita-binaria-n3.md.
+- 2026-11-12: 0b virou N2: bcmpciedhd63.sys monta %04Xr%dnvram.txt (4356r2nvram.txt), 0 nvram no WinRE; delta 5361 B em drivers/nvram-delta/ + passo no autorun. Ev: drivers/nvram-delta/README.md.
