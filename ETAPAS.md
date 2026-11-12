@@ -60,3 +60,4 @@ E5 | claude | 2026-11-07T20:09Z | liberada | sem progresso
 E5 | codebuddy | 2026-11-11T09:21Z | ativa | -
 E5 | brianwoo-auto | 2026-11-12T09:51Z | ativa | -
 E6 | claude | 2026-11-12T09:53Z | ativa | -
+E5 | brianwoo-auto | 2026-11-12T10:29Z | feita | docs/evidence/e5-escrita-binaria-n3.md: sha256 40aff2e9.. de 256 bytes 0x00..0xFF lidos do disco do convidado igual ao servido, 5/5 caminhos (b64+FSO Unicode, MSXML bin.hex, ResponseText cru+Unicode); substitutos sobrevivem; BOM FF FE presente em todo arquivo (hipotese P refutada)
