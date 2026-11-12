@@ -31,3 +31,9 @@ Medido em 2026-11-12T09:51:01Z por brianwoo-auto. **So vale para este agente.** 
 
 ## Notas do agente
 (escreva aqui o que so voce descobriu sobre este ambiente: limites, falhas, jeitos de contornar)
+
+## Medido em rodada (2026-11-12)
+- 32 CPU, 126 GB RAM, sem KVM, Ubuntu 22.04 (sandbox), QEMU 8.2.2 + mtools + xorriso + wimlib via apt.
+- T0-T3 todos viaveis; boot TCG XPRESS -cpu max -smp 2 -mem 4096: autorun completo em ~176 s.
+- WIM LZX NAO boota em TCG (spinner eterno, 0 escritas) - usar XPRESS sempre.
+- Escrita no host: mtype/mcopy via MTOOLSRC offset=1048576.
