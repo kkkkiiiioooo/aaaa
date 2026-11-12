@@ -10,6 +10,13 @@ Restaurar o Windows em uma partição C: formatada, sem cabos, pendrives ou adap
 - Acesso: cmd no WinRE, iniciado automaticamente no boot.
 - Restrição crítica: nenhuma conexão física.
 
+## Ponto central (leia antes de propor qualquer solução)
+- A máquina real **não tem rede, Wi-Fi, cabo nem mídia**. Injetar driver no Winre.wim (A1) só serve se os bytes do driver **já estiverem na máquina**. Sem um canal de dados, "injetar o driver" não resolve nada.
+- Canal garantido: **teclado (entrada) e tela (saída)**. Tudo que entra passa por digitação; tudo que sai, pela leitura da tela. Rede só existe depois de R1, então R1 não pode depender de baixar nada.
+- Prova que falta: transferir um **binário intacto** por esse canal. E2–E5 usaram o host (wimlib) e a NIC do QEMU: provam que o driver carrega e que o download funciona **com rede**, não o cenário real.
+- Toda proposta diz **por qual canal os bytes chegam** e quantas teclas custa. Sem isso, está errada.
+- Cubra também: driver já presente em disco no próprio PC (partições OEM/recuperação/EFI) e Bluetooth como canal (o enunciado diz que o driver carrega; `docs/evidence/wlan-wcm-bth-hive.md` mediu 0 arquivos `bth` no WinRE: confronte).
+
 ## Requisitos
 - R1 rede no WinRE (adaptador sem erro 10, IP válido) · R2 driver Wi-Fi instalado e operacional · R3 reinstalar o Windows sem mídia física (boot até a tela inicial) · R4 Bluetooth PAN (celular/PC) · R5 drivers preservados após reinstalação.
 

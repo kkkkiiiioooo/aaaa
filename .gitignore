@@ -15,4 +15,3 @@ __pycache__/
 *.iso
 *.tar.xz
 *.bundle
-.lint-tmp.*

@@ -66,7 +66,7 @@ O Integrador, periodicamente:
 sh bin/integrar.sh          # merge das refs de agente, aborta se o teste falhar
 ```
 
-## Proibições (verificadas por `protocolo-lint.sh`)
+## Proibições
 
 - commit em `main`, `0`, `template` ou `backup` — são configuração, não projeto;
 - tarefa fechada sem evidência;
@@ -102,7 +102,6 @@ A mecânica canônica está em `PROTOCOLO.md`. O que mudou na prática:
 | push só na branch do projeto | cada commit também publica em `refs/agents/<nome>` (nunca conflita) |
 | `HANDOFF.md` com `merge=union` | `HANDOFF.md` é snapshot (conflito explícito); recado por agente em `HANDOFF/<nome>.md` |
 | `MURAL.md` sem união | `MURAL.md merge=union` (era o arquivo mais disputado) |
-| regras só em prosa | `protocolo-lint.sh` + `hooks/pre-push` verificam |
 
 Comandos novos (a toolchain vem da branch `0` em `.work/bin/`, não é copiada aqui):
 

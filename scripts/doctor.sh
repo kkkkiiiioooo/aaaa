@@ -59,7 +59,7 @@ hdr "T3 - boot real de WinRE/WinPE (precisa ISO + recursos)"
 T3=nao
 if [ "${MEM:-0}" -ge 3072 ] && [ "${DISK:-0}" -ge 12288 ] && have qemu-system-x86_64; then
   ok "recursos minimos OK (mem ${MEM}MB, disco ${DISK}MB livres)"
-  inf "falta: ISO 1809 (uup_links.sh + baixar_uup.sh + converter_iso.sh)"
+  inf "falta: imagem (sh scripts/obter_imagem.sh --wim; ISO: sh scripts/montar_iso_winre.sh)"
   inf "sem /dev/kvm: PE do Windows MUITO lento em TCG — 2o plano, timeout alto"
   T3=parcial
 else

@@ -23,6 +23,8 @@ mkdir -p "$LOG"
     git rebase --abort 2>/dev/null
     echo "FALHA pull --rebase (conflito): resolva antes de enviar."
     : > "$PEND"
+    AG_REF=$(cat "$R/.work/agente" 2>/dev/null || git config user.name || echo desconhecido)
+    git push -q --force-with-lease origin "HEAD:refs/agents/$AG_REF" 2>/dev/null && echo "ok refs/agents/$AG_REF (backup apesar do conflito)"
     exit 1
   fi
   if git push -q origin "$b"; then

@@ -28,7 +28,7 @@ falha() { printf '\nPARADO: %s\n' "$1"; exit 1; }
 
 passo "buscar branch $BR (blob:none se o servidor suportar)"
 git -C "$REPO" fetch --depth 1 -q origin "$BR" 2>/dev/null || git -C "$REPO" fetch -q origin "$BR" 2>/dev/null \
-  || falha "fetch $BR" "a branch existe no remoto? sh scripts/dossie.sh publica o pacote"
+  || falha "fetch $BR" "a branch existe no remoto? a branch imagem ja foi publicada"
 
 passo "materializar em $WT sem mexer na sua branch de trabalho"
 if [ -d "$WT" ]; then

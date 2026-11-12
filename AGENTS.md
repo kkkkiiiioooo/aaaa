@@ -16,6 +16,7 @@ Prompt vazio, "continue", "wwii" ou só o nome do repo = **trabalhe já**. Não 
 Etapa com lease ativa de outro: pegue outra frente, nunca espere. Só responda ao dono no fim, em até 5 linhas: feito, evidência, bloqueio, próximo passo.
 
 ## Regras
+- **Antes de propor solução, leia "Ponto central" em `PROMPT.md`.** Sem canal de dados (teclado/tela), "injetar o driver" não resolve nada.
 - Trabalhe só na branch do projeto (`wwii`), neste clone. Nunca altere `main`, `0`, `backup`. Não leia `_archived/`, `.bundle`, `.tar.gz`, outras branches (exceto `lider` via `plano.sh`).
 - Branch `info` = só `README.md` (prompt final para o modelo mais capaz). Atualize quando achados ou ambiente mudarem, e mais nada nela.
 - Autorização total: terminal, instalar, editar, commit e push sem pedir. O dono não responde nem executa nada.
@@ -58,7 +59,7 @@ sh scripts/etapa.sh pegar E<n>                                  # lease 90 min
 sh scripts/etapa.sh fechar E<n> "<evidencia: caminho + saida>"   # sem evidência não está feita
 sh scripts/relatorio.sh estado "<provado + obstáculo + próximo>"
 ```
-Duas reclamações da mesma etapa: vale a primeira. Imprevisto: registre em `ETAPAS.md` (append) e siga. Quem obtiver a imagem roda `sh scripts/dossie.sh` e `python3 scripts/inventario.py > docs/imagem/INVENTARIO.md` e comita `docs/imagem/`. Sem a imagem: `zcat docs/imagem/winre-caminhos.txt.gz | grep -i <x>`.
+Duas reclamações da mesma etapa: vale a primeira. Imprevisto: registre em `ETAPAS.md` (append) e siga. `docs/imagem/` ja esta pronto (imagem na branch `imagem`: `sh scripts/obter_imagem.sh --wim`); nao regenere. Sem a imagem: `zcat docs/imagem/winre-caminhos.txt.gz | grep -i <x>`.
 
 ## Retorno ao lead
 Responda os ids do PLANO (D, C) com `docs/retorno/<ID>.md` a partir de `docs/retorno/MODELO.md`. Comando e saída literais; sem saída real o veredito é INCONCLUSIVO. "Wi-Fi operacional" só vale com código de erro lido (`Device Manager`/`pnputil`/`sc query` na VM ou máquina real). Driver Wi-Fi: `python3 scripts/checar_firmware.py <pasta>` antes de chamar de instalado. Responda em português.
