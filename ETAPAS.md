@@ -59,3 +59,4 @@ E5 | claude | 2026-11-07T20:08Z | ativa | -
 E5 | claude | 2026-11-07T20:09Z | liberada | sem progresso
 E5 | codebuddy | 2026-11-11T09:21Z | ativa | -
 E5 | brianwoo-auto | 2026-11-12T09:51Z | ativa | -
+E6 | claude | 2026-11-12T09:53Z | ativa | -
