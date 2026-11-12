@@ -18,9 +18,13 @@
 //
 // Uso: cscript //nologo download-js.js <URL> <destino> [auto|ascii|unicode|b64]
 
-var url = WScript.Arguments.Count > 0 ? WScript.Arguments(0) : "";
-var dest = WScript.Arguments.Count > 1 ? WScript.Arguments(1) : "";
-var modo = WScript.Arguments.Count > 2 ? WScript.Arguments(2) : "auto";
+// MEDIDO NO PE (run 2026-11-12, brianwoo-auto): WScript.Arguments.Count NAO existe
+// em JScript (so em VBScript) — "Object doesn't support this property or method"
+// na propria linha do Arguments. Em JScript e .length. Isto matou o downloader na
+// 1a linha do run anterior; corrigido e provado no run seguinte.
+var url = WScript.Arguments.length > 0 ? WScript.Arguments(0) : "";
+var dest = WScript.Arguments.length > 1 ? WScript.Arguments(1) : "";
+var modo = WScript.Arguments.length > 2 ? WScript.Arguments(2) : "auto";
 modo = ("" + modo).toLowerCase();
 
 if (!url || !dest) {

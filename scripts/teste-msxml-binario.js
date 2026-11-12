@@ -4,7 +4,8 @@
 // Tambem grava o payload via FSO Unicode empacotado (mesmo algoritmo de download-js.js).
 // Uso: cscript //nologo teste-msxml-binario.js <prefixo>
 var fso = new ActiveXObject("Scripting.FileSystemObject");
-var p = WScript.Arguments.Count > 0 ? WScript.Arguments(0) : "C:\\msxml-t";
+// MEDIDO NO PE (run 2026-11-12): Arguments.Count nao existe em JScript; use .length.
+var p = WScript.Arguments.length > 0 ? WScript.Arguments(0) : "C:\\msxml-t";
 var ids = ["Msxml2.DOMDocument.6.0", "Msxml2.DOMDocument.3.0", "MSXML2.DOMDocument", "Microsoft.XMLDOM"];
 var abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
