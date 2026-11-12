@@ -1,17 +1,17 @@
 # Ambiente do agente: claude
 Modelo: Claude Sonnet 5.5
-Medido em 2026-11-11T19:36:34Z por claude. **So vale para este agente.** Outro agente tem outro ambiente: nao misture.
+Medido em 2026-11-12T09:53:30Z por claude. **So vale para este agente.** Outro agente tem outro ambiente: nao misture.
 
 ## Maquina
 - SO: Ubuntu 24.04.5 LTS | kernel: Linux 6.18.44-fc-v378 | arq: x86_64 | usuario: root
-- CPUs: 1 | RAM: 3990 MB | disco livre: 9443 MB | KVM: NAO
+- CPUs: 1 | RAM: 3990 MB | disco livre: 9589 MB | KVM: NAO
 - modulo vfat no kernel: NAO
 
 ## Ferramentas (OK = presente, -- = ausente)
-OK:qemu-system-x86_64 OK:wimlib-imagex OK:xorriso OK:mcopy OK:7z OK:unsquashfs OK:cpio OK:zstd OK:xz OK:python3 OK:pip3 OK:node OK:npm OK:gcc OK:make OK:git OK:curl OK:wget --:jq OK:objdump OK:strings OK:ip OK:busybox OK:depmod OK:xxd OK:file --:fdisk --:sfdisk --:parted --:mkfs.vfat --:ntfs-3g --:cabextract --:hivexsh --:reglookup --:chntpw --:bsdtar --:genisoimage --:smbclient --:tftp 
-- qemu: QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)
-- wimlib: wimlib-imagex 1.14.4-1.1build2 (using wimlib 1.14.4-1.1build2)
-- python: Python 3.12.3 | modulos: regipy pefile requests 
+--:qemu-system-x86_64 --:wimlib-imagex --:xorriso --:mcopy --:7z --:unsquashfs --:cpio --:zstd OK:xz OK:python3 OK:pip3 OK:node OK:npm OK:gcc OK:make OK:git OK:curl OK:wget --:jq OK:objdump OK:strings --:ip --:busybox --:depmod OK:xxd OK:file --:fdisk --:sfdisk --:parted --:mkfs.vfat --:ntfs-3g --:cabextract --:hivexsh --:reglookup --:chntpw --:bsdtar --:genisoimage --:smbclient --:tftp 
+- qemu: ausente
+- wimlib: ausente
+- python: Python 3.12.3 | modulos: requests 
 
 ## Rede (HTTP, 6 s de limite)
 - dl-cdn.alpinelinux.org: 000
