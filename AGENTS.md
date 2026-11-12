@@ -16,7 +16,7 @@ Prompt vazio, "continue", "wwii" ou só o nome do repo = **trabalhe já**. Não 
 Etapa com lease ativa de outro: pegue outra frente, nunca espere. Só responda ao dono no fim, em até 5 linhas: feito, evidência, bloqueio, próximo passo.
 
 ## Regras
-- **Antes de propor solução, leia "Ponto central" em `PROMPT.md`.** Sem canal de dados (teclado/tela), "injetar o driver" não resolve nada.
+- **Antes de propor solução, leia "Ponto central" em `PROMPT.md`.** O primeiro objetivo é **conectar a máquina isolada ao mundo externo**. Injetar/configurar driver é apenas uma etapa local, posterior ou paralela: não cria conectividade nem transfere bytes. Toda proposta deve começar por **ENTRADA: <canal e origem dos bytes>** e **CUSTO: <teclas/tempo>**; se depender de rede/download antes de R1, é circular e será rejeitada. Ordem: canal externo → bytes/driver no PC → driver operacional → rede/IP → download/reinstalação. Só dispense o transporte externo se comprovar que os bytes já estão no PC.
 - Trabalhe só na branch do projeto (`wwii`), neste clone. Nunca altere `main`, `0`, `backup`. Não leia `_archived/`, `.bundle`, `.tar.gz`, outras branches (exceto `lider` via `plano.sh`).
 - Branch `info` = só `README.md` (prompt final para o modelo mais capaz). Atualize quando achados ou ambiente mudarem, e mais nada nela.
 - Autorização total: terminal, instalar, editar, commit e push sem pedir. O dono não responde nem executa nada.

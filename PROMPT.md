@@ -11,6 +11,8 @@ Restaurar o Windows em uma partição C: formatada, sem cabos, pendrives ou adap
 - Restrição crítica: nenhuma conexão física.
 
 ## Ponto central (leia antes de propor qualquer solução)
+
+**OBJETIVO ZERO: CONECTAR O PC AO MUNDO EXTERNO. INJETAR DRIVER NÃO É O OBJETIVO E NÃO CONECTA NADA.** Driver só usa bytes que já estão no PC; ele não transporta arquivos nem cria rede. Não proponha, feche etapa ou marque requisito como atendido com base apenas em injeção/`drvload`. Preencha: `CANAL EXTERNO=...; ORIGEM DOS BYTES=...; CUSTO (teclas/tempo)=...`. Rede/download como meio de obter o primeiro payload é circular. Ordem obrigatória: **canal externo → bytes no PC → driver → rede/IP → reinstalação**. Exceção: bytes locais comprovados (OEM/recuperação/EFI), com caminho e evidência.
 - A máquina real **não tem rede, Wi-Fi, cabo nem mídia**. Injetar driver no Winre.wim (A1) só serve se os bytes do driver **já estiverem na máquina**. Sem um canal de dados, "injetar o driver" não resolve nada.
 - Canal garantido: **teclado (entrada) e tela (saída)**. Tudo que entra passa por digitação; tudo que sai, pela leitura da tela. Rede só existe depois de R1, então R1 não pode depender de baixar nada.
 - Prova que falta: transferir um **binário intacto** por esse canal. E2–E5 usaram o host (wimlib) e a NIC do QEMU: provam que o driver carrega e que o download funciona **com rede**, não o cenário real.
