@@ -8,7 +8,7 @@
 | # | alegação | prova |
 |---|---|---|
 | 1 | o PE sobe e o autorun **chega ao fim** | `=== autorun-wwii end ===` na última linha do log |
-| 2 | o host lê o log **completo** | 19 727 bytes lidos do disco (`.work/vm/wwii-r2-final.log`, cópia em `docs/evidence/e4-autorun-completo-r2.txt`) |
+| 2 | o host lê o log **completo** | 19 727 bytes lidos do disco (`.work/vm/wwii-r2-final.log`, cópia em `git show 42d65cc:docs/evidence/e4-autorun-completo-r2.txt`) |
 | 3 | **`wlansvc` sobe no WinRE 1809** | `The WLAN AutoConfig service is starting.. / was started successfully.` — o serviço existe e funciona |
 | 4 | o contexto `netsh wlan` **responde** | `netsh wlan show drivers` devolveu "There is no wireless interface on the system." (não é erro de sintaxe: é falta de hardware) |
 | 5 | o PE **enxerga** os volumes e o hardware | `diag.cmd`: `Volume 0 D: CDFS 427 MB` (a ISO), `Volume 1 C: FAT32 3071 MB` (o disco de dados), `Disk 0 3072 MB`; PCI: `VEN_8086&DEV_100E` (a NIC e1000), `VEN_1237` (SATA), `VEN_7000/7010` (PIIX3) |

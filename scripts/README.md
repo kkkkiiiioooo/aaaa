@@ -42,7 +42,6 @@ sh scripts/injetar_driver.sh --imagem .work/wim/Winre.wim --driver .work/drivers
 | `ppm2png.py` | Converte PPM (P6) em PNG sem PIL (este sandbox não tem PIL) — a evidência do projeto é PNG |
 | `diag.cmd` | **Roda no WinRE** (não no Linux): coleta os IDs de hardware (Wi-Fi/Bluetooth) e o inventário de drivers. Detalhes em `docs/evidence/driver-injecao.md` |
 | `download.vbs` | **Roda no WinRE** (não no Linux): baixa arquivo por HTTP(S) via `cscript` — supre a ausência de `certutil`/PowerShell |
-| `download_ftp.txt` | Modelo de comandos para `ftp.exe -s:` no WinRE (alternativa de download) |
 | `doctor.sh` | Diz o que este ambiente executa (níveis T0–T4); sai com código ≠ 0 se nada for executável. Rode antes de gastar a rodada |
 | `agente.sh` | Identidade `A=<nome>` (git config) e linha `nome inicio <data UTC>` em `PRESENCA.md`; o hook post-commit grava `nome push <data UTC> <sha>` após cada push ok |
 | `etapa.sh` | Orquestra `ETAPAS.md`: `status`, `pegar`, `fechar`, `liberar` (lease de 90 min) |

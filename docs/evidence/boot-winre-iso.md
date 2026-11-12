@@ -47,6 +47,8 @@ Cada linha é um boot real medido; veredito em `.work/chovar/resultados.tsv`.
 | lzx2 | `winre-wwii-lzx.iso` (boot.wim **LZX**, 367 MB) | `-smp 4 -m 4096` | 1159 s sem BSOD, ainda em modo texto |
 | xp | `winre-wwii-xp.iso` (boot.wim **XPRESS**, 429 MB) | `-smp 4 -m 4096` + NIC + VNC | **BSOD em 425 s**, mesmo stop code (`e4-bsod-xpress-425s.png`) |
 
+Capturas: só `e4-bsod-xpress-425s.png` e `e4-controle-wim-original-361s.png` são imagens distintas. `e4-bsod-sys-thread-exc.png` e `e4-controle-wim-original-bsod.png` eram cópias byte a byte da primeira (md5 b86aad84f20f3149119a13e974daa3ac) e foram removidas em 42d65cc; o BSOD de 36 s (raw) e o do controle sem injeção não têm captura própria preservada.
+
 O que está medido e o que **não** está: a tela azul aparece com o WIM **sem compressão** (36 s) e
 com **XPRESS** (425 s), e não aparece com **LZMS** (232 s / 1800 s) nem com **LZX** (1159 s). A
 correlação que eu tinha escrito antes — "o que quebra é o boot.wim sem compressão" — está

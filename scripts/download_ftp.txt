@@ -1,7 +1,0 @@
-open <host-ftp>
-<usuario>
-<senha>
-binary
-hash
-get <caminho/remoto/win.iso> C:\win.iso
-bye
