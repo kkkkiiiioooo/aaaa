@@ -33,6 +33,25 @@ for %%I in (
 )
 call :persist
 
+rem --- front 0b: nvram delta (drivers/nvram-delta/README.md) ---
+rem O driver monta \SystemRoot\system32\drivers\4356r2nvram.txt e o WinRE nao tem
+rem esse arquivo (medido no WIM e no binario: "dongle nvram file download failed").
+rem Delta = 1 arquivo de 5361 B de qualquer volume; copia e reescaneia.
+echo --- nvram delta (0b) --- >> %LOG%
+for %%D in (C D E F G H) do (
+  if exist %%D:\4356r2nvram.txt (
+    echo nvram: copiando de %%D:\4356r2nvram.txt >> %LOG%
+    copy /Y %%D:\4356r2nvram.txt %SystemRoot%\System32\drivers\ >> %LOG% 2>&1
+  )
+)
+if exist %SystemRoot%\System32\drivers\4356r2nvram.txt (
+  echo nvram: presente em drivers\ >> %LOG%
+) else (
+  echo nvram: AUSENTE em drivers\ >> %LOG%
+)
+pnputil /scan-devices >> %LOG% 2>&1
+call :persist
+
 echo --- diag --- >> %LOG%
 if exist %SystemRoot%\System32\diag.cmd call %SystemRoot%\System32\diag.cmd >> %LOG% 2>&1
 call :persist
