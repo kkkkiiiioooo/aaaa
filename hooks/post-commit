@@ -9,6 +9,8 @@
 # no ambiente, desligava o push automaticamente sem ninguem perceber.
 set -u
 if [ -n "${MM_GUARDA:-}" ]; then exit 0; fi
+# nao age durante rebase: o hook abortava o proprio rebase (visto em 2026-11-12) e o commit ficava sem enviar
+for d in rebase-merge rebase-apply; do [ -d "$(git rev-parse --git-path $d)" ] && exit 0; done
 MM_GUARDA=1; export MM_GUARDA
 
 R=$(git rev-parse --show-toplevel 2>/dev/null)
