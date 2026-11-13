@@ -26,7 +26,7 @@ D=${D:-0}
 [ -n "${A:-}" ] || { echo "iniciar.sh: falta A=<nome do agente>"; exit 2; }
 if [ -z "${S:-}" ] && [ -n "${S_ARQ:-}" ] && [ -r "$S_ARQ" ]; then S=$(head -1 "$S_ARQ"); fi
 if [ -z "${S:-}" ] && [ ! -t 0 ]; then S=$(head -1); fi
-if [ -z "${S:-}" ]; then printf 'Passphrase do t.gpg: '; S=$(head -1); fi
+if [ -z "${S:-}" ]; then printf 'Passphrase do projeto.gpg: '; S=$(head -1); fi
 [ -n "$S" ] || { echo "iniciar.sh: sem passphrase"; exit 2; }
 
 passo() { printf '\n===== %s =====\n' "$1"; }

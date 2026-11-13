@@ -2,10 +2,10 @@
 
 ## O que existe hoje
 
-`t.gpg` (branch `0`) contém um token do GitHub cifrado simetricamente com uma
+`projeto.gpg` (branch `0`) contém um token do GitHub cifrado simetricamente com uma
 passphrase compartilhada entre os agentes. Consequências que você deve conhecer:
 
-1. Qualquer pessoa com leitura do repositório pode atacar o `t.gpg` offline; a força
+1. Qualquer pessoa com leitura do repositório pode atacar o `projeto.gpg` offline; a força
    da passphrase é a única barreira. Use passphrase longa — o `h.sh` não tenta mais
    variantes (isso mutilava a senha em silêncio e mascarava passphrase fraca).
 2. Quem tem a passphrase tem **escrita total** no repositório, inclusive em `main`.
@@ -30,4 +30,4 @@ usa, e ruleset no GitHub bloqueando push direto em `main` e `0`. Isso transforma
 ## Reportar
 
 Abra uma issue privada ou avise o dono do repositório. Se um token vazar: revogue,
-gere outro, atualize `t.gpg` e registre a data no `PROGRESS.md`.
+gere outro, atualize `projeto.gpg` e registre a data no `PROGRESS.md`.

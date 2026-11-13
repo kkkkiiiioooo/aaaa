@@ -27,10 +27,11 @@ URL=${URL:-https://github.com/kkkkiiiioooo/aaaa.git}
 if [ -n "${DIR:-}" ]; then :
 elif [ -d "$AQUI/.git" ]; then DIR="$AQUI"
 else DIR="$AQUI/aaaa"; fi
-RAW=${RAW:-https://raw.githubusercontent.com/kkkkiiiioooo/aaaa/0/t.gpg}
+RAW=${RAW:-https://raw.githubusercontent.com/kkkkiiiioooo/aaaa/0/projeto.gpg}
 
 [ -n "$S" ] || [ -n "${S_ARQ:-}" ] || { echo "erro: falta S=<passphrase> (ou S_ARQ=<arquivo>)."; exit 1; }
 if [ -z "$S" ] && [ -r "${S_ARQ:-/nonexistent}" ]; then S=$(head -1 "$S_ARQ"); fi
+if [ -z "$S" ] && [ -r "$HOME/.aaaa/frase" ]; then S=$(head -1 "$HOME/.aaaa/frase"); fi
 
 # ------------------------------------------------------------------ 1 credencial
 t=""
@@ -38,12 +39,12 @@ abre() { # $1 = blob cifrado
   printf '%s' "$1" | gpg -dq --batch --passphrase "$S" 2>/dev/null
 }
 if [ -d "$DIR/.git" ] && git -C "$DIR" rev-parse -q --verify origin/0 >/dev/null 2>&1; then
-  blob=$(git -C "$DIR" show origin/0:t.gpg 2>/dev/null)
+  blob=$(git -C "$DIR" show origin/0:projeto.gpg 2>/dev/null)
 fi
 [ -n "${blob:-}" ] || blob=$(curl -fsSL "$RAW" 2>/dev/null)
-[ -n "${blob:-}" ] || { echo "erro: sem acesso ao t.gpg (nem local em origin/0, nem $RAW)"; exit 1; }
+[ -n "${blob:-}" ] || { echo "erro: sem acesso ao projeto.gpg (nem local em origin/0, nem $RAW)"; exit 1; }
 t=$(abre "$blob")
-[ -n "$t" ] || { echo "erro: passphrase nao abriu o t.gpg. Confira S (uma tentativa, sem variantes)."; exit 1; }
+[ -n "$t" ] || { echo "erro: passphrase nao abriu o projeto.gpg. Confira S (uma tentativa, sem variantes)."; exit 1; }
 
 # ------------------------------------------------------------------ 2 clone
 if [ ! -d "$DIR/.git" ]; then
@@ -136,7 +137,7 @@ VERA=$(git show "HEAD:PROTOCOLO.md" 2>/dev/null | sed -n 's/^Versao: *//p' | hea
 
 [ "$(git branch --show-current)" = main ] || {
   git ls-files --error-unmatch .agentignore >/dev/null 2>&1 || {
-    echo "t.gpg" > .agentignore; git add .agentignore; git commit -qm "agentignore"; }
+    echo "projeto.gpg" > .agentignore; git add .agentignore; git commit -qm "agentignore"; }
 }
 
 echo "ok $(git branch --show-current) como ${A:-$(git config user.name || echo '?')} em $PWD"
