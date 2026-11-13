@@ -1,0 +1,14 @@
+* text=auto
+*.md text eol=lf
+*.sh text eol=lf
+*.py text eol=lf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.inf -text
+*.sys -text
+*.bin -text
+*.cat -text
+*.wim.part-* -text
+drivers/** -text
+winre-1809-254MB/** -text
+winre-fabrica-10586-424MB/** -text

@@ -1,0 +1,12 @@
+*.wim
+*.swm
+*.esd
+*.qcow2
+*.raw
+*.iso
+*.log
+*.mnt/
+*.bak
+*.orig
+qemu/work/
+qemu/http-root/
