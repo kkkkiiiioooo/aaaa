@@ -5,5 +5,5 @@
 ## Regras da main
 
 - A main nunca deve ser alterada. Não commite, não edite e não force nada nela.
-- Todo trabalho acontece em branches de projeto `N.nome`.
-- A branch `0` é a configuração inicial e a base de tudo: nunca apague e nunca a duplique.
+- Todo trabalho acontece em branches de projeto `nome`.
+- A branch `0` é a configuração inicial e a base de tudo: nunca apague.  Comece duplicando a partir dela.
