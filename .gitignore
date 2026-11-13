@@ -17,7 +17,7 @@ __pycache__/
 *.bundle
 
 # excecao: o dono pediu as imagens no repo (partes de 95 MiB, limite do GitHub e 100 MiB).
-# cada WIM tem sua pasta em imagens/; o subset de inspecao tambem.
+# neste ramo ficam o boot.wim 10586 e o subset de inspecao, cada um em sua pasta.
 !imagens/*.wim.part-*
 !imagens/*/*.wim.part-*
 !imagens/inspecao-62MB/subset-inspecao.tar.xz

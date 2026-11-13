@@ -1,5 +1,5 @@
 #!/bin/sh
-# obter_imagem.sh — obtem o pacote offline da imagem 1809 (pasta imagens/ do ramo extras).
+# obter_imagem.sh — obtem o pacote offline da imagem 1809 (subset em imagens/, WIM no ramo wwii).
 #
 #   sh scripts/obter_imagem.sh --fs     # sistema de arquivos de inspecao (62 MB)
 #   sh scripts/obter_imagem.sh --wim    # WIM do WinRE montavel (254 MB)
@@ -33,8 +33,19 @@ passo "verificando MANIFEST.sha256 ANTES de usar qualquer arquivo"
     "arquivo corrompido no transporte — rode git checkout -- imagens e tente de novo; NAO use parcial"
 
 if [ "$MODO" = --wim ] || [ "$MODO" = --all ]; then
+  WIM1809=$REPO/winre-1809-254MB
+  if [ ! -d "$WIM1809" ]; then
+    # a pasta foi para a raiz do ramo wwii: busca de la
+    passo "winre-1809-254MB nao esta neste ramo: buscando no ramo wwii"
+    git -C "$REPO" fetch -q origin wwii 2>/dev/null || true
+    git -C "$REPO" archive origin/wwii winre-1809-254MB 2>/dev/null | tar -x -C "$REPO" \
+      || falha "winre-1809-254MB ausente" "git fetch origin wwii; ou git checkout wwii -- winre-1809-254MB"
+    WIM1809=$REPO/winre-1809-254MB
+  fi
+  passo "verificando as partes do winre-1809"
+  ( cd "$WIM1809" && sha256sum -c SHA256SUMS ) || falha "verificacao de hash das partes" "NAO use parcial"
   passo "remontando winre-1809.wim a partir das 3 partes"
-  cat "$WT"/winre-1809-254MB/winre-1809.wim.part-0? > "$REPO/.work/winre-1809.wim"
+  cat "$WIM1809"/winre-1809.wim.part-0? > "$REPO/.work/winre-1809.wim"
   got=$(sha256sum "$REPO/.work/winre-1809.wim" | cut -d' ' -f1)
   [ "$got" = "$WIM_SHA" ] || { rm -f "$REPO/.work/winre-1809.wim"; falha "hash do WIM remontado"; }
   wimlib-imagex info "$REPO/.work/winre-1809.wim" 2>/dev/null | sed -n 's/^.*Boot Index: */Boot Index: /p'
