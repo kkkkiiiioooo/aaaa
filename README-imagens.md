@@ -10,13 +10,7 @@ Partes de 95 MiB porque o limite rígido do GitHub é 100 MiB por arquivo.
 
 Atenção: a recovery real de fábrica é o `winre-fabrica-10586` (424 MB). O `boot.wim` de fábrica (408 MB, WinPE do instalador) **não** é a recovery — ele ficou no ramo `extras`, em `imagens/mipad2-10586-boot-408MB/`.
 
-## Verificar
-
-```sh
-sha256sum -c SHA256SUMS     # as 8 partes
-sh remontar.sh               # remonta os 2 .wim e confere o hash de cada um
-```
-
+Remontar os 2 `.wim`: `sh remontar.sh` (o git ignora os `.wim` gerados).
 Inspecionar: `wimlib-imagex dir winre-1809-254MB/winre-1809.wim 1` (instalar: `apt-get install -y wimtools`).
 
 Custo: +~680 MB em todo clone/checkout deste ramo. Para um clone leve sem as imagens: `git clone --filter=blob:none --sparse <url>` e `git sparse-checkout set --no-cone '/*' '!/winre-1809-254MB' '!/winre-fabrica-10586-424MB'`.
