@@ -1,3 +1,0 @@
-#!/bin/sh
-# pre-push: sem lint e sem gate. Ambientes sao temporarios; o push nunca pode falhar por regra.
-exit 0
