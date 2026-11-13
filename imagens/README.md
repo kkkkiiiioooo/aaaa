@@ -14,8 +14,6 @@ ficaram o `boot.wim` 10586 e o subset de inspeção.
 Atenção: o `boot.wim` de fábrica (408 MB) é o WinPE da mídia de instalação, **não** a recovery. A recovery real de fábrica é o `winre-fabrica-10586-424MB`, no ramo `wwii`.
 
 Remontar e conferir: `sh imagens/remontar.sh` (gera o `mipad2-10586-boot.wim`; o git ignora os `.wim`).
-Só conferir as partes: `cd imagens && sha256sum -c MANIFEST.sha256`.
-Pacote de inspeção + boot: `cd imagens && sha256sum -c MANIFEST-imagem.sha256`.
 Inspecionar: `wimlib-imagex dir imagens/mipad2-10586-boot-408MB/mipad2-10586-boot.wim 1` (instalar: `apt-get install -y wimtools`).
 
 Custo: +~490 MB em todo clone/checkout deste ramo. Para um clone leve sem as imagens: `git clone --filter=blob:none --sparse <url>` e `git sparse-checkout set --no-cone '/*' '!/imagens'`.
