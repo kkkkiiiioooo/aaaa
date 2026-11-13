@@ -33,12 +33,12 @@ passo "verificando MANIFEST.sha256 ANTES de usar qualquer arquivo"
     "arquivo corrompido no transporte — rode git checkout -- imagens e tente de novo; NAO use parcial"
 
 if [ "$MODO" = --wim ] || [ "$MODO" = --all ]; then
-  passo "remontando winre-1809-254MB.wim a partir das 3 partes"
-  cat "$WT"/winre-1809-254MB/winre-1809-254MB.wim.part-0? > "$REPO/.work/winre-1809-254MB.wim"
-  got=$(sha256sum "$REPO/.work/winre-1809-254MB.wim" | cut -d' ' -f1)
-  [ "$got" = "$WIM_SHA" ] || { rm -f "$REPO/.work/winre-1809-254MB.wim"; falha "hash do WIM remontado"; }
-  wimlib-imagex info "$REPO/.work/winre-1809-254MB.wim" 2>/dev/null | sed -n 's/^.*Boot Index: */Boot Index: /p'
-  echo "WIM ok: $REPO/.work/winre-1809-254MB.wim"
+  passo "remontando winre-1809.wim a partir das 3 partes"
+  cat "$WT"/winre-1809-254MB/winre-1809.wim.part-0? > "$REPO/.work/winre-1809.wim"
+  got=$(sha256sum "$REPO/.work/winre-1809.wim" | cut -d' ' -f1)
+  [ "$got" = "$WIM_SHA" ] || { rm -f "$REPO/.work/winre-1809.wim"; falha "hash do WIM remontado"; }
+  wimlib-imagex info "$REPO/.work/winre-1809.wim" 2>/dev/null | sed -n 's/^.*Boot Index: */Boot Index: /p'
+  echo "WIM ok: $REPO/.work/winre-1809.wim"
 fi
 
 if [ "$MODO" = --fs ] || [ "$MODO" = --all ]; then
