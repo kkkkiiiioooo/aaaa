@@ -37,3 +37,4 @@ Alvo: Xiaomi Mi Pad 2 (x86, Broadcom BCM4356 Wi-Fi). Problema: WinRE sem Wi-Fi f
 - 2026-11-13T07:52Z teste do mem.sh: memoria automatica ativa; skill de memoria agora manda ler docs/MEMORIA.md e gravar a cada etapa
 - 2026-11-13T08:01Z pasta imagens/ no wwii (1809 + boot.wim 10586, 8 partes) publicada e verificada em clone novo (commit e00563d); falta Winre.wim de fabrica (so no sandbox Composio)
 - 2026-11-13T08:11Z Winre.wim de fabrica (444858791 B, sha256 152addc4...067a) enviada: imagens/ (wwii, d37a59c) e ramo imagem; remontar.sh OK nos 3 WIMs; wimlib abre como WinRE x64 build 10586; token apagado do sandbox Composio
+- 2026-11-13: MEDIDO `Winre.wim` de fabrica so tem Broadcom SDIO (BCM4324/43341), sem PCIe 43EC/4356 (`docs/evidence/winre-fabrica-10586-drivers.md`). Ramo `imagem` agora so tem `mipad2-10586-boot.wim` (boot.wim do instalador, NAO e a recovery); WinRE 1809, subset e Winre de fabrica ficam em `imagens/` (wwii).
