@@ -15,8 +15,9 @@ Alvo: Xiaomi Mi Pad 2 (x86, Broadcom BCM4356 Wi-Fi). Problema: WinRE sem Wi-Fi f
 - MEDIDO: a recovery real (`Winre.wim`) sai do Windows instalado (`\Windows\System32\Recovery\`), nao do `boot.wim`. `Winre.wim` de fabrica = 444 858 791 B, sha256 `152addc420748815c2cad90d382229e249ec853d3842531ddcc2b9998248067a`; sem Wi-Fi/nvram/PowerShell (igual a 1809 em espirito).
 - MEDIDO: PowerShell so existe no Windows instalado. A "recovery com PowerShell" do relato do dono NAO foi identificada.
 - RELATO: dono tinha uma recovery diferente, completa, antes de formatar; depois caiu na enxuta. Hipotese dele: driver incompleto vem do Windows, nao do fabricante (coerente com pasta so `.inf`+`.cat` = padrao inbox; nao provado).
-- Ramo `imagem` (github.com/kkkkiiiioooo/aaaa): `winre-1809.wim.part-00..02` (254 MB) e `mipad2-10586-boot.wim.part-00..04` (427 727 859 B, completo, `sha256sum -c MANIFEST.sha256` OK). Remontar: `git archive origin/imagem 'mipad2*' | tar -x && cat mipad2-10586-boot.wim.part-0? > m.wim`.
-- PENDENTE: enviar `Winre.wim` de fabrica ao ramo `imagem` (5 partes de 95 MiB); listar a loja de drivers do aparelho (quais 3 arquivos); D5/E6 em `HANDOFF.md`; identificar a recovery com PowerShell (perguntar ao dono o que a tela mostrava).
+- Pasta `imagens/` no ramo `wwii` (desde 2026-11-13, pedido do dono; exceção `!imagens/*.wim.part-*` no `.gitignore`): WinRE 1809 (3 partes) + `boot.wim` 10586 de fábrica (5 partes), com `MANIFEST.sha256`, `WIMS.sha256`, `remontar.sh` (`sh imagens/remontar.sh`). Verificado em clone novo do GitHub: hashes OK, `wimlib` abre. Custo: +~700 MB por clone (README tem comando de clone leve).
+- Ramo `imagem` (origem, continua existindo) (github.com/kkkkiiiioooo/aaaa): `winre-1809.wim.part-00..02` (254 MB) e `mipad2-10586-boot.wim.part-00..04` (427 727 859 B, completo, `sha256sum -c MANIFEST.sha256` OK). Remontar: `git archive origin/imagem 'mipad2*' | tar -x && cat mipad2-10586-boot.wim.part-0? > m.wim`.
+- PENDENTE: enviar `Winre.wim` de fabrica (a recovery real; so existe no sandbox do Composio) para `imagens/` (wwii) e para o ramo `imagem` (5 partes de 95 MiB; precisa do remoto + token temporario); listar a loja de drivers do aparelho (quais 3 arquivos); D5/E6 em `HANDOFF.md`; identificar a recovery com PowerShell (perguntar ao dono o que a tela mostrava).
 - SEGURANCA: um token GitHub foi exposto no chat de 2026-11-12 e usado no sandbox do Composio (apagado de la). Dono deve gerar novo e revogar o antigo.
 
 ## Receitas (para nao refazer)
@@ -33,3 +34,4 @@ Alvo: Xiaomi Mi Pad 2 (x86, Broadcom BCM4356 Wi-Fi). Problema: WinRE sem Wi-Fi f
 - 2026-11-12T19:00Z ramo imagem completo (boot.wim 10586, 5 partes) + MANIFEST ok; commits cf68b85, 1d18a57.
 - 2026-11-12T19:45Z imagem de fabrica (swm) aberta: Winre.wim de fabrica 444 858 791 B sem Wi-Fi; driver do repo identico ao de fabrica (14/14); doc 01922c6.
 - 2026-11-13T07:52Z teste do mem.sh: memoria automatica ativa; skill de memoria agora manda ler docs/MEMORIA.md e gravar a cada etapa
+- 2026-11-13T08:01Z pasta imagens/ no wwii (1809 + boot.wim 10586, 8 partes) publicada e verificada em clone novo (commit e00563d); falta Winre.wim de fabrica (so no sandbox Composio)
