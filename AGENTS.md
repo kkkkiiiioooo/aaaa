@@ -60,7 +60,7 @@ sh scripts/etapa.sh pegar E<n>                                  # lease 90 min
 sh scripts/etapa.sh fechar E<n> "<evidencia: caminho + saida>"   # sem evidência não está feita
 sh scripts/relatorio.sh estado "<provado + obstáculo + próximo>"
 ```
-Duas reclamações da mesma etapa: vale a primeira. Imprevisto: registre em `ETAPAS.md` (append) e siga. `docs/imagem/` ja esta pronto (imagem em `imagens/` no ramo `extras`: `sh scripts/obter_imagem.sh --wim`); nao regenere. Sem a imagem: `zcat docs/imagem/winre-caminhos.txt.gz | grep -i <x>`.
+Duas reclamações da mesma etapa: vale a primeira. Imprevisto: registre em `ETAPAS.md` (append) e siga. `docs/imagem/` ja esta pronto (imagem: WinRE 1809 e recovery de fabrica na raiz do ramo `wwii`; boot.wim e subset de inspecao em `imagens/` no ramo `extras`: `sh scripts/obter_imagem.sh --wim`); nao regenere. Sem a imagem: `zcat docs/imagem/winre-caminhos.txt.gz | grep -i <x>`.
 
 ## Retorno ao lead
 Responda os ids do PLANO (D, C) com `docs/retorno/<ID>.md` a partir de `docs/retorno/MODELO.md`. Comando e saída literais; sem saída real o veredito é INCONCLUSIVO. "Wi-Fi operacional" só vale com código de erro lido (`Device Manager`/`pnputil`/`sc query` na VM ou máquina real). Driver Wi-Fi: `python3 scripts/checar_firmware.py <pasta>` antes de chamar de instalado. Responda em português.

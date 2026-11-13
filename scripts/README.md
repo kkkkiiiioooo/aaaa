@@ -8,7 +8,7 @@ Nenhum depende de estado herdado — rode-os no começo da sua rodada.
 
 ```sh
 sh scripts/ambiente.sh                 # 1) prepara o ambiente (deps + dirs + diagnostico)
-sh scripts/obter_imagem.sh --wim       # 2) WinRE 1809 de imagens/ (ramo extras; so se for testar)
+sh scripts/obter_imagem.sh --wim       # 2) WinRE 1809 (raiz do ramo wwii; o script busca la)
 sh scripts/inspecionar_winre.sh <img>  # 3) examina o WinRE (netsh/WLAN/drivers)
 sh scripts/tests/run-tests.sh          # 4) ambiente de teste: VM QEMU + suite (termina em SUITE: PASS)
 ```
