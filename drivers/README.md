@@ -14,7 +14,7 @@ Binários: não abra no chat. Use `python3 scripts/listar_hwid.py`, `sha256sum -
 - Oficial: https://github.com/brianwoo/mipad2-win10-howto commit `8526424ca49d9077c16329f150fa176b88bd642e`, `win10_drivers.7z.001..004` (extraído com `7z x`). É um backup do DoubleDriver (há `restore.ini` e `oem*.inf`) dos drivers do Windows 10 build 10586 de fábrica — inferência, não confirmada.
 - sha256 dos volumes: 001=10c5b7dfa4c229f6e46a0473e131dd37832973a0b2945e85365998049906b7c3; 002=8445601afb505de97d23d4f2da25ccab3bb9ff091b73a227ac2b06f182b9198a; 003=884b82c033fb87cde6a3df9d190eb6197e49f1ebf12cf0bb129803578bd0ada6; 004=190004e186e0b6aefa4f29778f9affeebe85f3605e6433c799d2daf8456e4c22
 - Só Wi-Fi e Bluetooth foram extraídos. O resto do pacote (display 448 MB, áudio, câmera, sensores) não ajuda a conectar e ficou de fora.
-- Inbox: extraído de `subset-inspecao.tar.xz` (`imagens/inspecao-62MB/subset-inspecao.tar.xz` no ramo `extras`, sha256 024ba88c…); `tar -xJf imagens/inspecao-62MB/subset-inspecao.tar.xz --wildcards '*bcmwdidhdpcie*'`.
+- Inbox: extraído de `subset-inspecao.tar.xz` (`imagens/inspecao-62MB/subset-inspecao.tar.xz` no ramo `extras`; hash no `imagens/MANIFEST-imagem.sha256`); `tar -xJf imagens/inspecao-62MB/subset-inspecao.tar.xz --wildcards '*bcmwdidhdpcie*'`.
 
 ## Medido
 - Mesmo nome de driver nos dois: `bcmpciedhd63.sys` — inbox 1037824 B, oficial 1041320 B (versões diferentes).
