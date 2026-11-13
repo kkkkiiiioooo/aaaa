@@ -1,3 +1,0 @@
-# WIMS.sha256 - hash dos WIMs remontados a partir das partes (confere com sha256sum -c)
-f9e30ca308aa23e83d852ccefcfe7bca09a23d7c5b759ae655557612487879b8  winre-1809-254MB/winre-1809.wim
-152addc420748815c2cad90d382229e249ec853d3842531ddcc2b9998248067a  winre-fabrica-10586-424MB/winre-fabrica-10586.wim
