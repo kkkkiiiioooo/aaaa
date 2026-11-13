@@ -1,5 +1,5 @@
 #!/bin/sh
-# obter_imagem.sh — baixa o pacote offline da imagem 1809 (branch o rfã `imagem`).
+# obter_imagem.sh — baixa o pacote offline da imagem 1809 (pasta imagens/ do ramo wwii).
 #
 #   sh scripts/obter_imagem.sh --fs     # sistema de arquivos de inspecao (62 MB)
 #   sh scripts/obter_imagem.sh --wim    # WIM do WinRE montavel (254 MB)
@@ -14,8 +14,7 @@ set -eu
 
 AQUI=$(cd "$(dirname "$0")" && pwd)
 REPO=$(cd "$AQUI/.." && pwd)
-WT=$REPO/.work/wt-imagem
-BR=imagem
+WT=$REPO/imagens
 MODO=${1:---fs}
 
 # sha256 do WIM ja remontado, medido na geracao (25 s, Boot Index 1)
@@ -26,20 +25,12 @@ case "$MODO" in --fs|--wim|--all) : ;; *) echo "uso: obter_imagem.sh --fs|--wim|
 passo() { printf '\n=== %s ===\n' "$1"; }
 falha() { printf '\nPARADO: %s\n' "$1"; exit 1; }
 
-passo "buscar branch $BR (blob:none se o servidor suportar)"
-git -C "$REPO" fetch --depth 1 -q origin "$BR" 2>/dev/null || git -C "$REPO" fetch -q origin "$BR" 2>/dev/null \
-  || falha "fetch $BR" "a branch existe no remoto? a branch imagem ja foi publicada"
-
-passo "materializar em $WT sem mexer na sua branch de trabalho"
-if [ -d "$WT" ]; then
-  git -C "$WT" reset -q --hard FETCH_HEAD || falha "reset do worktree"
-else
-  git -C "$REPO" worktree add --detach -q "$WT" FETCH_HEAD || falha "worktree add"
-fi
+passo "usando imagens/ do proprio repo (ramo wwii)"
+[ -f "$WT/subset-inspecao.tar.xz" ] || falha "imagens/subset-inspecao.tar.xz ausente" "git pull; ou git checkout wwii -- imagens"
 
 passo "verificando MANIFEST.sha256 ANTES de usar qualquer arquivo"
-( cd "$WT" && sha256sum -c MANIFEST.sha256 ) || falha "verificacao de hash" \
-    "arquivo corrompido no transporte — apague $WT e rode de novo; NAO use parcial"
+( cd "$WT" && sha256sum -c MANIFEST-imagem.sha256 ) || falha "verificacao de hash" \
+    "arquivo corrompido no transporte — rode git checkout -- imagens e tente de novo; NAO use parcial"
 
 if [ "$MODO" = --wim ] || [ "$MODO" = --all ]; then
   passo "remontando winre-1809.wim a partir das 3 partes"
@@ -58,7 +49,3 @@ if [ "$MODO" = --fs ] || [ "$MODO" = --all ]; then
   echo "  grep -ril '<HWID>' $REPO/.work/fs/Windows/INF/"
   echo "  python3 scripts/ler_hive.py $REPO/.work/fs/Windows/System32/config/SYSTEM"
 fi
-
-passo "limpeza opcional"
-echo "as partes ficam em $WT ($(du -sh "$WT" | cut -f1)); para liberar espaco:"
-echo "  git -C $REPO worktree remove --force .work/wt-imagem"
