@@ -1,10 +1,10 @@
 # Ambiente do agente: mavis
 Modelo: MiniMax-M3.1-Flash
-Medido em 2026-11-07T12:10:10Z por mavis. **So vale para este agente.** Outro agente tem outro ambiente: nao misture.
+Medido em 2026-11-13T10:23:01Z por mavis. **So vale para este agente.** Outro agente tem outro ambiente: nao misture.
 
 ## Maquina
 - SO: Debian GNU/Linux 12 (bookworm) | kernel: Linux 5.10.134-18.0.12.lifsea8.x86_64 | arq: x86_64 | usuario: root
-- CPUs: 2 | RAM: 3072 MB | disco livre: 508209 MB | KVM: NAO
+- CPUs: 2 | RAM: 3072 MB | disco livre: 483506 MB | KVM: NAO
 - modulo vfat no kernel: NAO
 
 ## Ferramentas (OK = presente, -- = ausente)
