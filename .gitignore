@@ -15,3 +15,6 @@ __pycache__/
 *.iso
 *.tar.xz
 *.bundle
+
+# excecao: o dono pediu as 2 imagens no wwii (partes de 95 MiB, limite do GitHub e 100 MiB)
+!imagens/*.wim.part-*
