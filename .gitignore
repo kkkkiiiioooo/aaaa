@@ -16,5 +16,8 @@ __pycache__/
 *.tar.xz
 *.bundle
 
-# excecao: o dono pediu as 2 imagens no wwii (partes de 95 MiB, limite do GitHub e 100 MiB)
+# excecao: o dono pediu as imagens no repo (partes de 95 MiB, limite do GitHub e 100 MiB).
+# cada WIM tem sua pasta em imagens/; o subset de inspecao tambem.
 !imagens/*.wim.part-*
+!imagens/*/*.wim.part-*
+!imagens/inspecao/subset-inspecao.tar.xz

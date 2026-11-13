@@ -12,8 +12,8 @@ esperar pela E1.
 
 | arquivo | bytes | o que é |
 |---|---|---|
-| `winre-1809.wim.part-00..02` | 99 614 720 ×2 + 67 053 810 | WinRE exportado do índice 2 de `Core_en-us.esd`, LZMS, **`--boot` aplicado** (`Boot Index: 1`). Juntos = 266 283 250 bytes = 254 MB |
-| `subset-inspecao.tar.xz` | 65 534 392 | 249 MB extraídos, 1 917 arquivos: `Windows/INF`, `System32/config` (hives), `System32/drivers`, `System32/DriverStore`, `Windows/Boot`, `sources` |
+| `winre-1809/winre-1809.wim.part-00..02` | 99 614 720 ×2 + 67 053 810 | WinRE exportado do índice 2 de `Core_en-us.esd`, LZMS, **`--boot` aplicado** (`Boot Index: 1`). Juntos = 266 283 250 bytes = 254 MB |
+| `inspecao/subset-inspecao.tar.xz` | 65 534 392 | 249 MB extraídos, 1 917 arquivos: `Windows/INF`, `System32/config` (hives), `System32/drivers`, `System32/DriverStore`, `Windows/Boot`, `sources` |
 | `MANIFEST.sha256` | — | hash de tudo acima |
 
 Por que dividido: o limite **rígido** do GitHub é 100 MiB por arquivo (104 857 600

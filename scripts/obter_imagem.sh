@@ -1,5 +1,5 @@
 #!/bin/sh
-# obter_imagem.sh — baixa o pacote offline da imagem 1809 (pasta imagens/ do ramo wwii).
+# obter_imagem.sh — obtem o pacote offline da imagem 1809 (pasta imagens/ do ramo extras).
 #
 #   sh scripts/obter_imagem.sh --fs     # sistema de arquivos de inspecao (62 MB)
 #   sh scripts/obter_imagem.sh --wim    # WIM do WinRE montavel (254 MB)
@@ -25,8 +25,8 @@ case "$MODO" in --fs|--wim|--all) : ;; *) echo "uso: obter_imagem.sh --fs|--wim|
 passo() { printf '\n=== %s ===\n' "$1"; }
 falha() { printf '\nPARADO: %s\n' "$1"; exit 1; }
 
-passo "usando imagens/ do proprio repo (ramo wwii)"
-[ -f "$WT/subset-inspecao.tar.xz" ] || falha "imagens/subset-inspecao.tar.xz ausente" "git pull; ou git checkout wwii -- imagens"
+passo "usando imagens/ do proprio repo (ramo extras)"
+[ -f "$WT/inspecao/subset-inspecao.tar.xz" ] || falha "imagens/inspecao/subset-inspecao.tar.xz ausente" "git pull; ou git checkout extras -- imagens"
 
 passo "verificando MANIFEST.sha256 ANTES de usar qualquer arquivo"
 ( cd "$WT" && sha256sum -c MANIFEST-imagem.sha256 ) || falha "verificacao de hash" \
@@ -34,7 +34,7 @@ passo "verificando MANIFEST.sha256 ANTES de usar qualquer arquivo"
 
 if [ "$MODO" = --wim ] || [ "$MODO" = --all ]; then
   passo "remontando winre-1809.wim a partir das 3 partes"
-  cat "$WT"/winre-1809.wim.part-0? > "$REPO/.work/winre-1809.wim"
+  cat "$WT"/winre-1809/winre-1809.wim.part-0? > "$REPO/.work/winre-1809.wim"
   got=$(sha256sum "$REPO/.work/winre-1809.wim" | cut -d' ' -f1)
   [ "$got" = "$WIM_SHA" ] || { rm -f "$REPO/.work/winre-1809.wim"; falha "hash do WIM remontado"; }
   wimlib-imagex info "$REPO/.work/winre-1809.wim" 2>/dev/null | sed -n 's/^.*Boot Index: */Boot Index: /p'
@@ -44,7 +44,7 @@ fi
 if [ "$MODO" = --fs ] || [ "$MODO" = --all ]; then
   passo "extraindo sistema de arquivos de inspecao (249 MB)"
   mkdir -p "$REPO/.work/fs"
-  tar -xJf "$WT/subset-inspecao.tar.xz" -C "$REPO/.work/fs" || falha "extracao do subset"
+  tar -xJf "$WT/inspecao/subset-inspecao.tar.xz" -C "$REPO/.work/fs" || falha "extracao do subset"
   echo "fs ok: $REPO/.work/fs"
   echo "  grep -ril '<HWID>' $REPO/.work/fs/Windows/INF/"
   echo "  python3 scripts/ler_hive.py $REPO/.work/fs/Windows/System32/config/SYSTEM"
