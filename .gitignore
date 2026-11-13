@@ -20,4 +20,4 @@ __pycache__/
 # cada WIM tem sua pasta em imagens/; o subset de inspecao tambem.
 !imagens/*.wim.part-*
 !imagens/*/*.wim.part-*
-!imagens/inspecao/subset-inspecao.tar.xz
+!imagens/inspecao-62MB/subset-inspecao.tar.xz

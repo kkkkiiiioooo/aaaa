@@ -1,6 +1,6 @@
 # Drivers dentro do Winre.wim de fábrica (10586) — MEDIDO 2026-11-13
 
-Arquivo: `imagens/winre-fabrica-10586/winre-fabrica-10586.wim` (444 858 791 B, sha256 152addc4…067a). Comando: `wimlib-imagex dir <wim> 1` (26 461 caminhos) + `extract` só dos INFs.
+Arquivo: `imagens/winre-fabrica-10586-424MB/winre-fabrica-10586-424MB.wim` (444 858 791 B, sha256 152addc4…067a). Comando: `wimlib-imagex dir <wim> 1` (26 461 caminhos) + `extract` só dos INFs.
 
 | INF no WinRE | HWID (SDIO) | Chip | Nota |
 |---|---|---|---|
