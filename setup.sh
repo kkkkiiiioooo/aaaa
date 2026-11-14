@@ -53,3 +53,6 @@ git fetch -q origin --prune 2>/dev/null || true
 [ -z "$P" ] || git switch "$P" 2>/dev/null || git switch -c "$P" --track "origin/$P"
 
 printf '[aaaa] branch=%s agente=%s\n' "$(git branch --show-current)" "$A"
+
+# 6. confirma que a escrita esta ativa (push --dry-run: autentica, nao envia nada)
+git push --dry-run -q origin HEAD 2>/dev/null && echo ESCRITA_OK || echo ESCRITA_FALHOU
