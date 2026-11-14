@@ -8,7 +8,7 @@ Each experiment records one question, the exact commands, the observed output, t
 |---|---|---|
 | E0.1 | Base image provenance | Evidence recorded; base decision pending |
 | E1 | WinRE baseline in QEMU | Planned |
-| E2 | Offline servicing | Planned |
+| E2 | Offline servicing | File mechanics done with wimlib (F2-metadata); DISM and boot pending |
 | E3 | 1 KB HTTP channel | Planned |
 | E4 | Hardware validation | Planned; user-driven |
 
