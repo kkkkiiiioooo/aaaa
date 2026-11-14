@@ -135,7 +135,7 @@ wim_meta() {
         BUILD)      wimlib-imagex info "$1" 2>/dev/null | awk -F': *' '/^Build:/{print $2; exit}' ;;
         FILECOUNT)  wimlib-imagex info "$1" 2>/dev/null | awk -F': *' '/^File Count:/{print $2; exit}' ;;
         DIRCOUNT)   wimlib-imagex info "$1" 2>/dev/null | awk -F': *' '/^Directory Count:/{print $2; exit}' ;;
-        TOTALBYTES) wimlib-imagex info "$1" 2>/dev/null | awk -F': *' '/^Size:/{print $2; exit}' ;;
+        TOTALBYTES) wimlib-imagex info "$1" 2>/dev/null | awk -F': *' '/^Size:/{gsub(/[^0-9]/,"",$2); print $2; exit}' ;;
       esac ;;
     *)
       # The WIM-level TOTALBYTES lives outside the <IMAGE> block, and its position
