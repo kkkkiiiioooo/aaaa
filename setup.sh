@@ -69,6 +69,11 @@ git config --add credential.helper "store --file=\"$GITDIR/aaaa-gh\""
 git config user.name "$AGENTE"
 git config user.email "$EMAIL"
 
+# ---- 7. autenticar gh cli (silencioso, sem vazar token) -------------------
+if command -v gh >/dev/null 2>&1; then
+  echo "$TOKEN" | gh auth login --with-token >/dev/null 2>&1 || true
+fi
+
 # ---- 7. branch de trabalho (opcional) -------------------------------------
 if [ -n "$BRANCH" ]; then
   git fetch -q origin "$BRANCH" 2>/dev/null || falha "nao consegui buscar a branch $BRANCH"
