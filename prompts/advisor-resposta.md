@@ -1,0 +1,1 @@
+advisor-respostas/advisor-resposta-20261115-124958.md

@@ -1,0 +1,25 @@
+*.wim
+*.swm
+*.esd
+*.qcow2
+*.raw
+*.iso
+*.log
+*.mnt/
+*.bak
+*.orig
+qemu/work/
+qemu/iso/
+qemu/http-root/
+qemu/guest-kbd/
+qemu/guest/
+*.ppm
+
+# local secrets/env (not committed)
+.env
+.env.*
+*.local.env
+prompts/.advisor.env
+
+__pycache__/
+*.pyc

@@ -1,0 +1,19 @@
+Arquivo analisado: prompts/advisor.md
+Data: 2026-11-15
+
+Linhas: 431
+Palavras: 3.323
+Caracteres (com espaços e quebras de linha): 21.332
+Caracteres (sem espaços e quebras de linha): 17.774
+Bytes (UTF-8): 21.968
+
+Tokens (contagem exata por tokenizador):
+- cl100k_base (GPT-4/ChatGPT clássico): 6.937
+- o200k_base (GPT-4o/GPT-5 família OpenAI): 6.356
+
+Observação: a contagem de tokens depende do tokenizador do modelo. O modelo astra
+não foi identificado aqui; use a faixa de 6.356 a 6.937 tokens como referência.
+
+Método:
+- Caracteres e palavras: contagem direta do arquivo UTF-8.
+- Tokens: tiktoken com os vocabulários cl100k_base e o200k_base.
