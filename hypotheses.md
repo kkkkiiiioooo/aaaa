@@ -138,7 +138,7 @@ Preencha Owner e Status ao reivindicar (veja "Como funcionam os claims"). Priori
 | H-B2 | Limite de linha do `cmd` no WinRE | — | [ ] |
 | H-B3 | `cscript`/JScript/FSO no WinRE | — | [?] bloqueada no E1b |
 | H-B8 | Hash sem `certutil` | — | [ ] |
-| H-B6 | Hex vs base64: documentar o método exato e medir (docs/08-data-transfer.md) | claude | [~] |
+| H-B6 | Hex vs base64: documentar o método exato e medir (docs/08-data-transfer.md) | claude | [~] doc + teste de host feitos; falta WinRE (bloqueado no E1b) |
 | H-B11 | Tempo de digitação da nvram | — | [ ] |
 | H-B12 | Compressão antes de digitar | — | [ ] |
 | H-B13 | Firmware já local (sem digitar) | — | [ ] |
