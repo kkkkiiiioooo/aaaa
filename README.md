@@ -68,8 +68,6 @@ O repositório não contém uma imagem completa de instalação do Windows. Ele 
 10. `experiments/E0.1-firmware-baseline.md`
 11. `experiments/README.md`
 
-Ponto de entrada em português: `README.pt-BR.md`.
-
 ## Segurança e escopo
 
 - Não conecte o dispositivo a USB, SD, Ethernet ou teclado físico.

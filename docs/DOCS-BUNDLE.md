@@ -1,6 +1,6 @@
 # Project documentation bundle
 
-Generated from 32 markdown files (excluding .git, node_modules, symlinks).
+Generated from 31 markdown files (excluding .git, node_modules, symlinks).
 
 ---
 
@@ -742,6 +742,62 @@ Imagem base: o WIM do firmware de fábrica é a única imagem versionada. Ele n�
 
 ---
 
+## FILE: INDEX.md
+
+# INDEX — mapa do repositório (leia primeiro, depois `STATE.md`)
+
+Projeto: recuperar o Wi-Fi (BCM4356, erro 10) de um Xiaomi Mi Pad 2 só com WinRE + `cmd` + texto digitado. Prova em QEMU antes de hardware.
+Branch única: `desafio`. Um agente por vez. Detalhes ficam nos arquivos abaixo: leia só o que a tarefa pedir.
+
+## Ordem de leitura
+
+1. `INDEX.md` (este) e `STATE.md` (estado atual, feito/próximo/bloqueios).
+2. Só se for mudar algo: `AGENTS.md` (regras), `GOAL.md` (objetivo e restrições).
+3. Só se a tarefa tocar o tema: o arquivo da tabela abaixo.
+
+## Raiz
+
+| Arquivo | O que é |
+|---|---|
+| `AGENTS.md` | Regras de agente: sincronização, evidência, restrições (193 linhas) |
+| `GOAL.md` | Missão e restrições rígidas |
+| `README.md` | Visão geral do desafio e organização |
+| `TODO.md` | Plano amplo e ideias do dono (139 linhas) |
+| `ANOTACOES-IMPORTANTES.md` | Notas canônicas (dispositivo, canais) |
+| `hypotheses.md` | Hipóteses (não são fatos) |
+| `setup.sh`, `qoder-setup.sh` | Preparação do ambiente efêmero |
+| `projeto.gpg` | Arquivo cifrado (não ler) |
+| `.opencode/` | Configuração de agente |
+
+## Pastas
+
+| Pasta | Conteúdo | Quando abrir |
+|---|---|---|
+| `docs/` | `00` visão, `01` restrições, `02` estado do dispositivo, `03` driver Wi-Fi erro 10, `04` fidelidade, `05` offline servicing, `06` auditoria 1809, `07` inventário. `DOCS-BUNDLE.md` junta tudo (grande, evitar) | Para entender um tema |
+| `experiments/` | `README.md` = quadro de experimentos (E0.1–E7); `E1-…`, `E3b-…`, `E7-…`; `templates/` | Antes de rodar ou registrar experimento |
+| `qemu/` | Scripts de boot do WinRE (`run-winre*.sh`, `build-*.sh`, `mon.py`, `audit.sh`) e `README.md` | Para E1/E1b |
+| `scripts/` | `salvar.sh` (commit+push), `verify-*.sh`, `prepare-ascii-transfer.py`, `winre-*.js`, `advisor-request.py` | Para tarefas de automação |
+| `drivers/` | `estado-dispositivo/`, `mipad2-oficial/`, `nvram-delta/` (67 arquivos) | Para trabalho de driver/nvram |
+| `inventory/` | `names-only/` (nomes por tipo) + `README.md` | Para consultar o que existe nas imagens |
+| `prompts/` | `advisor.md` (briefing), `advisor-resposta.md` (orientação recente), histórico e anexos | Só para estratégia de recuperação |
+| `winre-1809-oficial-intacta/` | WIM 1809 oficial em partes + SHA256SUMS | Nunca editar; trabalhar em cópias |
+| `winre-fabrica-10586-424MB/` | WIM de fábrica 10586 em partes + SHA256SUMS | Nunca editar; trabalhar em cópias |
+
+## Comandos curtos
+
+- Sincronizar: `git fetch origin desafio && git merge --ff-only origin/desafio`
+- Salvar: `scripts/salvar.sh "msg" caminho...` (sempre caminhos explícitos)
+- Buscar sem ler tudo: `grep -rl termo .` e `sed -n 1,30p arq`
+- Histórico recente: `git log -5 --oneline`
+
+## Armadilhas de contexto
+
+- Não use `cat` em `TODO.md`, `AGENTS.md` ou `DOCS-BUNDLE.md` inteiros; a célula E1b em `TODO.md` é muito longa (linhas 19–82).
+- Resultado de QEMU/mock nunca é prova (regra de evidência em `AGENTS.md`).
+- Não commitar imagens geradas, logs ou segredos.
+
+---
+
 ## FILE: README.md
 
 # Desafio de recuperação do Windows no Mi Pad 2
@@ -814,8 +870,6 @@ O repositório não contém uma imagem completa de instalação do Windows. Ele 
 10. `experiments/E0.1-firmware-baseline.md`
 11. `experiments/README.md`
 
-Ponto de entrada em português: `README.pt-BR.md`.
-
 ## Segurança e escopo
 
 - Não conecte o dispositivo a USB, SD, Ethernet ou teclado físico.
@@ -828,6 +882,54 @@ Ponto de entrada em português: `README.pt-BR.md`.
 ## Próximo passo
 
 Revise `experiments/E0.1-firmware-baseline.md` para o inventário do firmware. Depois que as ferramentas estiverem instaladas, valide o repositório com `scripts/verify-repo.sh`. Os experimentos do QEMU estão definidos em `experiments/` e devem ser executados separadamente.
+
+---
+
+## FILE: STATE.md
+
+# STATE — passagem de bastão entre chats (leia depois de `INDEX.md`)
+
+Atualizado em: 21/11/2026 (criação do arquivo, a partir de `TODO.md` e `experiments/README.md`).
+Regra: ao fim de cada chat, reescreva este arquivo (máx. 60 linhas) e salve com `scripts/salvar.sh "state" STATE.md`.
+Fonte de verdade dos detalhes: `TODO.md` (plano) e `experiments/README.md` (quadro). Este arquivo só resume.
+
+## Foco atual
+
+E1b — fazer o WinRE inicializar sob QEMU/TCG até um `cmd` interativo, para destravar E3b e E7.
+
+## Feito (resumo)
+
+- Procedência do WinRE 1809 verificada (E0.1) e inventário das duas imagens (`inventory/`, `docs/07`).
+- Regras de canais, sincronização e coordenação fixadas em `AGENTS.md` / `GOAL.md`.
+- Ambiente UEFI com console de texto interativo (UEFI Shell, `FS0:`) e digitação via `keys.py`.
+- Descartados por medição (E1b, células I–AJ): PCAT/SeaBIOS, ISO9660 em EFI (o firmware só monta o ESP `efisys.bin` como `FS0:`), modelo de CPU, controladora de storage, tamanho do ramdisk, `winload.efi`, trocar `recenv.exe` por `cmd.exe` em `winpeshl.ini`.
+- Fato: o azul chapado `#2067B2` é real (não é artefato de captura) e vem do estágio depois do bootmgr; falhas do próprio bootmgr aparecem como texto preto (célula AF).
+
+## Próximo passo imediato
+
+1. Ler o STOP code do WinRE com `pmemsave`, `-d` ou `-debugcon` na mídia `qemu/work/winre-cmd.img`.
+   Autorizado pelo dono em 21/11/2026 (regra em `AGENTS.md`). Antes de rodar, conferir `qemu/audit.sh`: `-serial file:`, `-virtfs`, 9p e portas redirecionadas continuam proibidos.
+2. Com o STOP code, decidir a próxima variação de E1b ou registrar `bloqueado` em `experiments/README.md`.
+
+## Bloqueios
+
+| Tarefa | Depende de |
+|---|---|
+| E3b (nvram em ASCII + hash dentro do WinRE) | WinRE com `cmd` (E1b). Teste simulado não vale |
+| E7 (escrita binária a partir de texto) | WinRE real (E1b). certutil, PowerShell, .NET e ADODB.Stream estão ausentes |
+| E5 e E6 (erro 10 reproduzido) | Windows completo inicializável, de preferência com KVM. O sandbox atual só tem TCG |
+| E4 (hardware) | O dono, no dispositivo físico |
+
+## Decisões abertas do dono
+
+- Nenhuma imagem-base aprovada (`experiments/README.md`, "Decisão atual de base").
+- Teste de carga mínima: se só a nvram basta. Observação decisiva: `dir C:\Windows\System32\drivers\4356*` no aparelho vivo.
+
+## Armadilhas
+
+- A seção E1b de `TODO.md` (linhas 19–82) é muito longa: leia só as últimas linhas (`sed -n 76,82p TODO.md`).
+- Nunca apresentar resultado de QEMU/mock como prova de hardware.
+- Não editar os WIMs versionados; trabalhar em cópias em `qemu/work/` ou `/tmp`.
 
 ---
 
@@ -1622,234 +1724,6 @@ Todo resultado deve declarar o seu nível de fidelidade. Um resultado do QEMU é
 
 ---
 
-## FILE: docs/05-offline-servicing.md
-
-# Servicing offline
-
-> **Procedência:** verificada. A imagem base é o WinRE 1809 extraído do ESD
-> oficial (`winre-1809-oficial-intacta/`, ESD SHA-1 `8352af76…`, WIM SHA-256 `232199c5…`).
-> Os testes de servicing foram feitos numa cópia; os resultados são sobre o procedimento. Veja
-> `docs/06-auditoria-imagem-1809.md`.
-
-## Propósito
-
-Modificar uma cópia do WIM do WinRE para que contenha o driver Wi-Fi OEM de 2015 em vez do driver inbox de 2017. O servicing offline funciona sobre a imagem enquanto ela não está inicializada.
-
-Este é o caminho principal. Os planos B são `pnputil` e `devcon` num WinRE em execução.
-
-## Pré-condições
-
-- `cmd` do WinRE disponível.
-- Uma cópia do WIM do WinRE acessível.
-- O WIM base deve conter `bcmwdidhdpcie.inf` versão `1.558.53.25`. Use o WinRE 1809 re-extraído do ESD oficial (`winre-1809-oficial-intacta/`).
-- Não use o WIM de fábrica 10586 como base de drivers: ele não tem `bcmwdidhdpcie.inf` e não consegue reproduzir a falha PCIe de 2017.
-- O pacote Wi-Fi OEM acessível num volume local.
-- O WIM alvo com backup feito.
-- Espaço livre suficiente em `C:` para a cópia, o diretório de montagem e o WIM modificado.
-- O dispositivo BCM4356 presente no dispositivo físico. O QEMU não o tem.
-
-## Localizar o WIM
-
-Caminho comum:
-
-```bat
-dir D:\Recovery\WindowsRE\Winre.wim
-```
-
-Se não for encontrado:
-
-```bat
-dir /s /b D:\Winre.wim
-```
-
-Ajuste a letra da unidade para a partição de recuperação. Não assuma que é sempre `D:`.
-
-## Backup
-
-```bat
-copy /Y D:\Recovery\WindowsRE\Winre.wim C:\winre-orig.wim
-```
-
-Mantenha `C:\winre-orig.wim` até a imagem modificada estar verificada e o dispositivo recuperado.
-
-## Montar
-
-```bat
-mkdir C:\mnt
-dism /Mount-Wim /WimFile:C:\winre-orig.wim /Index:1 /MountDir:C:\mnt
-```
-
-## Listar drivers
-
-```bat
-dism /Image:C:\mnt /Get-Drivers /Format:Table
-```
-
-Ache o pacote inbox da Broadcom. Ele tem:
-
-- Nome de arquivo original: `bcmwdidhdpcie.inf`
-- Versão: `1.558.53.25`
-- Data: `21/04/2017`
-- Nome publicado: `oemXX.inf`
-
-Registre o nome publicado. O valor `XX` é local à imagem.
-
-Se este pacote estiver ausente, a imagem base está errada. Pare e use o WinRE 1809. O WIM de fábrica 10586 não contém este pacote.
-
-## Remover o pacote inbox
-
-```bat
-dism /Image:C:\mnt /Remove-Driver /Driver:oemXX.inf
-```
-
-Substitua `oemXX.inf` pelo nome publicado do passo anterior.
-
-Se o DISM recusar porque o pacote não é removível, pare e registre o erro exato. Não apague arquivos à mão ainda. Use o caminho alternativo em `docs/03-driver-wifi-erro-10.md`.
-
-## Adicionar o pacote OEM
-
-```bat
-dism /Image:C:\mnt /Add-Driver /Driver:C:\OEM\wifi\oem25.inf
-```
-
-O diretório deve conter `oem25.inf` e todos os arquivos que ele referencia, incluindo:
-
-- `bcmpciedhd63.sys`
-- `bcmpciedhd63.cat`
-- `4356a2rtecdc.bin`
-- `bcm94356wlpagbl_P3_150828M.txt`
-- `bcmihvsrv64.dll`
-- `bcmihvui64.dll`
-
-No ambiente QEMU o pacote OEM é colocado em `C:\OEM\wifi`. No dispositivo físico ele precisa já ser local ou chegar pelo canal externo sob teste.
-
-## Verificar o preparo
-
-```bat
-dism /Image:C:\mnt /Get-Drivers /Format:Table
-```
-
-Esperado:
-
-- O pacote de 2017 sumiu.
-- Um pacote Broadcom com versão `1.558.14.0` e data `23/12/2015` está listado.
-
-Confira o DriverStore:
-
-```bat
-dir C:\mnt\Windows\System32\DriverStore\FileRepository\oem25.inf_amd64_*
-dir C:\mnt\Windows\System32\DriverStore\FileRepository\oem25.inf_amd64_*\4356a2rtecdc.bin
-dir C:\mnt\Windows\System32\DriverStore\FileRepository\oem25.inf_amd64_*\bcm94356wlpagbl_P3_150828M.txt
-```
-
-O hash exato da pasta é gerado quando o pacote é preparado. Não espere que o nome da pasta inbox permaneça.
-
-## Nota sobre a nvram
-
-`dism /Add-Driver` prepara o pacote. Ele não executa necessariamente a lista de cópia do INF para o dispositivo. A cópia `System32\drivers\4356r2nvram.txt` normalmente acontece durante a instalação PnP.
-
-Se o teste no dispositivo físico mostrar que a nvram não foi copiada, use o plano B antes de inicializar a imagem modificada:
-
-```bat
-copy /Y C:\mnt\Windows\System32\DriverStore\FileRepository\oem25.inf_amd64_*\bcm94356wlpagbl_P3_150828M.txt C:\mnt\Windows\System32\drivers\4356r2nvram.txt
-```
-
-Faça isso apenas se a regra de cópia não rodar. Prefira o caminho do INF e do PnP. Registre a decisão.
-
-O firmware tem uma renomeação semelhante:
-
-```text
-4356a2rtecdc.bin -> 4356r2rtecdc.bin
-```
-
-A imagem inbox já contém a origem do firmware. O INF do OEM também a contém. Prefira o caminho de cópia do PnP.
-
-## Commit
-
-```bat
-dism /Unmount-Wim /MountDir:C:\mnt /Commit
-```
-
-O WIM modificado agora é `C:\winre-orig.wim`. Não sobrescreva o WIM original de recuperação até a cópia modificada estar verificada.
-
-## Inicializar a imagem modificada
-
-QEMU:
-
-- Construa a mídia de boot a partir do WIM modificado.
-- Inicialize o WinRE modificado.
-- Verifique com `dism`, `pnputil` e `dir`.
-- O BCM4356 está ausente, então o resultado do rádio não é testável.
-
-Dispositivo físico:
-
-- Se o WIM modificado couber na partição de recuperação, faça backup do original e substitua-o.
-- Se não couber, mantenha-o em `C:` e crie uma entrada no BCD para ele. Isso é avançado e deve ser testado no QEMU antes.
-- Não apague o original até a imagem modificada inicializar e o adaptador funcionar.
-
-## Restrição de espaço
-
-A partição de recuperação real tem cerca de 398 MB. O WIM original tem aproximadamente o mesmo tamanho. O WIM modificado pode ficar maior depois de adicionar o pacote OEM. Não assuma que há espaço no `D:`.
-
-Ordem preferida:
-
-1. Mantenha o original em `C:`.
-2. Modifique a cópia em `C:`.
-3. Inicialize a cópia em `C:` por uma entrada no BCD.
-4. Só substitua o `D:` se o arquivo modificado couber e o original estiver com backup.
-
-## Reversão
-
-Reversão imediata:
-
-```bat
-copy /Y C:\winre-orig.wim D:\Recovery\WindowsRE\Winre.wim
-```
-
-Se uma entrada no BCD foi adicionada, remova-a. Se o original foi substituído, restaure do backup. Registre o resultado da reversão.
-
-## Plano B: pnputil num WinRE em execução
-
-Isso muda o WinRE em execução (baseado em RAM), não o WIM. É útil para download de uma sessão só.
-
-```bat
-pnputil /enum-drivers
-pnputil /delete-driver oemXX.inf /uninstall /force
-pnputil /add-driver C:\OEM\wifi\oem25.inf /install
-pnputil /scan-devices
-netsh wlan show drivers
-```
-
-Se o pacote inbox não puder ser apagado, use `devcon update` ou o equivalente de seleção manual.
-
-## Plano B: devcon
-
-`devcon` não faz parte do WinRE. Ele já precisa estar local.
-
-```bat
-devcon update C:\OEM\wifi\oem25.inf "PCI\VEN_14E4&DEV_43EC"
-devcon status "PCI\VEN_14E4&DEV_43EC"
-```
-
-## Última instância: substituição manual do .sys
-
-Não comece por aqui. Substituir `System32\drivers\bcmpciedhd63.sys` à mão contorna o tratamento normal de pacotes de driver e pode quebrar o registro de serviços ou as verificações de assinatura. Use somente se o DISM e o `pnputil` falharem ambos, e registre cada passo.
-
-## Lista de verificação de validação
-
-- [ ] WIM original com backup.
-- [ ] Pacote 2017 identificado pelo nome publicado.
-- [ ] Pacote 2017 removido.
-- [ ] Pacote 2015 preparado.
-- [ ] `Get-Drivers` mostra 1.558.14.0.
-- [ ] Origens do firmware e da nvram OEM presentes no pacote preparado.
-- [ ] Commit bem-sucedido.
-- [ ] WIM modificado inicializa.
-- [ ] Decisão do plano B registrada.
-- [ ] Verificação de hardware feita separadamente.
-
----
-
 ## FILE: docs/06-auditoria-imagem-1809.md
 
 # Auditoria — documentos e evidências construídos sobre a imagem WinRE 1809 derivada
@@ -2202,74 +2076,6 @@ O pacote OEM inclui o catálogo `bcmpciedhd63.cat` e as DLLs IHV. O INF do inbox
 
 ---
 
-## FILE: drivers/README.pt-BR.md
-
-# Drivers Broadcom do Mi Pad 2 (resumo)
-
-> **Procedência:** verificada. Os arquivos "inbox do WinRE 1809" abaixo foram
-> reconferidos contra `winre-1809-oficial-intacta/`, extraído do ESD oficial
-> (`Core_en-us.esd`, 522.499.063 bytes, SHA-1 `8352af76…`). Os 11 arquivos das três
-> pastas do DriverStore são idênticos byte a byte à extração derivada anterior, e o WIM
-> tem a mesma listagem de 21.230 caminhos. Ver `docs/06-auditoria-imagem-1809.md`.
-
-## Estrutura
-
-| Caminho | Origem | Versão | Conteúdo |
-|---|---|---|---|
-| `mipad2-oficial/wifi/` | Pacote OEM oficial do backup do Mi Pad 2 | 1.558.14.0 (2015-12-23) | 16 arquivos, 13,97 MB |
-| `mipad2-oficial/bt-uart/` | Mesmo backup OEM | 12.0.1.731 (2015-09-10) | 31 arquivos, 4,0 MB |
-| `estado-dispositivo/bcmwdidhdpcie.inf_amd64_977dcc915465b0e9/` | Inbox do WinRE 1809 | 1.558.53.25 (2017-04-21) | 4 arquivos, 2,2 MB |
-| `estado-dispositivo/bcmdhd64.inf_amd64_e0bae6831f60ea5f/` | Inbox do WinRE 1809 | 5.93.102.22 (2015-08-06) | 5 arquivos, 1,7 MB |
-| `estado-dispositivo/bcmfn2.inf_amd64_5ebadf201c5b5845/` | Inbox do WinRE 1809 | 5.93.102.22 | 2 arquivos, 14 KB |
-| `nvram-delta/` | nvram OEM renomeado para o driver | n/a | 1 arquivo, 5.361 bytes |
-
-O estado do alvo é `estado-dispositivo/`. O pacote OEM é o payload de substituição, não o estado do alvo. O nvram não está no estado do alvo.
-
-## Pacote Wi-Fi do alvo
-
-A pasta `estado-dispositivo/bcmwdidhdpcie.inf_amd64_977dcc915465b0e9/` tem exatamente:
-
-- `bcmwdidhdpcie.inf`
-- `bcmpciedhd63.sys`
-- `4356a2rtecdc.bin`
-- `43596a0rtecdc.bin`
-
-Não tem nvram. O `43596a0rtecdc.bin` é do BCM4359 / `DEV_4355`; fica junto para manter a pasta idêntica ao DriverStore. A seção ativa do `DEV_43EC` usa o firmware `4356a2rtecdc.bin`.
-
-O `SHA256SUMS` fica em `estado-dispositivo/SHA256SUMS`, um nível acima das pastas do DriverStore.
-
-## Pacote OEM
-
-`mipad2-oficial/wifi/oem25.inf` é a versão 1.558.14.0. A seção do `DEV_43EC` é `BCM43XAC_NT62_4356`. Ela copia:
-
-- `bcmpciedhd63.sys`
-- `4356r2rtecdc.bin` a partir de `4356a2rtecdc.bin`
-- `4356r2nvram.txt` a partir de `bcm94356wlpagbl_P3_150828M.txt`
-
-O pacote OEM inclui o catálogo `bcmpciedhd63.cat` e as DLLs IHV. O INF inbox não tem a linha do nvram nem catálogo.
-
-## Conflito de versão
-
-- Inbox: 2017-04-21, 1.558.53.25.
-- OEM: 2015-12-23, 1.558.14.0.
-- O Windows prefere o mais novo.
-- Só instalar o pacote OEM não resolve; é preciso remover o inbox ou forçar o OEM.
-
-## Detalhes medidos
-
-- `bcmpciedhd63.sys` difere: inbox 1.037.824 bytes; OEM 1.041.320 bytes.
-- O WinRE já tem o `.sys` inbox e o firmware `4356a2rtecdc.bin` no DriverStore, mas não o nvram.
-
-## Origem
-
-- OEM: https://github.com/brianwoo/mipad2-win10-howto, commit `8526424ca49d9077c16329f150fa176b88bd642e`.
-- Inbox: WinRE 1809 extraído do ESD oficial em `winre-1809-oficial-intacta/` (verificado); a cópia derivada `winre-1809-254MB/` está superada.
-- nvram OEM SHA-256: `a7a0a8fb9abfa877675dc7126ae2bde54c4695088543ddbaaa0a49140d9b4667`.
-
-Documento canônico em inglês: `drivers/README.md`.
-
----
-
 ## FILE: drivers/estado-dispositivo/README.md
 
 # Estado do dispositivo alvo
@@ -2430,67 +2236,6 @@ O QEMU não pode confirmar o resultado do rádio. Pode confirmar que o arquivo e
 - `drivers/README.md`
 - `docs/03-driver-wifi-erro-10.md`
 - `docs/05-offline-servicing.md`
-
----
-
-## FILE: drivers/nvram-delta/README.pt-BR.md
-
-# Delta de nvram (resumo)
-
-## O que é
-
-`4356r2nvram.txt` é o nvram OEM `bcm94356wlpagbl_P3_150828M.txt`, renomeado para o nome fixo que o driver procura.
-
-- Tamanho: 5.361 bytes.
-- SHA-256: `a7a0a8fb9abfa877675dc7126ae2bde54c4695088543ddbaaa0a49140d9b4667`.
-- Idêntico ao arquivo OEM.
-- Não está no estado do alvo.
-- Não está em lugar nenhum do WIM 1809.
-
-## Evidência no driver
-
-Strings do `bcmpciedhd63.sys` inbox mostram:
-
-```text
-\SystemRoot\system32\drivers\4356r2rtecdc.bin
-\SystemRoot\system32\drivers\4356r2nvram.txt
-```
-
-O firmware existe no DriverStore como `4356a2rtecdc.bin`. O nvram não existe.
-
-O INF OEM tem a linha:
-
-```text
-4356r2nvram.txt,bcm94356wlpagbl_P3_150828M.txt,,6
-```
-
-O INF inbox não tem. Essa é a diferença.
-
-## Relação com o fix
-
-- H2 (principal): o driver inbox de 2017 é a regressão; o pacote OEM de 2015 é o fix. O OEM já inclui o nvram.
-- H1 (secundária): se o nvram não for copiado na instalação, ele precisa ser colocado em `System32\drivers`.
-
-O DISM offline adiciona o pacote ao DriverStore, mas não garante que a lista de cópia do INF rodou. A cópia acontece na instalação PnP do dispositivo. No QEMU sem o BCM4356, só dá para verificar o staging.
-
-## Aplicar só o nvram (fallback)
-
-```bat
-for %%D in (C D E F G H) do if exist %%D:\4356r2nvram.txt copy /Y %%D:\4356r2nvram.txt %SystemRoot%\System32\drivers\
-pnputil /scan-devices
-netsh wlan show drivers
-```
-
-Não assumir pendrive, pasta compartilhada ou clipboard. O arquivo precisa já estar em um volume local ou chegar pelo canal externo em teste.
-
-## O que confirmaria
-
-- H1: `netsh wlan show drivers` lista a interface no hardware; erro 10 vira 0; o log não mostra `dongle nvram file download failed`.
-- H2: o alvo mostra o driver 2017; o WIM modificado mostra o 2015; o hardware sobe com o 2015 e falha com o 2017.
-
-O QEMU não confirma o rádio. Confirma o arquivo no caminho e o pacote no DriverStore.
-
-Documento canônico em inglês: `README.md`.
 
 ---
 
