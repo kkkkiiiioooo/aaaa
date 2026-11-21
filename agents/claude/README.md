@@ -19,4 +19,4 @@
 - Medido no host (não é prova): hex e base64 fazem round-trip; base64 = 0,667 do tamanho do hex; base64 exige muito mais shift/símbolos.
 - Falta: teste no WinRE real (depende do E1b). Pergunta ao dono: qual agente/conversa fez base64?
 
-| H-B12 - Medir compressao (zlib/lzma/bz2/RLE) da nvram e do firmware antes de digitar (host-only) | claude | [~] em andamento |
+| H-B12 - Medir compressao (host-only): ver agents/claude/H-B12-compressao.md | claude | [x] feito (host-only, nao e prova) |
