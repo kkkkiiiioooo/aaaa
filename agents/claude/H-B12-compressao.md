@@ -11,7 +11,7 @@ Medido em 21/11/2026 no sandbox (python3 zlib/bz2/lzma). Nada foi testado no Win
 
 ## Leitura
 - Hipotese H-B12 sustentada **so no host**: a nvram cai ~68% (10.722 -> 3.440 chars em hex). O firmware cai 46% no melhor caso, mas ainda sao ~700 mil caracteres: inviavel digitar.
-- Custo escondido: o dispositivo precisa de um **descompressor ja presente** no WinRE. Compressao so vale se existir `expand.exe`/`makecab`/`extrac32` (CAB MSZIP/LZX) na imagem. Nao verificado aqui; checar com `inventory/` e depois `where expand` no WinRE real.
+- Custo escondido: o dispositivo precisa de um **descompressor ja presente** no WinRE. Compressao so vale se existir `expand.exe`/`makecab`/`extrac32` (CAB MSZIP/LZX) na imagem. Inventario (`inventory/winre-1809-files.txt`) lista `/Windows/System32/expand.exe` no WinRE 1809 (existencia em arquivo, nao execucao). `makecab` nao confirmado. Falta `where expand` + teste no WinRE real.
 - Para a nvram (5,4 KB) o ganho absoluto e pequeno (~7 mil caracteres) e adiciona um passo binario (o CAB e binario, cai no problema do sumidouro E7). Recomendacao provisoria (hipotese): **nao comprimir a nvram**; digitar ASCII direto.
 - RLE simples quase nao ajuda (5.361 -> 5.328).
 
