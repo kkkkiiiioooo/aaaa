@@ -1,6 +1,6 @@
-# Pacote de documentação do projeto
+# Project documentation bundle
 
-Gerado a partir de 35 arquivos markdown (excluindo .git, node_modules e symlinks).
+Generated from 36 markdown files (excluding .git, node_modules, symlinks).
 
 ---
 
@@ -65,15 +65,7 @@ Leia estes arquivos antes de mudar qualquer coisa:
 Este é **um repositório git** com **uma branch de trabalho: `desafio`**. Todo agente
 trabalha, commita e envia na `desafio`.
 
-- **Pastas não são branches git.** Cada agente tem uma *pasta* `agents/<modelo>/` para o
-  seu próprio log de sessão. Essa pasta vive na branch compartilhada `desafio`; não é uma
-  branch separada. O trabalho compartilhado (docs, drivers, experiments, qemu, scripts) vive
-  nas pastas compartilhadas na `desafio`.
-- Não crie, não troque e não envie para nenhuma outra branch sem autorização explícita do
-  dono. Não crie uma branch por agente nem por tarefa. As branches espalhadas (`qemu`,
-  `wwii`, `windows`, `macos`, ...) são o erro que essa regra previne; o dono as limpa
-  manualmente.
-- Preserve o trabalho enviando-o para a `desafio` (veja a regra de persistência), não criando branches.
+- **Agentes trabalham um de cada vez** (decisão do dono, 21/11/2026), todos na `desafio`, sem pasta própria. O trabalho vive nas pastas compartilhadas (docs, drivers, experiments, qemu, scripts). Não crie uma branch por agente nem por tarefa.
 
 ## Regra de sincronização (obrigatória)
 
@@ -89,16 +81,9 @@ Vários agentes compartilham a `desafio`. Mantenha-se atualizado e nunca sobresc
 - `scripts/salvar.sh` usa `git add -A` por padrão; sempre passe caminhos explícitos para
   não preparar arquivos de outro agente nem artefatos gerados.
 
-## Regra de coordenação (obrigatória — evita trabalho duplicado)
+## Regra de coordenação (obrigatória)
 
-- Depois de fazer fetch, leia os logs dos outros agentes (`agents/*/README.md`) e o quadro
-  de experimentos compartilhado (`experiments/README.md`) para ver o que está feito e o que está reivindicado.
-- **Reivindique uma tarefa antes de trabalhar nela:** adicione uma linha (tarefa, owner, status) no
-  seu `agents/<modelo>/README.md` e defina o Owner na linha correspondente de `experiments/README.md`,
-  e envie a reivindicação imediatamente para que os outros vejam.
-- Um owner por tarefa/experimento. Se uma tarefa já está reivindicada ou feita, escolha outra ou
-  coordene; não a refaça.
-- Envie pouco e com frequência. Uma reivindicação que só existe no seu sandbox não impede duplicação.
+Só um agente trabalha por vez: não há reivindicação de tarefas nem pasta por agente. Registre o estado em `TODO.md` e `experiments/README.md` e deixe tudo enviado antes de parar; o próximo agente começa pelo repositório.
 
 ## Regra de canais (obrigatória)
 
@@ -183,7 +168,7 @@ imediatos, em toda sessão, sem perguntar antes.
 - Se um push falhar (crendenciais, limite de tamanho, rede), diga isso explicitamente e tente de novo; não
   relate o trabalho como concluído.
 - Arquivos acima de 100 MiB são rejeitados pelo GitHub: divida em partes ou não versioná-los.
-- Nunca escreva fora de `agents/<modelo>/`, das pastas compartilhadas e de `/tmp`.
+- Nunca escreva fora das pastas compartilhadas e de `/tmp`.
 
 Regra prática: **se o trabalho valeria ser feito duas vezes, envie-o agora.**
 
@@ -225,23 +210,6 @@ Regra prática: **se o trabalho valeria ser feito duas vezes, envie-o agora.**
 
 Este repositório serve para montar o desafio e suas evidências. Não é uma licença para contornar as restrições declaradas nem para fabricar uma recuperação bem-sucedida.
 
-## Área de trabalho do agente
-
-Cada agente trabalha na sua própria pasta: `agents/<modelo>/`. Essa pasta é uma área de
-trabalho na branch compartilhada `desafio`, **não** uma branch git (veja a regra de modelo de
-repositório e de branch).
-
-Exemplo:
-- `agents/claude/`
-
-Regras:
-- Crie a sua pasta no primeiro uso, se ela não existir.
-- Mantenha um `README.md` dentro dela com o log das suas sessões.
-- O trabalho compartilhado (experiments, docs, drivers) fica nas pastas compartilhadas.
-- Não escreva na pasta de outro agente.
-- Envie o conteúdo da sua pasta antes de parar de trabalhar; uma sessão que termina sem
-  push não deixa nada para trás.
-
 ## Resumo em português
 
 Todo agente trabalha num ambiente temporário. O que não for enviado ao repositório
@@ -254,12 +222,11 @@ push falhar, diga isso claramente e tente de novo — não declare a tarefa conc
 Para provar imagens divididas, rode `scripts/verify-images.sh`: ele junta as partes,
 confere `SHA256SUMS` e `SHA256SUMS.reassembled` e imprime uma linha por imagem — não é
 preciso colar hash nenhum no chat.
-Estrutura: um único repositório, um único ramo de trabalho (`desafio`). Pastas não são
-ramos: cada agente tem a pasta `agents/<model>/` no mesmo ramo; o trabalho compartilhado
-fica nas pastas comuns. Sincronize antes de começar e antes de enviar (`git fetch origin`
-desafio` + `git merge --ff-only origin/desafio`); nunca force-push nem apague ramos. Para
-não duplicar serviço, leia os logs dos outros agentes e o quadro `experiments/README.md`,
-reivindique a tarefa (owner/status) e envie a reivindicação antes de trabalhar.
+Estrutura: um único repositório, um único ramo de trabalho (`desafio`). Agentes
+trabalham um de cada vez, sem pasta própria; o trabalho fica nas pastas comuns. Sincronize antes de começar e antes de enviar (`git fetch origin`
+desafio` + `git merge --ff-only origin/desafio`); nunca force-push nem apague ramos. Como
+só um agente trabalha por vez, não há reivindicação de tarefas: registre o estado em `TODO.md` e
+`experiments/README.md`.
 Regra prática: se o trabalho vale ser feito duas vezes, envie agora.
 
 ---
@@ -444,7 +411,7 @@ Consequência: F2 é um estado funcional sintético, não uma reprodução da pa
 ## 16/11/2026 — E2 servicing offline + causa-raiz da mídia PCAT (qoder)
 
 - Mecânica do E2 PASS (lado do host, em cópias): ambas as cargas construídas em ~4 s e relidas
-  byte a byte por SHA-256; `wimlib-imagex verify` OK. `agents/qoder/e2-servicing.sh`.
+  byte a byte por SHA-256; `wimlib-imagex verify` OK. `e2-servicing.sh`.
 - O caminho de busca da nvram agora está provado a partir dos binários, não dos nomes de arquivo: AMBOS os builds de `bcmpciedhd63.sys`
   contêm `\SystemRoot\system32\drivers\%04Xr%dnvram.txt` (+ o template de firmware e a
   string `dongle nvram file download failed`). Para o chip 0x4356 rev 2 → `System32\drivers\4356r2nvram.txt`.
@@ -471,7 +438,7 @@ Consequência: F2 é um estado funcional sintético, não uma reprodução da pa
   ausência de `boot\pcatboot.wim`, nomes minúsculos no descritor primário, LZX vs none, layout
   interno do pcatboot.wim. Suspeita restante: formato/offset da boot info table que o xorriso escreve
   vs. o que `etfsboot.com` espera. Não é caminho promissor sem uma mídia de referência do oscdimg.
-- UEFI com a mídia oficial (`agents/qoder/build-efi-dvd-iso.sh`, `-e boot/efisys.bin`): é a primeira
+- UEFI com a mídia oficial (`build-efi-dvd-iso.sh`, `-e boot/efisys.bin`): é a primeira
   mídia desta matriz que faz o stub da Microsoft rodar e imprimir "Press any key to boot from CD or
   DVD……". Com tecla injetada pelo monitor (`KEY_AT`/`KEY_TIMES` no `e1-run.sh`) o erro muda de
   `Time out` para `BdsDxe: failed to start Boot0001 … No mapping` (células S e T). Injetar o BCD
@@ -524,19 +491,19 @@ Consequência: F2 é um estado funcional sintético, não uma reprodução da pa
   (`compare -metric AE -fuzz 5%` = 0), como esperado: a opção Boot0001 aponta para a ESP, então a
   cópia não muda o que o BdsDxe resolve. O que muda é o que o **shell** consegue alcançar, porque
   `FS0:` é o volume ISO9660 e a ESP dentro de `efisys.bin` não é montada por ele.
-- **Ferramenta nova para o console.** `agents/qoder/keys.py` traduz texto literal em `sendkey`
+- **Ferramenta nova para o console.** `keys.py` traduz texto literal em `sendkey`
   (um por caractere) e os knobs `TYPE_AT`/`TYPE_FILE`/`TYPE_GAP` no `e1-run.sh` digitam cada linha
   de um arquivo no prompt. Canal: teclado apenas — `qemu/audit.sh` continua PASS. Detalhe medido:
   dois-pontos é `shift-semicolon`, não `shift-2`; na sonda ao vivo o convidado ecoou `fs0@`, que
   é exatamente o tipo de bug de mapeamento que se leria como "o shell não tem FS0:".
-- **Célula W (em execução).** mesma mídia V, sequência `agents/qoder/e1-w-shell.txt`:
+- **Célula W (em execução).** mesma mídia V, sequência `e1-w-shell.txt`:
   `fs0:` → `ls efi\boot` → `ls efi\microsoft\boot` → `\efi\boot\bootx64.efi`. O que se testa é se o
   bootmgr da Microsoft carrega quando o caminho vem do FS0: em vez da opção de boot do firmware.
 - Nada aqui é evidência de hardware: nenhum convidado chegou ao kernel do Windows.
 
 ## 2026-11-17 — E1b: o console interativo existe e o `FS0:` não é o que se pensava (qoder)
 
-- **Console de texto interativo confirmado sob TCG.** Com `agents/qoder/keys.py` (texto literal →
+- **Console de texto interativo confirmado sob TCG.** Com `keys.py` (texto literal →
   `sendkey`) e os knobs `TYPE_AT`/`TYPE_FILE`/`TYPE_GAP` do `e1-run.sh`, o UEFI Interactive Shell
   aceita comandos digitados, ecoa e mostra a saída. Células W e X: `fs0:` muda o prompt para
   `FS0:\>`; `ls efi\boot` lista; `\efi\boot\bootx64.efi` executa e volta ao shell (provado pelo
@@ -579,7 +546,7 @@ Consequência: F2 é um estado funcional sintético, não uma reprodução da pa
   t=40 s e t=60 s **uma única cor** `srgb(32,103,178)` cobrindo os 786.432 px, e o QEMU saiu com
   **código 0** (desligamento pedido pelo convidado) mesmo com `NOREBOOT=0`. O mesmo dispositivo
   mostra texto e modo gráfico: a captura acompanha o convidado. O azul não é quadro velho.
-- **Célula AE — o shell do WinPE nunca é alcançado.** `agents/qoder/build-cmd-media.sh` troca,
+- **Célula AE — o shell do WinPE nunca é alcançado.** `build-cmd-media.sh` troca,
   dentro do `boot.wim`, o `winpeshl.ini` que aponta para `X:\sources\recovery\recenv.exe` por
   `AppPath=X:\Windows\System32\cmd.exe`. Resultado idêntico ao AD. Logo o azul é pintado **antes**
   do `winpeshl.exe` — por `winload` ou pelo kernel, não pela interface de recuperação. (Também
@@ -602,7 +569,7 @@ Consequência: F2 é um estado funcional sintético, não uma reprodução da pa
 
 ## 2026-11-17 — E1b: células AH e AJ fecham o que dá para testar sem canal de debug (qoder)
 
-- **AH — tirar o `winload.efi` de dentro do ramdisk não muda nada.** `agents/qoder/build-nowl-media.sh`
+- **AH — tirar o `winload.efi` de dentro do ramdisk não muda nada.** `build-nowl-media.sh`
   apagou os dois caminhos que a imagem traz (`\Windows\System32\Boot\winload.efi` e
   `\Windows\System32\winload.efi`); a mídia `winre-nowl.img` (`d53f813a…`) deu o mesmo azul
   `srgb(32,103,178)` em t=30 s e t=45 s e `exit code 0` aos 60 s. Lido com cuidado, isso não prova
@@ -630,126 +597,6 @@ Consequência: F2 é um estado funcional sintético, não uma reprodução da pa
   restantes é ver por dentro do convidado, e isso pede autorização do dono: debug de kernel por
   serial, `pmemsave` ou logs `-d` do QEMU.
 - Nada aqui é evidência de hardware: nenhum convidado produziu um console do Windows.
-
----
-
-## FILE: ANOTACOES-IMPORTANTES.pt-BR.md
-
-# Notas importantes (resumo em português)
-
-## Situação
-
-- Xiaomi Mi Pad 2, x64, Windows 10 build 17763.
-- `C:` foi formatado rapidamente.
-- Só restou o WinRE no `D:`.
-- Sem USB, SD, Ethernet, teclado físico ou abrir o aparelho.
-- Canais: tela, `cmd` do WinRE, Wi-Fi, Bluetooth e toque.
-- **Realidade do canal:** o dispositivo não tem rede funcional — o Wi-Fi BCM4356 é o dispositivo com erro 10. A única via de entrada válida é texto digitado pelo teclado virtual da tela de toque (payload em hex/base64, reconstruído no WinRE). Rede/HTTP não é via válida; o HTTP user-mode do QEMU é só baseline de mecânica. Editar o WIM pelo host é prova de mecânica, não o método de transferência do dispositivo.
-- O aparelho não consegue enviar arquivos; não há clipboard nem pasta compartilhada.
-
-## Imagem fornecida
-
-O repositório tem apenas o WIM de fábrica:
-
-- `winre-fabrica-10586-424MB`: build 10586, x64, en-US/zh-CN/zh-TW, 21.867 arquivos, WIM de 444.856.529 bytes, LZX, SHA-256 `152addc420748815c2cad90d382229e249ec853d3842531ddcc2b9998248067a`.
-- Pacotes Broadcom presentes: bcmdhd, bcmdhd64, bcmfn2 e bcmfn.
-- **Não tem** `bcmwdidhdpcie.inf` nem pacote PCIe.
-- Não tem nvram.
-- É maior que a partição de recuperação de aproximadamente 398 MB; não cabe no `D:` como está.
-
-O WIM de fábrica não reproduz o erro 10 sem injetar o pacote PCIe de 2017.
-
-## Estado do alvo
-
-Pasta: `drivers/estado-dispositivo/`.
-
-O estado do alvo é mantido como o pacote quebrado de 2017. A imagem de origem não está mais no repositório.
-
-- `bcmwdidhdpcie.inf_amd64_977dcc915465b0e9` — 4 arquivos.
-- `bcmdhd64.inf_amd64_e0bae6831f60ea5f` — 5 arquivos.
-- `bcmfn2.inf_amd64_5ebadf201c5b5845` — 2 arquivos.
-
-O pacote Wi-Fi do alvo tem:
-
-- `bcmwdidhdpcie.inf`
-- `bcmpciedhd63.sys`
-- `4356a2rtecdc.bin`
-- `43596a0rtecdc.bin`
-
-Não tem nvram. O `43596a0` fica junto para manter a pasta idêntica ao DriverStore.
-
-O `SHA256SUMS` fica um nível acima, em `drivers/estado-dispositivo/`.
-
-## Versões
-
-- Pacote quebrado de 2017: `bcmwdidhdpcie.inf` `1.558.53.25` (2017-04-21).
-- OEM: `oem25.inf` `1.558.14.0` (2015-12-23).
-- O Windows prefere o mais novo. Só adicionar o OEM antigo não resolve; é preciso remover o pacote de 2017 ou forçar o antigo.
-
-## nvram
-
-- Arquivo: `bcm94356wlpagbl_P3_150828M.txt`.
-- SHA-256: `a7a0a8fb9abfa877675dc7126ae2bde54c4695088543ddbaaa0a49140d9b4667`.
-- Tamanho: 5.361 bytes.
-- Cópia da hipótese: `drivers/nvram-delta/4356r2nvram.txt`.
-- O driver procura `System32\drivers\4356r2nvram.txt`.
-- Não está no estado do alvo nem no WIM de fábrica.
-
-## Diagnóstico
-
-- O Wi-Fi dá erro 10 (`ConfigManagerErrorCode=10`).
-- O caso é conhecido: selecionar manualmente o driver Broadcom 2015 resolve.
-- H2 (regressão do pacote de 2017) é a hipótese principal.
-- H1 (nvram ausente) é secundária.
-
-## Fidelidade
-
-- F1 — baseline do firmware: WIM de fábrica como está. Não tem `bcmwdidhdpcie.inf`; não reproduz o erro 10.
-- F2 — estado sintético de trabalho: WIM de fábrica + pacote PCIe de 2017 injetado + pacote OEM 2015 + nvram. É aproximação, não é a partição real; o build é 10586.
-- F3 — WIM real do aparelho, aproximadamente 398 MB. Não disponível.
-
-A imagem de 398 MB só foi vista na tela e não pode ser transferida. Não exigir F3 no teste padrão.
-
-Essas definições são de teste; não afirmam a origem do pacote de 2017 nem do WIM de fábrica.
-
-## O que está verificado
-
-- O WIM de fábrica tem bcmdhd, bcmdhd64, bcmfn2 e bcmfn.
-- O WIM de fábrica não tem `bcmwdidhdpcie.inf`.
-- Os arquivos do estado do alvo estão presentes com os hashes do `SHA256SUMS`.
-- Os metadados do WIM de fábrica registrados acima.
-
-## O que não está verificado
-
-- A origem do WIM de fábrica. O usuário relata que é a recovery de fábrica; não foi comparado com um hash oficial independente.
-- A origem do pacote PCIe de 2017 mantido no estado do alvo.
-- Se F2 aproxima a partição real de 398 MB.
-- Se o pacote de 2017 é original ou foi montado de outra fonte.
-
-Consequência: F2 é um estado sintético de trabalho, não uma reprodução da partição real. Rotular assim em todo experimento.
-
-## Limitação do QEMU
-
-- O QEMU não emula o rádio BCM4356.
-- Não reproduz o erro 10.
-- Prova a troca de driver, os arquivos e a entrada de payload como texto digitado (reconstruído no guest). O canal HTTP/user-mode é só baseline de mecânica, não o canal do dispositivo.
-- A validação do rádio é no hardware, lendo a tela e digitando comandos.
-
-## Estado do repositório
-
-- Branch `desafio`, commit inicial `2b51dd0`.
-- Só há o WIM de fábrica versionado.
-- Não há imagem completa do Windows.
-- Nenhum experimento QEMU foi executado nesta montagem.
-- Persistência: o dono deu autorização permanente para commit e push imediatos no `desafio` (ver `AGENTS.md`, Persistence rule). A regra antiga "nada é commitado sem pedido" está superseded.
-
-## Próximas verificações
-
-- Confirmar o resultado offline de injetar o pacote PCIe de 2017 no WIM de fábrica.
-- Confirmar a remoção do `bcmwdidhdpcie.inf` no WIM modificado.
-- Confirmar se o PnP copia o nvram para `System32\drivers` no WinRE modificado.
-- Confirmar se o driver 2015 sobe no hardware.
-- Confirmar o caminho de instalação do Windows sem imagem completa.
 
 ---
 
@@ -911,9 +758,9 @@ O repositório não contém uma imagem completa de instalação do Windows. Ele 
 ## Como este repositório se organiza (leia primeiro)
 
 - **Um repositório git, uma branch de trabalho: `desafio`.** Todo agente trabalha, commita e envia na `desafio`.
-- **Pastas não são branches git.** Cada agente tem uma pasta `agents/<modelo>/` para o seu log de sessão, na branch compartilhada. O trabalho compartilhado (docs, drivers, experiments, qemu, scripts) vive nas pastas compartilhadas. Não crie uma branch por agente nem por tarefa.
+- **Agentes trabalham um de cada vez**, sem pasta própria. O trabalho vive nas pastas compartilhadas (docs, drivers, experiments, qemu, scripts). Não crie uma branch por agente nem por tarefa.
 - **Sincronize antes de começar e antes de enviar:** `git fetch origin desafio` + `git merge --ff-only origin/desafio`. Nunca force push nem apague branches.
-- **Evite trabalho duplicado:** leia `agents/*/README.md` e o quadro `experiments/README.md`, reivindique uma tarefa (Owner) e envie a reivindicação antes de trabalhar.
+- **Um agente por vez:** não há reivindicação de tarefas; registre o estado em `TODO.md` e `experiments/README.md`.
 - **Persista imediatamente:** o sandbox é temporário; faça commit e push de cada artefato concluído via `scripts/salvar.sh "mensagem" caminho...` (autorização permanente). Veja `AGENTS.md`.
 
 ## Estado
@@ -943,7 +790,6 @@ O repositório não contém uma imagem completa de instalação do Windows. Ele 
 | `GOAL.md` | Missão, restrições, marcos e critérios de aceitação. |
 | `ANOTACOES-IMPORTANTES.md` | Fatos e evidências canônicos para os agentes. |
 | `AGENTS.md` | Regras de operação para os agentes. |
-| `agents/` | Logs de sessão por agente (`agents/<modelo>/`), na branch compartilhada. |
 | `drivers/` | Estado alvo do DriverStore, pacotes OEM e hipótese de nvram. |
 | `winre-fabrica-10586-424MB/` | WIM do firmware de fábrica dividido em partes versionadas. |
 | `winre-1809-oficial-intacta/` | WIM do WinRE 1809 oficial (do ESD da Microsoft), dividido em partes versionadas. |
@@ -983,100 +829,11 @@ Revise `experiments/E0.1-firmware-baseline.md` para o inventário do firmware. D
 
 ---
 
-## FILE: README.pt-BR.md
-
-# Desafio de recuperação do Mi Pad 2
-
-Este repositório monta um desafio reproduzível para um problema específico:
-
-- Xiaomi Mi Pad 2, x64, Windows 10 build 17763.
-- O `C:` foi formatado rapidamente.
-- O único ambiente Windows restante é a partição de recuperação no `D:`.
-- Não há USB, SD, Ethernet nem teclado físico.
-- Os canais de entrada/saída disponíveis são tela, prompt do WinRE e toque. O Wi-Fi é o dispositivo quebrado (erro 10), então não há rede funcional; a única via de entrada válida é texto digitado pelo teclado virtual da tela de toque.
-- O Wi-Fi apresenta erro 10 com o pacote PCIe de 2017.
-
-O repositório não contém uma imagem completa do Windows. Versiona dois WIMs: a imagem de recovery do firmware de fábrica (10586) e o WinRE 1809 oficial extraído do ESD da Microsoft. O objetivo é montar evidências, o estado do driver do alvo, o harness QEMU e os protocolos de experimento para que os agentes provem a parte de software antes de qualquer conclusão sobre o hardware.
-
-## Como o repositório é organizado (leia primeiro)
-
-- **Um único repositório git, um único ramo de trabalho: `desafio`.** Todo agente trabalha, commita e envia no `desafio`.
-- **Pastas não são ramos git.** Cada agente tem a pasta `agents/<model>/` para o seu log de sessões, no ramo compartilhado. O trabalho compartilhado (docs, drivers, experiments, qemu, scripts) fica nas pastas comuns. Não crie um ramo por agente ou por tarefa.
-- **Sincronize antes de começar e antes de enviar:** `git fetch origin desafio` + `git merge --ff-only origin/desafio`. Nunca force-push nem apague ramos.
-- **Evite serviço duplicado:** leia `agents/*/README.md` e o quadro `experiments/README.md`, reivindique a tarefa (Owner) e envie a reivindicação antes de trabalhar.
-- **Persista imediatamente:** o sandbox é temporário; commit e push de cada artefato pronto via `scripts/salvar.sh "mensagem" caminho...` (autorização permanente). Ver `AGENTS.md`.
-
-## Estado atual
-
-- A entrega atual é a modulação do repositório; a execução do desafio está adiada.
-- Dois WIMs versionados: o firmware de fábrica (10586, sem `bcmwdidhdpcie.inf`) e o WinRE 1809 oficial (contém o pacote PCIe de 2017 quebrado; proveniência verificada).
-- O dispositivo não tem rede funcional (o Wi-Fi é o dispositivo quebrado). A única via de entrada válida é texto digitado pelo teclado virtual da tela de toque; o payload entra em hex/base64 e é reconstruído no WinRE. Rede/HTTP não é via do dispositivo.
-- Editar o WIM pelo host (offline servicing, ou injetar o pacote de 2017 numa cópia) é baseline de mecânica numa cópia, não o método de transferência do dispositivo.
-- O harness QEMU está montado; nenhum resultado de erro 10 do dispositivo é alegado. Reproduzir o sintoma de erro 10 com um dispositivo PCI falso idêntico + driver real é proposto, mas não provado; precisa de um Windows completo bootável (o repo só tem WinRE) e KVM é recomendado para velocidade. Não demonstrado aqui. Ver `docs/04`.
-- O QEMU não emula o rádio BCM4356. Nenhum resultado do QEMU é prova de hardware.
-- A imagem real de aproximadamente 398 MB do `D:` não está disponível.
-
-## Fatos principais
-
-- O estado quebrado é o pacote PCIe de 2017 `bcmwdidhdpcie.inf`, versão `1.558.53.25`.
-- O pacote bom é o driver OEM de 2015 `oem25.inf`, versão `1.558.14.0`.
-- O Windows prefere o driver mais novo. Só adicionar o pacote antigo não resolve; é preciso remover o pacote de 2017 ou forçar o antigo.
-- O estado do alvo não tem o nvram da placa.
-- O pacote OEM contém o nvram. O nvram é um payload separado, não faz parte do estado do alvo.
-- O WIM de fábrica tem bcmdhd, bcmdhd64, bcmfn2 e bcmfn, mas não tem `bcmwdidhdpcie.inf`.
-- O aparelho não consegue enviar arquivos. O desafio não pode assumir clipboard, pasta compartilhada, USB ou qualquer outro canal de transferência.
-
-## Mapa do repositório
-
-| Caminho | Função |
-|---|---|
-| `GOAL.md` | Missão, restrições, marcos e critérios de aceite. |
-| `ANOTACOES-IMPORTANTES.md` | Fatos canônicos e evidências para agentes. |
-| `AGENTS.md` | Regras de operação dos agentes. |
-| `agents/` | Logs de sessão por agente (`agents/<model>/`), no ramo compartilhado. |
-| `drivers/` | Estado do DriverStore do alvo, pacotes OEM e hipótese do nvram. |
-| `winre-fabrica-10586-424MB/` | WIM do firmware de fábrica em partes versionadas. |
-| `winre-1809-oficial-intacta/` | WIM oficial do WinRE 1809 (do ESD da Microsoft), em partes versionadas. |
-| `docs/` | Explicações técnicas e runbooks. |
-| `qemu/` | Harness QEMU e scripts. |
-| `experiments/` | Protocolos reproduzíveis. |
-| `scripts/` | Validação no host e fichas de comando do WinRE. |
-
-## Ordem de leitura
-
-1. `GOAL.md`
-2. `ANOTACOES-IMPORTANTES.pt-BR.md`
-3. `AGENTS.md`
-4. `docs/00-visao-geral.md`
-5. `docs/01-restricoes.md`
-6. `docs/02-estado-do-dispositivo.md`
-7. `docs/03-driver-wifi-erro-10.md`
-8. `docs/04-fidelidade-mimetizacao.md`
-9. `docs/05-offline-servicing.md`
-10. `experiments/E0.1-firmware-baseline.md`
-11. `experiments/README.md`
-
-## Escopo e segurança
-
-- Não conectar USB, SD, Ethernet nem teclado físico.
-- Não assumir nenhum caminho de transferência de arquivos do aparelho.
-- Não tratar resultado do QEMU como prova de hardware.
-- Não alterar as partes WIM versionadas. Trabalhar em cópias em `qemu/work/` ou `/tmp`.
-- Não commitar WIM gerado, disco, ISO, log ou segredo.
-- Commit e push imediatos no `desafio` (autorização permanente, 2026-11-15); o sandbox é temporário. Use `scripts/salvar.sh`. Um commit local não é entrega.
-
-## Próximo passo
-
-Revisar `experiments/E0.1-firmware-baseline.md` para o inventário do firmware. Depois de instalar as ferramentas, validar com `scripts/verify-repo.sh`. Os experimentos QEMU estão em `experiments/` e devem ser executados separadamente.
-
----
-
 ## FILE: TODO.md
 
 # TODO
 
-Lista de tarefas compartilhada. Reivindique uma tarefa (defina o Owner) e envie a reivindicação antes de trabalhar — veja a
-regra de coordenação em `AGENTS.md`. Um owner por tarefa. O quadro de experimentos é `experiments/README.md`; este
+Lista de tarefas compartilhada. Um agente trabalha por vez, sem reivindicação de tarefas (veja a regra de coordenação em `AGENTS.md`). O quadro de experimentos é `experiments/README.md`; este
 arquivo acompanha o plano mais amplo e as ideias do dono. Status: [ ] a fazer, [~] em andamento, [x] feito.
 
 ## Feito
@@ -1114,8 +871,8 @@ arquivo acompanha o plano mais amplo e as ideias do dono. Status: [ ] a fazer, [
   Status 17/11/2026 (células I–AE): a rota PCAT/SeaBIOS é beco sem saída com as ferramentas do host — `etfsboot`
   não imprime nada sob 7 variantes de mídia diferentes. Na rota UEFI o ambiente agora tem um **console de texto
   interativo real**: toda célula EFI esgotada (S, U, V, W, X, Y, Z, AB) cai no UEFI Interactive Shell com `FS0:`
-  mapeado, e `agents/qoder/keys.py` + `TYPE_AT`/`TYPE_FILE`/`TYPE_GAP` digitam comandos nele que executam e
-  renderizam saída (`agents/qoder/e1-run.sh` captura um quadro por comando digitado, porque o shell EDK2 limpa a
+  mapeado, e `keys.py` + `TYPE_AT`/`TYPE_FILE`/`TYPE_GAP` digitam comandos nele que executam e
+  renderizam saída (`e1-run.sh` captura um quadro por comando digitado, porque o shell EDK2 limpa a
   tela quando uma aplicação sai).
   Duas causas-raiz foram estabelecidas por medição, não por inferência:
   (1) `map` + `ls` (célula Y) provam que o firmware monta **apenas** o ESP `efisys.bin` de 1.474.560 bytes como
@@ -1125,7 +882,7 @@ arquivo acompanha o plano mais amplo e as ideias do dono. Status: [ ] a fazer, [
   (2) `\efi\boot\bootx64.efi` lançado do shell realmente executa o bootmgr da Microsoft, e ele para na
   janela de DVD "pressione qualquer tecla" (células X, Z, AB). A taxa de injeção é o obstáculo: um `sendkey`
   por processo custa ~4 s aqui, então 150 teclas se espalharam por ~10 min e foram consumidas pelo shell depois
-  que o bootmgr já tinha desistido (AB: cursor +150 colunas). `agents/qoder/keyspam-dump.py` agora mantém uma
+  que o bootmgr já tinha desistido (AB: cursor +150 colunas). `keyspam-dump.py` agora mantém uma
   conexão de monitor e intercala uma tecla a cada 150 ms com um quadro a cada 30 s — a célula AC é esse teste.
   **Resultado AC: a densidade não abriu a cancela.** 5.117 espaços em 902 s (5,68 teclas/s) estavam em voo
   desde t≈0,2 s, e o cursor do shell avançava a um constante +17 colunas por quadro o tempo todo — o shell
@@ -1140,7 +897,7 @@ arquivo acompanha o plano mais amplo e as ideias do dono. Status: [ ] a fazer, [
   `NOREBOOT=0`). `#2067B2` é o azul da UI de recuperação, e o `\Windows\System32\winpeshl.ini` dentro
   de `winre1809.wim` nomeia `X:\sources\recovery\recenv.exe` como launcher do shell.
   Próxima célula em fila: **AE** — mesmo disco FAT32, boot.wim com `winpeshl.ini` substituído por
-  `AppPath=X:\Windows\System32\cmd.exe` (`agents/qoder/build-cmd-media.sh`, mídia
+  `AppPath=X:\Windows\System32\cmd.exe` (`build-cmd-media.sh`, mídia
   `qemu/work/winre-cmd.img` sha256 `c8dadd60…`): se é a UI de recuperação que pinta o azul e morre, o mesmo
   ramdisk deveria abrir um console de texto. AA (se `partition_offset=16` suprime a montagem ISO9660) agora é
   prioridade baixa, atrás do AE.
@@ -1158,9 +915,9 @@ arquivo acompanha o plano mais amplo e as ideias do dono. Status: [ ] a fazer, [
   ainda precisa de um canal de debug (serial do kernel, `pmemsave` ou logs `-d` do QEMU) que o dono não
   autorizou.
   **Resultados AH e AJ (17/11/2026):** apagar as duas cópias de `winload.efi` de dentro do ramdisk
-  (`agents/qoder/build-nowl-media.sh`, mídia `winre-nowl.img` `d53f813a…`) produziu o azul idêntico, e
+  (`build-nowl-media.sh`, mídia `winre-nowl.img` `d53f813a…`) produziu o azul idêntico, e
   encolher o WIM para `Total Bytes 952.214.657` apagando WinSxS + DriverStore
-  (`agents/qoder/build-small-media.sh`, mídia `winre-small.img` `564b7061…`) — bem dentro dos
+  (`build-small-media.sh`, mídia `winre-small.img` `564b7061…`) — bem dentro dos
   1,51 GiB de volume que o cabeçalho da partição SDI declara — também produziu o azul idêntico. Então a
   aritmética de tamanho do ramdisk também está eliminada, e a fase do bootmgr que pinta o azul renderiza
   os mesmos pixels haja ou não uma aplicação de boot. `build-small-media.sh` ganhou uma guarda depois de sua
@@ -2385,6 +2142,122 @@ Nenhum resultado do QEMU é prova de hardware.
 
 ---
 
+## FILE: docs/08-data-transfer.md
+
+# 08 — Transferência de dados (texto digitado → arquivo no WinRE)
+
+Documento de referência: **o que está provado, o que não está, e o método exato** para levar dados ao aparelho.
+Regra de evidência de `AGENTS.md`: QEMU/host nunca é prova de hardware; mock nunca é prova.
+
+## 1. Resposta direta: existe registro de base64 funcionando?
+
+**Não.** Busca em todo o repositório (`grep -ri base64`, histórico de commits, `experiments/`, `docs/`, `prompts/`):
+
+- `base64` aparece só como **opção citada** (`GOAL.md`, `README.md`, `qemu/README.md`, `ANOTACOES-IMPORTANTES.md`: "hex/base64") e em `experiments/E7-binary-write-sink.md` ("MSXML decodifica base64 num array de bytes", **não provado**).
+- Nenhum experimento registra base64 digitado e reconstruído, nem no WinRE real nem em convidado.
+- Se um agente fez isso numa conversa antiga, **não foi registrado no repo**. Para registrar: informe qual agente/conversa (ou cole o método) e eu documento aqui como "relato do dono, não verificado" até haver experimento.
+
+O que **está registrado e provado**:
+
+| Item | Resultado | Onde | Limite |
+|---|---|---|---|
+| Hex digitado → arquivo, nvram 5.361 B, SHA-256 confere | PASS | `experiments/E3-typed-text-channel.md` | Convidado **Linux busybox**, não WinRE. Usou ACK pela serial, que **não existe no aparelho** |
+| Mesmo canal sem ACK, ritmo fixo | FALHOU (5317/5361 B) | E3 (nota de método) | Teclas perdidas quando o convidado atrasa |
+| Reconstrução no WinRE (E3b) | **Bloqueado** | `experiments/E3b-ascii-hash-prep.md` | Depende do E1/E1b alcançar o `cmd` |
+| Sumidouro binário (E7) | **Não provado** | `experiments/E7-binary-write-sink.md` | Depende do E1/E1b |
+
+## 2. Fatos medidos agora (host-only, NÃO é prova de WinRE)
+
+Comando: `python3 scripts/compare-hex-b64.py <arquivos>` (decodificadores ES3 em `scripts/hex-b64-es3.js`, sem `atob`/`Buffer`, estilo JScript; linhas de 120 caracteres; round-trip com SHA-256).
+
+| Arquivo | Bytes | Chars hex | Chars base64 | b64/hex | Especiais do `cmd` (hex/b64) | Round-trip hex | Round-trip b64 |
+|---|---|---|---|---|---|---|---|
+| `4356r2nvram.txt` | 5.361 | 10.722 | 7.148 | 0,667 | 0/0 | PASS | PASS |
+| `4356a2rtecdc.bin` (firmware) | 641.951 | 1.283.902 | 855.936 | 0,667 | 0/0 | PASS | PASS |
+| `bcmpciedhd63.sys` | 1.037.824 | 2.075.648 | 1.383.768 | 0,667 | 0/0 | PASS | PASS |
+
+Leitura:
+
+- **Algoritmo** de hex e de base64 reconstrói byte a byte (host). Isso só prova a matemática, não o WinRE.
+- Base64 tem **33% menos caracteres** que hex.
+- Base64 exige **muito mais maiúsculas e símbolos**: na nvram, 3.656 dos 7.148 caracteres não são minúscula nem dígito. No teclado touch isso significa trocar de modo (shift/símbolos) com frequência, mais toques por caractere e mais risco de autocorreção/auto-capitalização. Hex usa só `0-9a-f` (um modo do teclado, sem maiúscula) — **hipótese** H-B6/H-B7, não medida no TabTip.
+- Nenhum dos dois contém caracteres especiais do `cmd` (`^ & | < > % ! " ( )`). `=` (padding), `+` e `/` do base64 não foram testados no `cmd` do WinRE.
+
+Fatos da nvram (`drivers/nvram-delta/4356r2nvram.txt`):
+
+- 5.361 B, 222 linhas, **terminadores LF (sem CRLF)**, último byte `0x0A`, 100% ASCII imprimível.
+- Só **1** caractere especial do `cmd`: um `&`. Isso importa para quem pensar em digitar o texto direto com `echo`.
+- SHA-256 `a7a0a8fb9abfa877675dc7126ae2bde54c4695088543ddbaaa0a49140d9b4667`.
+- Cuidado conhecido: o FSO no Windows pode converter LF em CRLF; só um teste no WinRE responde se o último byte e os LF saem idênticos (E3b "ainda não observado").
+
+## 3. Ponto crítico: a escolha hex vs base64 não resolve o problema binário
+
+- **nvram (texto ASCII):** não é problema binário. Hex ou base64 funcionam em tese; o que decide é o teclado e o decodificador disponível no WinRE.
+- **firmware (641.951 B) e `.sys` (1.037.824 B):** são binários. Os dois encodings precisam de um **sumidouro binário** (escrever bytes 0x00–0xFF). Sem `certutil`, PowerShell, .NET e ADODB (ausentes, E7), o FSO escreve só texto. Proposta do E7: 256 arquivos de 1 byte + `copy /b` (**não provada**).
+- **Volume digitado:** firmware em hex = 1.283.902 caracteres; em base64 = 855.936. Digitar isso à mão no touch é, na prática, inviável. Por isso a hipótese **H-B13** (o firmware já existe localmente e só precisa ser copiado/renomeado, sem digitar) é a mais valiosa a verificar antes de qualquer transferência binária.
+- **MSXML + base64** (`dataType="bin.base64"`): decodifica para array de bytes, mas ainda falta como gravar esses bytes em arquivo. Só serve se existir um gravador binário.
+
+## 4. Método exato conhecido (E3b) — texto ASCII, ainda não provado no WinRE
+
+Fonte: `experiments/E3b-ascii-hash-prep.md`, `scripts/winre-ascii.js`, `scripts/prepare-ascii-transfer.py`.
+
+1. Gerar a folha no host: `python3 scripts/prepare-ascii-transfer.py --chunk-size 128 > /tmp/e3b-sheet.md` (42 pedaços de 128 B, um comando por pedaço com SHA-256).
+2. No `cmd` do WinRE: `md "%TEMP%\mipad-e3b"`, `cd /d "%TEMP%\mipad-e3b"`, `notepad ascii.js`.
+3. Digitar o `ascii.js` no Notepad (salvar como **ANSI**, nome `ascii.js` e não `ascii.js.txt`).
+4. `cscript //nologo ascii.js selftest`.
+5. Digitar um pedaço por vez; conferir o ACK **na tela** (não há serial).
+6. Verificar: `cscript //nologo ascii.js verify 4356r2nvram.txt 5361 a7a0a8fb9abfa877675dc7126ae2bde54c4695088543ddbaaa0a49140d9b4667`
+7. Antes da nvram completa: sonda curta de CRLF/espaços finais/metacaracteres (`scripts/winre-fso-probe.js`).
+
+Diferença chave em relação ao E3: no E3 o ACK vinha pela porta serial; no aparelho o único retorno é a **tela**. O controle de fluxo real é humano: digitar, ler o resultado, seguir.
+
+## 5. O que falta para fechar (testes necessários)
+
+Ordem recomendada, cada item com o que refuta:
+
+1. **Alcançar o `cmd` no WinRE** (E1b, dono: qoder) — desbloqueia tudo. Sem isso, nada abaixo é prova.
+2. H-B3: `cscript` + JScript + FSO executam? (`where cscript`, `cscript //nologo` com `.js` mínimo)
+3. H-B1/H-B2: TabTip digita no `cmd`; limite de linha.
+4. **Hex no WinRE** (E3b): nvram completa, hash confere. Refutação: bytes perdidos, LF virando CRLF, hash divergente.
+5. **Base64 no WinRE:** repetir a mesma nvram em base64 com `scripts/hex-b64-es3.js` adaptado a `WScript`/FSO; comparar taxa de erro de digitação e tempo com o hex.
+6. Sumidouro binário (E7): `fsutil file createnew` + FSO + `copy /b`; só então fazer sentido o firmware.
+7. H-B13: procurar o firmware já local antes de qualquer digitação.
+
+Decisão provisória (marcada como hipótese): **hex para a nvram primeiro**, porque é o único caminho com PASS registrado (E3), usa um único modo de teclado e não tem caracteres especiais; **base64 como segunda rodada** para comparar, pois reduz 33% o volume.
+
+## 6. Artefatos desta rodada
+
+- `scripts/hex-b64-es3.js` — decodificadores ES3 hex/base64 (teste de host).
+- `scripts/compare-hex-b64.py` — comparação e round-trip (teste de host).
+- Status: **host-only / não é prova**. Nenhuma execução em WinRE ou hardware.
+
+---
+
+## FILE: docs/09-compressao-antes-de-digitar.md
+
+# H-B12 - Compressao antes de digitar (host-only, NAO e prova)
+
+Medido em 21/11/2026 no sandbox (python3 zlib/bz2/lzma). Nada foi testado no WinRE.
+
+| Arquivo | Bytes | Melhor compressor | Comprimido | Hex digitado | Base64 digitado |
+|---|---|---|---|---|---|
+| 4356r2nvram.txt | 5.361 | lzma (0,321) | 1.720 | 3.440 (era 10.722) | 2.296 (era 7.148) |
+| 4356r2nvram.txt | 5.361 | zlib-9 (0,338) | 1.810 | 3.620 | 2.416 |
+| 4356a2rtecdc.bin | 641.951 | lzma (0,540) | 346.952 | 693.904 (era 1.283.902) | 462.604 (era 855.936) |
+| 4356a2rtecdc.bin | 641.951 | zlib-9 (0,637) | 408.635 | 817.270 | 544.848 |
+
+## Leitura
+- Hipotese H-B12 sustentada **so no host**: a nvram cai ~68% (10.722 -> 3.440 chars em hex). O firmware cai 46% no melhor caso, mas ainda sao ~700 mil caracteres: inviavel digitar.
+- Custo escondido: o dispositivo precisa de um **descompressor ja presente** no WinRE. Compressao so vale se existir `expand.exe`/`makecab`/`extrac32` (CAB MSZIP/LZX) na imagem. Inventario (`inventory/winre-1809-files.txt`) lista `/Windows/System32/expand.exe` no WinRE 1809 (existencia em arquivo, nao execucao). `makecab` nao confirmado. Falta `where expand` + teste no WinRE real.
+- Para a nvram (5,4 KB) o ganho absoluto e pequeno (~7 mil caracteres) e adiciona um passo binario (o CAB e binario, cai no problema do sumidouro E7). Recomendacao provisoria (hipotese): **nao comprimir a nvram**; digitar ASCII direto.
+- RLE simples quase nao ajuda (5.361 -> 5.328).
+
+## Refuta / proximo
+- Refutaria utilidade: se `expand.exe` nao existir no WinRE real.
+- Proximo: H-B13 (firmware ja local) segue sendo o ganho maior; evita digitar os 641.951 B.
+
+---
+
 ## FILE: drivers/README.md
 
 # Drivers Broadcom do Mi Pad 2
@@ -2819,7 +2692,7 @@ só tem sentido quando uma célula alcança o ponto em que o Windows carrega de 
 nenhuma célula aqui alcança ainda.
 
 Evidência por célula: frames de `screendump` do monitor do QEMU a cada 30 s (PPM → PNG),
-retidos em `agents/qoder/e1-<celula>/`. `-serial file:` é proibido pelo `qemu/audit.sh`
+retidos em `e1-<celula>/`. `-serial file:` é proibido pelo `qemu/audit.sh`
 (anti-trapaça), então a tela é o único canal — que é também exatamente o canal do dispositivo real.
 
 ## Comandos
@@ -3017,7 +2890,7 @@ a captura do framebuffer não mostra, ou uma mudança de modo que a captura não
 
 Como o caminho UEFI para antes de qualquer texto, a mesma imagem é testada pela rota clássica
 de CD do WinPE, que é o que o template BCD dentro do WIM realmente espera
-(`[boot]\sources\boot.wim`, `[boot]\boot\boot.sdi`). O `agents/qoder/build-pcat-iso.sh`
+(`[boot]\sources\boot.wim`, `[boot]\boot\boot.sdi`). O `build-pcat-iso.sh`
 extrai o template PCAT do próprio WIM (`/Windows/Boot/DVD/PCAT/BCD`, `boot.sdi`,
 `etfsboot.com`, `en-US/bootfix.bin`) e constrói uma ISO inicializável por BIOS via El Torito
 com `-boot-info-table`:
@@ -3071,9 +2944,9 @@ a mídia já está depois dessa etapa e ainda não vai a lugar nenhum. Hipótese
 
 **Célula L (variável: `-boot-load-size 8`, ou seja, o `etfsboot.com` completo de 4096 bytes
 carregado):**
-`OUT=qemu/work/winre-pcat-l8.iso LOADSIZE=8 sh agents/qoder/build-pcat-iso.sh` →
+`OUT=qemu/work/winre-pcat-l8.iso LOADSIZE=8 sh build-pcat-iso.sh` →
 269.862.912 bytes, sha256 `932b900392346b8601a783dae78987de70e6408bba6d465dfc4317fed3969989`.
-Rodada como `BIOS=1 MEM=4096 agents/qoder/e1-run.sh L qemu/work/winre-pcat-l8.iso pc qemu64 420 30`.
+Rodada como `BIOS=1 MEM=4096 e1-run.sh L qemu/work/winre-pcat-l8.iso pc qemu64 420 30`.
 **Resultado da célula L — `-boot-load-size 8` não muda nada.** Os frames são a mesma tela de
 duas cores "Booting from DVD/CD..."; `compare -metric AE` contra `frame-30.png` dá 18
 em t=60 s e 0 em t=90 s, ou seja, só o cursor de texto pisca. Então carregar o `etfsboot.com`
@@ -3098,7 +2971,7 @@ qemu/work/winre-pcat-m.iso  270,247,936 bytes
 a478af26639ba6abb19f8b4698abe4730416f25f54497ea5f355dea7fbe10eb2
 ```
 
-Rodada como `BIOS=1 MEM=4096 agents/qoder/e1-run.sh M qemu/work/winre-pcat-m.iso pc qemu64 900 30`.
+Rodada como `BIOS=1 MEM=4096 e1-run.sh M qemu/work/winre-pcat-m.iso pc qemu64 900 30`.
 **Resultados das células M/N/O/P — a rota PCAT está bloqueada abaixo da camada de mídia.** Todas
 as quatro param na mesma tela bit-idêntica do SeaBIOS ("Booting from DVD/CD...", 2 cores,
 `compare -metric AE` = 0 entre frames, só o cursor pisca):
@@ -3120,7 +2993,7 @@ documentado — não mais suposições.
 
 ### Células Q/R/S — a mídia EFI oficial é reconhecida; ela falha uma etapa depois
 
-O `agents/qoder/build-efi-dvd-iso.sh` constrói o layout que um DVD real do Windows usa, com as
+O `build-efi-dvd-iso.sh` constrói o layout que um DVD real do Windows usa, com as
 próprias peças da Microsoft tiradas do WIM em vez de um ESP feito à mão:
 
 ```text
@@ -3216,7 +3089,7 @@ a pena inicializar.
 ### Célula U — GPT híbrido com o GUID de ESP real: `No mapping` inalterado
 
 ```sh
-OUT=qemu/work/winre-efidvd-u.iso HYBRID=1 sh agents/qoder/build-efi-dvd-iso.sh
+OUT=qemu/work/winre-efidvd-u.iso HYBRID=1 sh build-efi-dvd-iso.sh
 → 273,022,976 bytes  sha256 2ca259ce89063afa31f78feb2a161b1b1089615c8710337d89ac453ec7026fcc
 ```
 
@@ -3242,7 +3115,7 @@ não na mídia.) A partição 1 cobre exatamente o ESP `efisys.bin` de 1.474.560
 a camada que a hipótese pedia está realmente presente, e a mídia não híbrida das células Q/R/S
 não tem tabela de partição nenhuma.
 
-Rodada: `MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=8 bash agents/qoder/e1-run.sh U
+Rodada: `MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=8 bash e1-run.sh U
 qemu/work/winre-efidvd-u.iso pc qemu64 500 5`.
 
 Resultado (frame-25, 1024x768, 2 cores, texto real): o aviso é aceito e depois
@@ -3283,12 +3156,12 @@ laço `KEY_AT`/`KEY_TIMES` enviou, não saída.
 ### Célula V — `\EFI\BOOT\BOOTX64.EFI` também exposto na árvore ISO9660/Joliet
 
 ```sh
-OUT=qemu/work/winre-efidvd-v.iso HYBRID=1 EFI_BOOT_COPY=1 sh agents/qoder/build-efi-dvd-iso.sh
+OUT=qemu/work/winre-efidvd-v.iso HYBRID=1 EFI_BOOT_COPY=1 sh build-efi-dvd-iso.sh
 → 274,530,304 bytes  sha256 16a5e4efbdc00399d7b581e0c7ec9eddb9560b726f6afc0e51befb1418ba7f54
 ```
 
 Mesma forma de GPT da U (partição ESP 1 agora 500 … 3379, ou seja, o mesmo `efisys.bin`,
-deslocado porque a árvore cresceu). Rodada: `MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=8 bash agents/qoder/e1-run.sh V
+deslocado porque a árvore cresceu). Rodada: `MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=8 bash e1-run.sh V
 qemu/work/winre-efidvd-v.iso pc qemu64 400 5`.
 
 Medido: o resultado do BdsDxe está inalterado, e as telas finais são a mesma tela —
@@ -3306,16 +3179,16 @@ a próxima alavanca testável, em vez de um teste da opção de boot em si.
 Duas peças foram adicionadas para isso, ambas só de teclado, de modo que o `qemu/audit.sh`
 continua passando inalterado:
 
-- `agents/qoder/keys.py` — traduz uma string literal em nomes de `sendkey` do QEMU (uma
+- `keys.py` — traduz uma string literal em nomes de `sendkey` do QEMU (uma
   chamada por caractere) e opcionalmente aperta Enter. Descoberto ao construí-la: dois-pontos é
   `shift-semicolon`, não `shift-2`; uma sonda ao vivo digitou `fs0:` e o console do guest
   ecoou `fs0@`, que é o tipo de bug de mapeamento que de outro modo teria sido lido como
   "o shell não tem FS0:".
-- Alavancas `TYPE_AT` / `TYPE_FILE` / `TYPE_GAP` no `agents/qoder/e1-run.sh` — em
+- Alavancas `TYPE_AT` / `TYPE_FILE` / `TYPE_GAP` no `e1-run.sh` — em
   `TYPE_AT` segundos, digita cada linha do `TYPE_FILE` e aperta Enter, `TYPE_GAP` segundos
   de distância (o TCG é lento e a linha precisa ser registrada antes da próxima).
 
-O `agents/qoder/e1-w-shell.txt` é a sequência: `fs0:`, `ls efi\boot`, `ls efi\microsoft\boot`,
+O `e1-w-shell.txt` é a sequência: `fs0:`, `ls efi\boot`, `ls efi\microsoft\boot`,
 e então `\efi\boot\bootx64.efi`. A última linha é o experimento de fato: se o boot manager EFI
 da Microsoft carrega a partir da visão ISO9660, então o `No mapping` é uma propriedade do device
 path da opção Boot0001 e não do arquivo, e a matriz ganha uma forma controlada de alcançar o
@@ -3325,7 +3198,7 @@ path da opção Boot0001 e não do arquivo, e a matriz ganha uma forma controlad
 
 A primeira tentativa foi abortada por um defeito do harness que vale registrar: o laço
 `TYPE_FILE` digitou o próprio cabeçalho de comentário `#` do arquivo no console do guest, de
-modo que o shell recebeu prosa como comandos. Corrigido no `agents/qoder/e1-run.sh` (linhas
+modo que o shell recebeu prosa como comandos. Corrigido no `e1-run.sh` (linhas
 vazias e linhas `#` são puladas); a rodada abortada não é evidência.
 
 A segunda tentativa (`MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=8 TYPE_AT=70 TYPE_GAP=8`, orçamento
@@ -3342,8 +3215,8 @@ digitada** (`cmd-<n>.png`) antes de tirar qualquer conclusão.
 ### Célula X — o console é real: frames por comando a partir da mesma mídia
 
 ```sh
-MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=8 TYPE_AT=75 TYPE_FILE=agents/qoder/e1-w-shell.txt TYPE_GAP=15 \
-  bash agents/qoder/e1-run.sh X qemu/work/winre-efidvd-v.iso pc qemu64 700 15
+MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=8 TYPE_AT=75 TYPE_FILE=e1-w-shell.txt TYPE_GAP=15 \
+  bash e1-run.sh X qemu/work/winre-efidvd-v.iso pc qemu64 700 15
 ```
 
 Observado, um frame por comando (`qemu/work/e1-X/cmd-<n>.png`, não commitado):
@@ -3385,8 +3258,8 @@ listagem da raiz com apenas `EFI` significa que o `FS0:` é o ESP; uma listagem 
 ### Célula Y — decisiva: o `FS0:` é o ESP de El Torito, e o volume ISO9660 nunca é montado
 
 ```sh
-MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=8 TYPE_AT=75 TYPE_FILE=agents/qoder/e1-y-diag.txt TYPE_GAP=10 \
-  bash agents/qoder/e1-run.sh Y qemu/work/winre-efidvd-v.iso pc qemu64 500 20
+MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=8 TYPE_AT=75 TYPE_FILE=e1-y-diag.txt TYPE_GAP=10 \
+  bash e1-run.sh Y qemu/work/winre-efidvd-v.iso pc qemu64 500 20
 ```
 
 Dois comandos resolvem (`qemu/work/e1-Y/cmd-1.png`, `cmd-3.png`):
@@ -3446,7 +3319,7 @@ Duas correções candidatas se seguem de (2), e elas são experimentos diferente
 ### Célula Z — o BCD agora é visível para o shell, mas a rajada de teclas chegou tarde demais
 
 ```sh
-OUT=qemu/work/winre-efidvd-z.iso HYBRID=1 ESPBCD=1 EFI_BOOT_COPY=1 sh agents/qoder/build-efi-dvd-iso.sh
+OUT=qemu/work/winre-efidvd-z.iso HYBRID=1 ESPBCD=1 EFI_BOOT_COPY=1 sh build-efi-dvd-iso.sh
 → 274,530,304 bytes  sha256 cd59d84bfdc679f391596510d237c529c0c667ffd6606a77b4477c8da1cf3359
 ```
 
@@ -3454,7 +3327,7 @@ Verificado no host antes de inicializar, puxando a imagem de boot de volta da IS
 (`xorriso -osirrox on -dev … -extract /boot/efisys.bin`, depois `mdir`): o ESP de
 1.474.560 bytes agora guarda `\EFI\BOOT\BOOTX64.EFI` *e* `\EFI\MICROSOFT\BOOT\BCD`
 (16.384 B), com 317.440 B ainda livres. Rodada: `MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=40
-TYPE_AT=90 TYPE_FILE=agents/qoder/e1-z-boot.txt TYPE_GAP=6`, orçamento 900 s, intervalo 20 s.
+TYPE_AT=90 TYPE_FILE=e1-z-boot.txt TYPE_GAP=6`, orçamento 900 s, intervalo 20 s.
 
 Frames por comando:
 
@@ -3479,8 +3352,8 @@ ou screendump. A célula AB re-roda a mesma mídia com a mesma sequência sob a 
 ### Célula AB — a ordem corrigida ainda perde a corrida, e o motivo é mensurável
 
 ```sh
-MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=4 TYPE_AT=100 TYPE_FILE=agents/qoder/e1-ab-boot.txt TYPE_GAP=6 \
-  bash agents/qoder/e1-run.sh AB qemu/work/winre-efidvd-z.iso pc qemu64 900 20
+MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=4 TYPE_AT=100 TYPE_FILE=e1-ab-boot.txt TYPE_GAP=6 \
+  bash e1-run.sh AB qemu/work/winre-efidvd-z.iso pc qemu64 900 20
 ```
 
 Com a rajada agora disparada logo depois do Enter de `\efi\boot\bootx64.efi`, o `cmd-3`
@@ -3498,7 +3371,7 @@ qemu/mon.py` abrindo um socket novo enquanto o laço principal do QEMU está ocu
 de cada vez, de modo que o spam não pode simplesmente ser colocado em segundo plano enquanto o
 runner continua despejando frames.
 
-Correção (de ferramenta, não de mídia): o `agents/qoder/keyspam-dump.py` mantém **uma**
+Correção (de ferramenta, não de mídia): o `keyspam-dump.py` mantém **uma**
 conexão de monitor e intercala teclas densas com `screendump` nessa mesma conexão —
 `!spam <tecla> <s> <ms> <dump_s>` no runner. A célula AC roda `!spam spc 900 150 30`: uma
 tecla a cada 150 ms por 900 s com um frame a cada 30 s, o que cobre o tempo de carga e a janela
@@ -3513,8 +3386,8 @@ política de press-any-key do próprio BCD.
 ### Célula AC — spam denso: a leitura (a) é falsificada, e o portão não é um problema de tempo
 
 ```sh
-MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=4 TYPE_AT=100 TYPE_FILE=agents/qoder/e1-ac-spam.txt TYPE_GAP=6 \
-  bash agents/qoder/e1-run.sh AC qemu/work/winre-efidvd-z.iso pc qemu64 1500 30
+MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=4 TYPE_AT=100 TYPE_FILE=e1-ac-spam.txt TYPE_GAP=6 \
+  bash e1-run.sh AC qemu/work/winre-efidvd-z.iso pc qemu64 1500 30
 ```
 
 O `keyspam-dump.py` consumiu o próprio orçamento primeiro: `total: 902s teclas=5117 frames=29`,
@@ -3576,7 +3449,7 @@ de fato é. É a célula AD.
 
 ```sh
 MEM=4096 SMP=2 VGA_DEV=bochs-display NOREBOOT=0 \
-  bash agents/qoder/e1-run.sh AD qemu/work/winre.img pc qemu64 600 20
+  bash e1-run.sh AD qemu/work/winre.img pc qemu64 600 20
 ```
 
 `-vga ramfb` não existe neste QEMU (medido com `-vga help`: `none std cirrus vmware xenfb qxl
@@ -3621,9 +3494,9 @@ dar um console de texto no mesmo ramdisk. A célula AE constrói exatamente essa
 ### Célula AE — o shell do WinPE nunca é alcançado, de modo que o azul está a montante dele
 
 ```sh
-bash agents/qoder/build-cmd-media.sh   # mídia: qemu/work/winre-cmd.img
+bash build-cmd-media.sh   # mídia: qemu/work/winre-cmd.img
 MEM=4096 SMP=2 VGA_DEV=bochs-display NOREBOOT=0 \
-  bash agents/qoder/e1-run.sh AE qemu/work/winre-cmd.img pc qemu64 900 20
+  bash e1-run.sh AE qemu/work/winre-cmd.img pc qemu64 900 20
 ```
 
 O `build-cmd-media.sh` copia `winre1809.wim` → `winre-cmd.wim`, substitui
@@ -3664,7 +3537,7 @@ cp qemu/work/winre-cmd.img qemu/work/winre-nobwim.img
 mmove -i "qemu/work/winre-nobwim.img@@1048576" ::/sources/boot.wim ::/sources/bootx.wim
 mdir -i "qemu/work/winre-nobwim.img@@1048576" ::/sources   # confirma que só bootx.wim resta
 MEM=4096 SMP=2 VGA_DEV=bochs-display NOREBOOT=0 \
-  bash agents/qoder/e1-run.sh AF qemu/work/winre-nobwim.img pc qemu64 400 15
+  bash e1-run.sh AF qemu/work/winre-nobwim.img pc qemu64 400 15
 ```
 
 Com a imagem de ramdisk renomeada de modo que `\sources\boot.wim` não exista mais, a mesma
@@ -3712,7 +3585,7 @@ Windows num estado que tenha produzido um console utilizável.
 
 ```sh
 MEM=4096 SMP=2 VGA_DEV=bochs-display NOREBOOT=0 \
-  bash agents/qoder/e1-run.sh AG qemu/work/winre-cmd.img q35 max 600 15
+  bash e1-run.sh AG qemu/work/winre-cmd.img q35 max 600 15
 ```
 
 | t | frame | cores | conteúdo |
@@ -3737,9 +3610,9 @@ caminho renderiza), e se ele *consegue* encontrá-la, o azul nos diz que o preen
 ### Célula AH — apagar o `winload.efi` de dentro do ramdisk não muda nada
 
 ```sh
-bash agents/qoder/build-nowl-media.sh    # mídia: qemu/work/winre-nowl.img d53f813a…
+bash build-nowl-media.sh    # mídia: qemu/work/winre-nowl.img d53f813a…
 MEM=4096 SMP=2 VGA_DEV=bochs-display NOREBOOT=0 \
-  bash agents/qoder/e1-run.sh AH qemu/work/winre-nowl.img pc qemu64 400 15
+  bash e1-run.sh AH qemu/work/winre-nowl.img pc qemu64 400 15
 ```
 
 O `wimlib-imagex update` apagou as duas cópias que a imagem traz
@@ -3758,9 +3631,9 @@ de boot estão bons" e "há algo para entregar".
 ### Célula AJ — a aritmética do tamanho do ramdisk também está eliminada
 
 ```sh
-bash agents/qoder/build-small-media.sh   # mídia: qemu/work/winre-small.img 564b7061…
+bash build-small-media.sh   # mídia: qemu/work/winre-small.img 564b7061…
 MEM=4096 SMP=2 VGA_DEV=bochs-display NOREBOOT=0 \
-  bash agents/qoder/e1-run.sh AJ qemu/work/winre-small.img pc qemu64 900 20
+  bash e1-run.sh AJ qemu/work/winre-small.img pc qemu64 900 20
 ```
 
 O `build-small-media.sh` apaga `/Windows/WinSxS` e `/Windows/System32/DriverStore` de uma
@@ -3890,7 +3763,7 @@ Segunda pergunta respondida no caminho: qual é a menor carga que plausivelmente
 
 ## Comandos
 
-Driver, roteirizado, idempotente, opera só sobre cópias: `agents/qoder/e2-servicing.sh`.
+Driver, roteirizado, idempotente, opera só sobre cópias: `e2-servicing.sh`.
 
 ```sh
 # 0. inventário de baseline da origem intocada
@@ -4071,7 +3944,7 @@ O script rodou duas vezes de ponta a ponta (22:49 e 22:53 UTC) e os digests acim
 - `GOAL.md` (H1 e as restrições rígidas de canal), `docs/05-offline-servicing.md`, `docs/06-auditoria-imagem-1809.md`, `docs/04-fidelidade-mimetizacao.md`
 - `drivers/README.md`, `drivers/estado-dispositivo/README.md`, `drivers/nvram-delta/`
 - `experiments/E1-winre-boot-tcg.md` (por que nenhuma evidência de boot ainda), `experiments/README.md` (quadro)
-- Script: `agents/qoder/e2-servicing.sh`
+- Script: `e2-servicing.sh`
 
 ---
 
@@ -4401,9 +4274,7 @@ Cada experimento registra uma pergunta, os comandos exatos, a saída observada, 
 
 ## Índice (quadro de tarefas compartilhado)
 
-Este é o único quadro compartilhado. **Reivindique uma linha antes de trabalhar:** defina o Owner, envie a
-reivindicação imediatamente e mantenha um owner por tarefa. Veja a regra de coordenação em `AGENTS.md`. Não
-comece uma linha que já está reivindicada ou Feita.
+Este é o único quadro compartilhado. Um agente trabalha por vez, então não há reivindicação de linhas: atualize o Status ao trabalhar e envie. Veja a regra de coordenação em `AGENTS.md`.
 
 | ID | Título | Owner | Status |
 |---|---|---|---|
@@ -4516,6 +4387,157 @@ F1, F2, F2b, F3 ou `somente metadados`. Explique o que é exato e o que é aprox
 ## Referências
 
 - Documentos, experimentos e fontes externas relacionados.
+
+---
+
+## FILE: hypotheses.md
+
+# Hipóteses
+
+Lista de todas as hipóteses possíveis para o desafio (Wi-Fi BCM4356 com erro 10 no Xiaomi Mi Pad 2, só WinRE + `cmd` + texto digitado).
+
+Regras de uso:
+
+- Isto é **hipótese, não fato**. Fato só entra com experimento (`experiments/`), seguindo a regra de evidência de `AGENTS.md`. QEMU/mock nunca é prova de hardware.
+- Cada hipótese tem ID `H-<grupo><n>`, um teste que a confirma ou refuta, e o que a refuta.
+- Status: `[ ]` não testada, `[~]` em teste, `[+]` confirmada, `[-]` refutada, `[?]` bloqueada.
+- Sem renomear arquivos existentes; sem outras branches (só `desafio`).
+
+## Grupo A — Causa do erro 10 (rádio não inicia)
+
+| ID | Hipótese | Como testar | O que refuta |
+|---|---|---|---|
+| H-A1 | Regressão do driver inbox de 2017 (`bcmpciedhd63.sys`) em relação ao OEM de 2015 | Comparar INF/binários; trocar o pacote no aparelho (E4) | OEM 2015 também dá erro 10 |
+| H-A2 | Falta o arquivo nvram (`4356r2nvram.txt`) em `System32\drivers` | Colocar só a nvram (5.361 B) e reiniciar o dispositivo | Erro 10 persiste com nvram no lugar |
+| H-A3 | Falta o firmware com nome renomeado (~0,64 MB) no caminho que o driver busca | Colocar nvram + firmware nos nomes que o `.sys` embute | Erro 10 persiste com os dois |
+| H-A4 | A nvram existe mas tem conteúdo errado para a placa (boardtype, MAC, calibração) | Comparar com nvram da placa do Mi Pad 2 e com as de outros dispositivos | Conteúdo idêntico e ainda falha |
+| H-A5 | O driver correto está em staging, mas o Windows seleciona outro por ranking (inbox ganha do OEM) | Conferir driver ativo; forçar a seleção por INF/hardware ID | Driver ativo já é o OEM e falha |
+| H-A6 | Assinatura/política de driver bloqueia o pacote OEM (Secure Boot, catálogo, código 52) | Verificar código do problema; testar com assinatura de teste | Pacote carrega sem erro de assinatura |
+| H-A7 | O problema é de energia/PCIe (ASPM, D3, reset de link) e não de driver | Ajustar parâmetros de energia/INF; comparar logs | Mudar energia não muda o código |
+| H-A8 | Hardware ou firmware de plataforma (ACPI/_DSM, regulador) com defeito, fora do alcance do software | Não há teste só por software; E4 no aparelho | Qualquer variante de software inicia o rádio |
+| H-A9 | Mais de uma causa ao mesmo tempo (ex.: nvram faltando E driver errado) | Matriz fatorial: {driver 2017, 2015} x {com, sem nvram} x {com, sem firmware} | Uma única variável resolve |
+| H-A10 | O código "10" é sintoma de outro código real (ex.: 31, 39, 43) lido de forma errada | Ler código e detalhes pelo Gerenciador/`pnputil`/registro | Código confirmado como 10 |
+
+## Grupo B — Canal de entrada (texto digitado vira binário)
+
+| ID | Hipótese | Como testar | O que refuta |
+|---|---|---|---|
+| H-B1 | O teclado touch (TabTip) consegue digitar no `cmd` do WinRE de forma confiável | Digitar linha de teste e conferir na tela | TabTip não abre/não envia teclas no WinRE |
+| H-B2 | O limite de linha do `cmd` (cerca de 8.191 caracteres) basta para o bootstrap | Colar/digitar linhas longas no WinRE real | Linha é truncada |
+| H-B3 | `cscript`/`wscript` (JScript + `FileSystemObject`) existe e roda no WinRE real | `where cscript`, executar um `.js` mínimo | Ausente ou bloqueado |
+| H-B4 | `mshta`/HTA existe como alternativa de execução de script | `where mshta` e teste | Ausente |
+| H-B5 | Reconstrução em `cmd` puro (`for`, `set /a`, `echo`) é viável sem script | Reconstruir 1 KB só com `cmd` | Lento demais ou perde bytes (CR/LF, `%`, `^`, `!`) |
+| H-B6 | Hex é mais seguro que base64 (alfabeto sem caracteres especiais do `cmd`) | Comparar taxa de erro/tempo de digitação | Base64 não tem erro e é mais curto |
+| H-B7 | Alfabeto reduzido (só letras minúsculas/dígitos) evita autocorreção e maiúsculas do teclado | Digitar alfabeto completo e comparar | Teclado altera algo mesmo assim |
+| H-B8 | Dá para verificar integridade sem `certutil` (hash em JScript ou `fc /b`/`comp`) | Rodar hash JS no WinRE e comparar com host | Sem mecanismo de checagem possível |
+| H-B9 | `copy con arquivo` ou `echo ... > arquivo` grava bytes ASCII fielmente (inclui CR/LF final) | Gravar e comparar bytes | Acrescenta ou altera bytes |
+| H-B10 | O Wi-Fi/Bluetooth/OBEX podem ser outro canal de entrada (fora do texto) | Verificar no aparelho; revisar restrições | Restrições proíbem ou não há pilha |
+| H-B11 | A taxa de digitação manual (tempo humano) é viável: nvram 5,4 KB entra em tempo razoável | Cronometrar E3 simulado e estimar | Tempo inviável (horas) |
+| H-B12 | Compressão antes de digitar (RLE/dicionário) reduz a digitação de forma útil | Medir tamanho comprimido da nvram/firmware | Ganho desprezível |
+| H-B13 | O firmware (0,64 MB) não precisa ser digitado: já existe em alguma pasta do aparelho e basta copiar/renomear | Procurar no `C:` e na imagem do WinRE | Não existe localmente |
+| H-B14 | A tela como canal de saída basta para conferir (hash curto/QR textual) | Mostrar hash e conferir à mão | Tela corta/rola a saída |
+
+## Grupo C — Ambiente QEMU (E1/E1b)
+
+| ID | Hipótese | Como testar | O que refuta |
+|---|---|---|---|
+| H-C1 | O azul chapado `#2067B2` é a UI de recuperação rodando e desligando por conta própria | Já medido (AD): quadro real; falta a causa do desligamento | Outro estágio produz o azul |
+| H-C2 | O azul vem depois do bootmgr entregar ao `winload` (AF) | Tela de erro do bootmgr em texto prova a ordem | Texto de erro também pinta azul |
+| H-C3 | O WinRE sai por falta de driver de storage/vídeo da máquina emulada | Mudar controladora/vídeo (AG feito: não mudou) | Qualquer controladora resolve |
+| H-C4 | Falta de canal de debug (serial do kernel, `pmemsave`, `-d`) impede ler o código de parada | Se o dono autorizar, ler o STOP code | Não há STOP code |
+| H-C5 | O TCG é lento demais e há timeout de inicialização do WinRE | Aumentar timeouts e rodar com paciência | Mesmo resultado com tempo longo |
+| H-C6 | O WinRE 10586 (fábrica) inicia onde o 1809 oficial não | Repetir a matriz com o 10586 | Também falha |
+| H-C7 | Mídia em disco FAT32/VHD com layout diferente (BCD, ramdisk) muda o resultado | Variar BCD, `boot.sdi`, partições | Todas as variantes iguais |
+| H-C8 | O firmware UEFI (OVMF) é o problema (versão, tamanho de RAM, GOP) | Testar outro OVMF, outro tamanho de RAM | Outro firmware igual |
+| H-C9 | Falta uma característica de CPU/ACPI (Atom Z8500 tem features que `-cpu max` não tem) | Modelos de CPU Atom, flags `-cpu` | CPU não importa (AG: indício) |
+| H-C10 | Outro emulador/hipervisor (KVM, Hyper-V, VirtualBox, bochs) inicia o WinRE | Rodar fora do QEMU TCG | Mesmo resultado em todos |
+| H-C11 | A rota PCAT/SeaBIOS (`etfsboot`) funciona com outra mídia/ferramenta no host | Montar mídia com outra ferramenta | Sempre sem saída |
+| H-C12 | Uma imagem de Windows completo (não só WinRE) inicia no QEMU e permite E5/E6 | Agente com KVM e imagem completa | Imagem completa também falha |
+| H-C13 | O sandbox sem `/dev/kvm` é limitação definitiva; precisa outro host | Verificar host com KVM (remoto) | TCG resolve com ajustes |
+
+## Grupo D — Instalação/troca do driver
+
+| ID | Hipótese | Como testar | O que refuta |
+|---|---|---|---|
+| H-D1 | `pnputil /add-driver` coloca o pacote em staging, mas não troca o driver ativo | Instalar e conferir driver ativo | Troca o ativo |
+| H-D2 | `drvload` carrega o OEM 2015 no WinRE em runtime | `drvload arquivo.inf` e checar o dispositivo | Falha ou não persiste |
+| H-D3 | `dism /image:C:\ /add-driver` (offline) instala o OEM no Windows do `C:` | Rodar DISM offline numa cópia | Não aplica ou falha na assinatura |
+| H-D4 | Copiar `.sys`/INF direto para `System32\drivers` e `inf\` basta | Cópia manual e reiniciar | Não é carregado |
+| H-D5 | Alterar o registro offline (`reg load` do SYSTEM) força o serviço a usar o driver certo | Editar `Services\bcmpciedhd63` e checar | Serviço volta ao driver antigo |
+| H-D6 | O pacote inbox de 2017 não tem `oemXX.inf` removível, então remoção por DISM não funciona | `dism /get-drivers /all` (Inbox: Yes) | Removível |
+| H-D7 | `InstallHinfSection` via `rundll32 setupapi` instala sem `devcon` | Testar no WinRE | Comando ausente/falha |
+| H-D8 | Renomear/mover o INF inbox de 2017 deixa o OEM vencer a seleção | Testar em cópia offline | Seleção continua errada |
+| H-D9 | O pacote OEM completo é grande demais; versão reduzida (só 4 arquivos) é suficiente | Montar pacote mínimo e testar | Assinatura/catálogo exige o completo |
+| H-D10 | Basta trocar só o `.sys` (sem INF) | Teste em cópia | Exige INF/catálogo |
+| H-D11 | Editar o WIM do WinRE (servicing offline) embute os arquivos e persiste após reiniciar | E2 já provou a mecânica no host; falta o aparelho | WinRE no aparelho é recriado/restaurado |
+| H-D12 | Os arquivos devem ir para a partição de recuperação do aparelho e não para `X:` (RAM) | Verificar persistência após reboot | `X:` persiste |
+
+## Grupo E — Pilha WLAN utilizável no WinRE
+
+| ID | Hipótese | Como testar | O que refuta |
+|---|---|---|---|
+| H-E1 | O WinRE tem o serviço WLAN (`wlansvc`) e dependências necessárias | `sc query wlansvc`, listar DLLs | Ausente |
+| H-E2 | `netsh wlan` existe e funciona sem WLAN AutoConfig completo | `netsh wlan show drivers` | Falha ou sem o contexto |
+| H-E3 | Dá para conectar a uma rede WPA2 digitando SSID/senha por `netsh wlan add profile` | Teste com rede de laboratório | Associação falha |
+| H-E4 | Mesmo com o rádio funcionando, faltam componentes (NativeWifiP, vwifibus, DHCP) e é preciso adicioná-los | Comparar com WinPE-WiFi | Tudo já presente |
+| H-E5 | O Wi-Fi deixa de ser necessário: reinstalar o Windows a partir de fonte local basta | Procurar fonte local | Não há fonte local |
+| H-E6 | Bluetooth (PAN) ou outro caminho dá rede sem Wi-Fi | Verificar suporte no WinRE | Sem pilha |
+| H-E7 | Mesmo com rede, o WinRE não consegue baixar/aplicar uma imagem completa | Teste de download e aplicação | Consegue |
+
+## Grupo F — Recuperar o Windows 10 17763
+
+| ID | Hipótese | Como testar | O que refuta |
+|---|---|---|---|
+| H-F1 | `C:` não tem Windows utilizável; um `winre.wim` não é imagem de instalação | Inspecionar `C:`; já indicado pelo advisor | Existe `install.wim` |
+| H-F2 | Nenhuma fonte local de 17763 existe (partições, recovery, OEM) | Listar partições do aparelho (E4) | Há fonte |
+| H-F3 | "Reset this PC"/recuperação do fabricante restaura o Windows sem rede | Verificar no aparelho | Não existe imagem de recovery |
+| H-F4 | `setup.exe`/`dism /apply-image` aplica uma imagem baixada pela rede | Teste com imagem e rede | Falha de driver/espaço |
+| H-F5 | O erro 10 aparece só depois de reinstalar (regressão volta) e o driver precisa ser injetado na instalação | Injetar o OEM na imagem aplicada | Não volta |
+| H-F6 | Alternativa: instalar outro SO (Linux) só para obter o rádio e baixar o Windows | Avaliar restrições | Fora do escopo |
+
+## Grupo G — Metodologia e processo
+
+| ID | Hipótese | Como testar | O que refuta |
+|---|---|---|---|
+| H-G1 | Começar pela nvram sem remover drivers é o caminho de menor custo (advisor) | E3b/E7 no WinRE real | Não resolve; outro caminho melhor |
+| H-G2 | O E4 (hardware) é o único teste definitivo; o QEMU só valida mecânica | Plano E4 guiado pelo usuário | QEMU reproduz o erro (E5) |
+| H-G3 | Um dispositivo PCI falso (E5) reproduz o erro 10 num Windows completo | Montar `VEN_14E4&DEV_43EC` falso + driver real | Não reproduz |
+| H-G4 | Substituta e1000 (E6) mostra "driver errado dá 10, correto inicia" | Rodar E6 | Sem diferença |
+| H-G6 | Dividir por capacidade (KVM vs TCG) acelera: E5/E6 para agente com KVM, E3/E7 para os demais | Atribuir e medir | Gargalo é outro |
+| H-G7 | Documentar cada experimento com o modelo de `experiments/templates/experimento.md` evita refazer testes | Auditoria dos logs | Refaz mesmo assim |
+
+## Tabela de tarefas
+
+Atualize o Status ao trabalhar (um agente por vez, sem claims). Prioridade sugerida: H-B3, H-B1, H-B2 e H-B8 desbloqueiam o canal; H-A2/H-A3/H-A9 testam a causa; H-C* só desbloqueiam o E1b.
+
+| ID | Tarefa | Owner | Status |
+|---|---|---|---|
+| H-B1 | Digitar no `cmd` do WinRE pelo TabTip | — | [ ] |
+| H-B2 | Limite de linha do `cmd` no WinRE | — | [ ] |
+| H-B3 | `cscript`/JScript/FSO no WinRE | — | [?] bloqueada no E1b |
+| H-B8 | Hash sem `certutil` | — | [ ] |
+| H-B6 | Hex vs base64: documentar o método exato e medir (docs/08-data-transfer.md) | claude | [~] doc + teste de host feitos; falta WinRE (bloqueado no E1b) |
+| H-B11 | Tempo de digitação da nvram | — | [ ] |
+| H-B12 | Compressão antes de digitar | claude | [~] medido no host (docs/09-compressao-antes-de-digitar.md); falta `where expand` no WinRE |
+| H-B13 | Firmware já local (sem digitar) | — | [ ] |
+| H-A2 | Só nvram resolve? | — | [ ] |
+| H-A3 | nvram + firmware resolve? | — | [ ] |
+| H-A4 | Conteúdo da nvram correto para a placa | — | [ ] |
+| H-A5 | Seleção do driver por ranking | — | [ ] |
+| H-A9 | Matriz fatorial driver x nvram x firmware | — | [ ] |
+| H-C4 | Ler o STOP code (canal de debug) | — | [?] precisa autorização do dono |
+| H-C6 | WinRE 10586 inicia? | qoder | [~] E1b |
+| H-C10 | Outro hipervisor / KVM | — | [ ] |
+| H-D2 | `drvload` do OEM 2015 | — | [ ] |
+| H-D3 | `dism /add-driver` offline no `C:` | — | [ ] |
+| H-D8 | Renomear INF inbox para o OEM vencer | — | [ ] |
+| H-D12 | Persistência: `X:` x partição de recuperação | — | [ ] |
+| H-E1 | `wlansvc` e dependências no WinRE | — | [ ] |
+| H-E4 | Componentes WLAN faltando | — | [ ] |
+| H-F1 | `C:` sem Windows utilizável | — | [ ] |
+| H-F2 | Fonte local de 17763 | — | [ ] |
+| H-G3 | Dispositivo PCI falso (E5) | — | [ ] |
+| H-G4 | Substituta e1000 (E6) | — | [ ] |
 
 ---
 

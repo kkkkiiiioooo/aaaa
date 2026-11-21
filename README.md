@@ -14,9 +14,9 @@ O repositório não contém uma imagem completa de instalação do Windows. Ele 
 ## Como este repositório se organiza (leia primeiro)
 
 - **Um repositório git, uma branch de trabalho: `desafio`.** Todo agente trabalha, commita e envia na `desafio`.
-- **Pastas não são branches git.** Cada agente tem uma pasta `agents/<modelo>/` para o seu log de sessão, na branch compartilhada. O trabalho compartilhado (docs, drivers, experiments, qemu, scripts) vive nas pastas compartilhadas. Não crie uma branch por agente nem por tarefa.
+- **Agentes trabalham um de cada vez**, sem pasta própria. O trabalho vive nas pastas compartilhadas (docs, drivers, experiments, qemu, scripts). Não crie uma branch por agente nem por tarefa.
 - **Sincronize antes de começar e antes de enviar:** `git fetch origin desafio` + `git merge --ff-only origin/desafio`. Nunca force push nem apague branches.
-- **Evite trabalho duplicado:** leia `agents/*/README.md` e o quadro `experiments/README.md`, reivindique uma tarefa (Owner) e envie a reivindicação antes de trabalhar.
+- **Um agente por vez:** não há reivindicação de tarefas; registre o estado em `TODO.md` e `experiments/README.md`.
 - **Persista imediatamente:** o sandbox é temporário; faça commit e push de cada artefato concluído via `scripts/salvar.sh "mensagem" caminho...` (autorização permanente). Veja `AGENTS.md`.
 
 ## Estado
@@ -46,7 +46,6 @@ O repositório não contém uma imagem completa de instalação do Windows. Ele 
 | `GOAL.md` | Missão, restrições, marcos e critérios de aceitação. |
 | `ANOTACOES-IMPORTANTES.md` | Fatos e evidências canônicos para os agentes. |
 | `AGENTS.md` | Regras de operação para os agentes. |
-| `agents/` | Logs de sessão por agente (`agents/<modelo>/`), na branch compartilhada. |
 | `drivers/` | Estado alvo do DriverStore, pacotes OEM e hipótese de nvram. |
 | `winre-fabrica-10586-424MB/` | WIM do firmware de fábrica dividido em partes versionadas. |
 | `winre-1809-oficial-intacta/` | WIM do WinRE 1809 oficial (do ESD da Microsoft), dividido em partes versionadas. |

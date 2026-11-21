@@ -1,7 +1,6 @@
 # TODO
 
-Lista de tarefas compartilhada. Reivindique uma tarefa (defina o Owner) e envie a reivindicação antes de trabalhar — veja a
-regra de coordenação em `AGENTS.md`. Um owner por tarefa. O quadro de experimentos é `experiments/README.md`; este
+Lista de tarefas compartilhada. Um agente trabalha por vez, sem reivindicação de tarefas (veja a regra de coordenação em `AGENTS.md`). O quadro de experimentos é `experiments/README.md`; este
 arquivo acompanha o plano mais amplo e as ideias do dono. Status: [ ] a fazer, [~] em andamento, [x] feito.
 
 ## Feito
@@ -39,8 +38,8 @@ arquivo acompanha o plano mais amplo e as ideias do dono. Status: [ ] a fazer, [
   Status 17/11/2026 (células I–AE): a rota PCAT/SeaBIOS é beco sem saída com as ferramentas do host — `etfsboot`
   não imprime nada sob 7 variantes de mídia diferentes. Na rota UEFI o ambiente agora tem um **console de texto
   interativo real**: toda célula EFI esgotada (S, U, V, W, X, Y, Z, AB) cai no UEFI Interactive Shell com `FS0:`
-  mapeado, e `agents/qoder/keys.py` + `TYPE_AT`/`TYPE_FILE`/`TYPE_GAP` digitam comandos nele que executam e
-  renderizam saída (`agents/qoder/e1-run.sh` captura um quadro por comando digitado, porque o shell EDK2 limpa a
+  mapeado, e `keys.py` + `TYPE_AT`/`TYPE_FILE`/`TYPE_GAP` digitam comandos nele que executam e
+  renderizam saída (`e1-run.sh` captura um quadro por comando digitado, porque o shell EDK2 limpa a
   tela quando uma aplicação sai).
   Duas causas-raiz foram estabelecidas por medição, não por inferência:
   (1) `map` + `ls` (célula Y) provam que o firmware monta **apenas** o ESP `efisys.bin` de 1.474.560 bytes como
@@ -50,7 +49,7 @@ arquivo acompanha o plano mais amplo e as ideias do dono. Status: [ ] a fazer, [
   (2) `\efi\boot\bootx64.efi` lançado do shell realmente executa o bootmgr da Microsoft, e ele para na
   janela de DVD "pressione qualquer tecla" (células X, Z, AB). A taxa de injeção é o obstáculo: um `sendkey`
   por processo custa ~4 s aqui, então 150 teclas se espalharam por ~10 min e foram consumidas pelo shell depois
-  que o bootmgr já tinha desistido (AB: cursor +150 colunas). `agents/qoder/keyspam-dump.py` agora mantém uma
+  que o bootmgr já tinha desistido (AB: cursor +150 colunas). `keyspam-dump.py` agora mantém uma
   conexão de monitor e intercala uma tecla a cada 150 ms com um quadro a cada 30 s — a célula AC é esse teste.
   **Resultado AC: a densidade não abriu a cancela.** 5.117 espaços em 902 s (5,68 teclas/s) estavam em voo
   desde t≈0,2 s, e o cursor do shell avançava a um constante +17 colunas por quadro o tempo todo — o shell
@@ -65,7 +64,7 @@ arquivo acompanha o plano mais amplo e as ideias do dono. Status: [ ] a fazer, [
   `NOREBOOT=0`). `#2067B2` é o azul da UI de recuperação, e o `\Windows\System32\winpeshl.ini` dentro
   de `winre1809.wim` nomeia `X:\sources\recovery\recenv.exe` como launcher do shell.
   Próxima célula em fila: **AE** — mesmo disco FAT32, boot.wim com `winpeshl.ini` substituído por
-  `AppPath=X:\Windows\System32\cmd.exe` (`agents/qoder/build-cmd-media.sh`, mídia
+  `AppPath=X:\Windows\System32\cmd.exe` (`build-cmd-media.sh`, mídia
   `qemu/work/winre-cmd.img` sha256 `c8dadd60…`): se é a UI de recuperação que pinta o azul e morre, o mesmo
   ramdisk deveria abrir um console de texto. AA (se `partition_offset=16` suprime a montagem ISO9660) agora é
   prioridade baixa, atrás do AE.
@@ -83,9 +82,9 @@ arquivo acompanha o plano mais amplo e as ideias do dono. Status: [ ] a fazer, [
   ainda precisa de um canal de debug (serial do kernel, `pmemsave` ou logs `-d` do QEMU) que o dono não
   autorizou.
   **Resultados AH e AJ (17/11/2026):** apagar as duas cópias de `winload.efi` de dentro do ramdisk
-  (`agents/qoder/build-nowl-media.sh`, mídia `winre-nowl.img` `d53f813a…`) produziu o azul idêntico, e
+  (`build-nowl-media.sh`, mídia `winre-nowl.img` `d53f813a…`) produziu o azul idêntico, e
   encolher o WIM para `Total Bytes 952.214.657` apagando WinSxS + DriverStore
-  (`agents/qoder/build-small-media.sh`, mídia `winre-small.img` `564b7061…`) — bem dentro dos
+  (`build-small-media.sh`, mídia `winre-small.img` `564b7061…`) — bem dentro dos
   1,51 GiB de volume que o cabeçalho da partição SDI declara — também produziu o azul idêntico. Então a
   aritmética de tamanho do ramdisk também está eliminada, e a fase do bootmgr que pinta o azul renderiza
   os mesmos pixels haja ou não uma aplicação de boot. `build-small-media.sh` ganhou uma guarda depois de sua

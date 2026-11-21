@@ -4,9 +4,7 @@ Cada experimento registra uma pergunta, os comandos exatos, a saída observada, 
 
 ## Índice (quadro de tarefas compartilhado)
 
-Este é o único quadro compartilhado. **Reivindique uma linha antes de trabalhar:** defina o Owner, envie a
-reivindicação imediatamente e mantenha um owner por tarefa. Veja a regra de coordenação em `AGENTS.md`. Não
-comece uma linha que já está reivindicada ou Feita.
+Este é o único quadro compartilhado. Um agente trabalha por vez, então não há reivindicação de linhas: atualize o Status ao trabalhar e envie. Veja a regra de coordenação em `AGENTS.md`.
 
 | ID | Título | Owner | Status |
 |---|---|---|---|

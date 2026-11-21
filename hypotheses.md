@@ -9,21 +9,6 @@ Regras de uso:
 - Status: `[ ]` não testada, `[~]` em teste, `[+]` confirmada, `[-]` refutada, `[?]` bloqueada.
 - Sem renomear arquivos existentes; sem outras branches (só `desafio`).
 
-## Como funcionam os claims (reivindicações)
-
-Claim = "esta tarefa é minha". Evita dois agentes fazendo a mesma coisa. Já é a regra de `AGENTS.md` (Regra de coordenação):
-
-1. `git fetch origin desafio && git merge --ff-only origin/desafio`
-2. Escolha uma hipótese com Owner `—` e Status `[ ]` na tabela de claims abaixo.
-3. Escreva seu nome no Owner e mude o Status para `[~]` nesta tabela.
-4. Adicione a mesma linha em `agents/<seu-modelo>/README.md`.
-5. Envie na hora: `scripts/salvar.sh "claim H-xx" hypotheses.md agents/<seu-modelo>/README.md`
-6. Ao terminar: Status `[+]`/`[-]`, link para o experimento, envie de novo.
-
-Regras: um owner por hipótese; nunca pegue uma já reivindicada; se travar, devolva (Owner `—`) com nota do motivo; claim parado sem commit por muito tempo pode ser retomado por outro agente após aviso no README dele.
-
-Opcional (mais robusto, a decidir pelo dono): claim com expiração. Cada linha ganha `claimed_at` e `ttl`; passou do prazo sem heartbeat (commit), o claim cai.
-
 ## Grupo A — Causa do erro 10 (rádio não inicia)
 
 | ID | Hipótese | Como testar | O que refuta |
@@ -124,13 +109,12 @@ Opcional (mais robusto, a decidir pelo dono): claim com expiração. Cada linha 
 | H-G2 | O E4 (hardware) é o único teste definitivo; o QEMU só valida mecânica | Plano E4 guiado pelo usuário | QEMU reproduz o erro (E5) |
 | H-G3 | Um dispositivo PCI falso (E5) reproduz o erro 10 num Windows completo | Montar `VEN_14E4&DEV_43EC` falso + driver real | Não reproduz |
 | H-G4 | Substituta e1000 (E6) mostra "driver errado dá 10, correto inicia" | Rodar E6 | Sem diferença |
-| H-G5 | Sistema de claims com TTL reduz trabalho duplicado melhor do que claims manuais | Comparar após alguns ciclos | Não muda a duplicação |
 | H-G6 | Dividir por capacidade (KVM vs TCG) acelera: E5/E6 para agente com KVM, E3/E7 para os demais | Atribuir e medir | Gargalo é outro |
 | H-G7 | Documentar cada experimento com o modelo de `experiments/templates/experimento.md` evita refazer testes | Auditoria dos logs | Refaz mesmo assim |
 
-## Tabela de claims
+## Tabela de tarefas
 
-Preencha Owner e Status ao reivindicar (veja "Como funcionam os claims"). Prioridade sugerida: H-B3, H-B1, H-B2 e H-B8 desbloqueiam o canal; H-A2/H-A3/H-A9 testam a causa; H-C* só desbloqueiam o E1b.
+Atualize o Status ao trabalhar (um agente por vez, sem claims). Prioridade sugerida: H-B3, H-B1, H-B2 e H-B8 desbloqueiam o canal; H-A2/H-A3/H-A9 testam a causa; H-C* só desbloqueiam o E1b.
 
 | ID | Tarefa | Owner | Status |
 |---|---|---|---|
@@ -140,7 +124,7 @@ Preencha Owner e Status ao reivindicar (veja "Como funcionam os claims"). Priori
 | H-B8 | Hash sem `certutil` | — | [ ] |
 | H-B6 | Hex vs base64: documentar o método exato e medir (docs/08-data-transfer.md) | claude | [~] doc + teste de host feitos; falta WinRE (bloqueado no E1b) |
 | H-B11 | Tempo de digitação da nvram | — | [ ] |
-| H-B12 | Compressão antes de digitar | — | [ ] |
+| H-B12 | Compressão antes de digitar | claude | [~] medido no host (docs/09-compressao-antes-de-digitar.md); falta `where expand` no WinRE |
 | H-B13 | Firmware já local (sem digitar) | — | [ ] |
 | H-A2 | Só nvram resolve? | — | [ ] |
 | H-A3 | nvram + firmware resolve? | — | [ ] |

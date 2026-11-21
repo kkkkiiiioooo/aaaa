@@ -23,15 +23,7 @@ Leia estes arquivos antes de mudar qualquer coisa:
 Este é **um repositório git** com **uma branch de trabalho: `desafio`**. Todo agente
 trabalha, commita e envia na `desafio`.
 
-- **Pastas não são branches git.** Cada agente tem uma *pasta* `agents/<modelo>/` para o
-  seu próprio log de sessão. Essa pasta vive na branch compartilhada `desafio`; não é uma
-  branch separada. O trabalho compartilhado (docs, drivers, experiments, qemu, scripts) vive
-  nas pastas compartilhadas na `desafio`.
-- Não crie, não troque e não envie para nenhuma outra branch sem autorização explícita do
-  dono. Não crie uma branch por agente nem por tarefa. As branches espalhadas (`qemu`,
-  `wwii`, `windows`, `macos`, ...) são o erro que essa regra previne; o dono as limpa
-  manualmente.
-- Preserve o trabalho enviando-o para a `desafio` (veja a regra de persistência), não criando branches.
+- **Agentes trabalham um de cada vez** (decisão do dono, 21/11/2026), todos na `desafio`, sem pasta própria. O trabalho vive nas pastas compartilhadas (docs, drivers, experiments, qemu, scripts). Não crie uma branch por agente nem por tarefa.
 
 ## Regra de sincronização (obrigatória)
 
@@ -47,16 +39,9 @@ Vários agentes compartilham a `desafio`. Mantenha-se atualizado e nunca sobresc
 - `scripts/salvar.sh` usa `git add -A` por padrão; sempre passe caminhos explícitos para
   não preparar arquivos de outro agente nem artefatos gerados.
 
-## Regra de coordenação (obrigatória — evita trabalho duplicado)
+## Regra de coordenação (obrigatória)
 
-- Depois de fazer fetch, leia os logs dos outros agentes (`agents/*/README.md`) e o quadro
-  de experimentos compartilhado (`experiments/README.md`) para ver o que está feito e o que está reivindicado.
-- **Reivindique uma tarefa antes de trabalhar nela:** adicione uma linha (tarefa, owner, status) no
-  seu `agents/<modelo>/README.md` e defina o Owner na linha correspondente de `experiments/README.md`,
-  e envie a reivindicação imediatamente para que os outros vejam.
-- Um owner por tarefa/experimento. Se uma tarefa já está reivindicada ou feita, escolha outra ou
-  coordene; não a refaça.
-- Envie pouco e com frequência. Uma reivindicação que só existe no seu sandbox não impede duplicação.
+Só um agente trabalha por vez: não há reivindicação de tarefas nem pasta por agente. Registre o estado em `TODO.md` e `experiments/README.md` e deixe tudo enviado antes de parar; o próximo agente começa pelo repositório.
 
 ## Regra de canais (obrigatória)
 
@@ -141,7 +126,7 @@ imediatos, em toda sessão, sem perguntar antes.
 - Se um push falhar (crendenciais, limite de tamanho, rede), diga isso explicitamente e tente de novo; não
   relate o trabalho como concluído.
 - Arquivos acima de 100 MiB são rejeitados pelo GitHub: divida em partes ou não versioná-los.
-- Nunca escreva fora de `agents/<modelo>/`, das pastas compartilhadas e de `/tmp`.
+- Nunca escreva fora das pastas compartilhadas e de `/tmp`.
 
 Regra prática: **se o trabalho valeria ser feito duas vezes, envie-o agora.**
 
@@ -183,23 +168,6 @@ Regra prática: **se o trabalho valeria ser feito duas vezes, envie-o agora.**
 
 Este repositório serve para montar o desafio e suas evidências. Não é uma licença para contornar as restrições declaradas nem para fabricar uma recuperação bem-sucedida.
 
-## Área de trabalho do agente
-
-Cada agente trabalha na sua própria pasta: `agents/<modelo>/`. Essa pasta é uma área de
-trabalho na branch compartilhada `desafio`, **não** uma branch git (veja a regra de modelo de
-repositório e de branch).
-
-Exemplo:
-- `agents/claude/`
-
-Regras:
-- Crie a sua pasta no primeiro uso, se ela não existir.
-- Mantenha um `README.md` dentro dela com o log das suas sessões.
-- O trabalho compartilhado (experiments, docs, drivers) fica nas pastas compartilhadas.
-- Não escreva na pasta de outro agente.
-- Envie o conteúdo da sua pasta antes de parar de trabalhar; uma sessão que termina sem
-  push não deixa nada para trás.
-
 ## Resumo em português
 
 Todo agente trabalha num ambiente temporário. O que não for enviado ao repositório
@@ -212,10 +180,9 @@ push falhar, diga isso claramente e tente de novo — não declare a tarefa conc
 Para provar imagens divididas, rode `scripts/verify-images.sh`: ele junta as partes,
 confere `SHA256SUMS` e `SHA256SUMS.reassembled` e imprime uma linha por imagem — não é
 preciso colar hash nenhum no chat.
-Estrutura: um único repositório, um único ramo de trabalho (`desafio`). Pastas não são
-ramos: cada agente tem a pasta `agents/<model>/` no mesmo ramo; o trabalho compartilhado
-fica nas pastas comuns. Sincronize antes de começar e antes de enviar (`git fetch origin`
-desafio` + `git merge --ff-only origin/desafio`); nunca force-push nem apague ramos. Para
-não duplicar serviço, leia os logs dos outros agentes e o quadro `experiments/README.md`,
-reivindique a tarefa (owner/status) e envie a reivindicação antes de trabalhar.
+Estrutura: um único repositório, um único ramo de trabalho (`desafio`). Agentes
+trabalham um de cada vez, sem pasta própria; o trabalho fica nas pastas comuns. Sincronize antes de começar e antes de enviar (`git fetch origin`
+desafio` + `git merge --ff-only origin/desafio`); nunca force-push nem apague ramos. Como
+só um agente trabalha por vez, não há reivindicação de tarefas: registre o estado em `TODO.md` e
+`experiments/README.md`.
 Regra prática: se o trabalho vale ser feito duas vezes, envie agora.

@@ -60,7 +60,7 @@ só tem sentido quando uma célula alcança o ponto em que o Windows carrega de 
 nenhuma célula aqui alcança ainda.
 
 Evidência por célula: frames de `screendump` do monitor do QEMU a cada 30 s (PPM → PNG),
-retidos em `agents/qoder/e1-<celula>/`. `-serial file:` é proibido pelo `qemu/audit.sh`
+retidos em `e1-<celula>/`. `-serial file:` é proibido pelo `qemu/audit.sh`
 (anti-trapaça), então a tela é o único canal — que é também exatamente o canal do dispositivo real.
 
 ## Comandos
@@ -258,7 +258,7 @@ a captura do framebuffer não mostra, ou uma mudança de modo que a captura não
 
 Como o caminho UEFI para antes de qualquer texto, a mesma imagem é testada pela rota clássica
 de CD do WinPE, que é o que o template BCD dentro do WIM realmente espera
-(`[boot]\sources\boot.wim`, `[boot]\boot\boot.sdi`). O `agents/qoder/build-pcat-iso.sh`
+(`[boot]\sources\boot.wim`, `[boot]\boot\boot.sdi`). O `build-pcat-iso.sh`
 extrai o template PCAT do próprio WIM (`/Windows/Boot/DVD/PCAT/BCD`, `boot.sdi`,
 `etfsboot.com`, `en-US/bootfix.bin`) e constrói uma ISO inicializável por BIOS via El Torito
 com `-boot-info-table`:
@@ -312,9 +312,9 @@ a mídia já está depois dessa etapa e ainda não vai a lugar nenhum. Hipótese
 
 **Célula L (variável: `-boot-load-size 8`, ou seja, o `etfsboot.com` completo de 4096 bytes
 carregado):**
-`OUT=qemu/work/winre-pcat-l8.iso LOADSIZE=8 sh agents/qoder/build-pcat-iso.sh` →
+`OUT=qemu/work/winre-pcat-l8.iso LOADSIZE=8 sh build-pcat-iso.sh` →
 269.862.912 bytes, sha256 `932b900392346b8601a783dae78987de70e6408bba6d465dfc4317fed3969989`.
-Rodada como `BIOS=1 MEM=4096 agents/qoder/e1-run.sh L qemu/work/winre-pcat-l8.iso pc qemu64 420 30`.
+Rodada como `BIOS=1 MEM=4096 e1-run.sh L qemu/work/winre-pcat-l8.iso pc qemu64 420 30`.
 **Resultado da célula L — `-boot-load-size 8` não muda nada.** Os frames são a mesma tela de
 duas cores "Booting from DVD/CD..."; `compare -metric AE` contra `frame-30.png` dá 18
 em t=60 s e 0 em t=90 s, ou seja, só o cursor de texto pisca. Então carregar o `etfsboot.com`
@@ -339,7 +339,7 @@ qemu/work/winre-pcat-m.iso  270,247,936 bytes
 a478af26639ba6abb19f8b4698abe4730416f25f54497ea5f355dea7fbe10eb2
 ```
 
-Rodada como `BIOS=1 MEM=4096 agents/qoder/e1-run.sh M qemu/work/winre-pcat-m.iso pc qemu64 900 30`.
+Rodada como `BIOS=1 MEM=4096 e1-run.sh M qemu/work/winre-pcat-m.iso pc qemu64 900 30`.
 **Resultados das células M/N/O/P — a rota PCAT está bloqueada abaixo da camada de mídia.** Todas
 as quatro param na mesma tela bit-idêntica do SeaBIOS ("Booting from DVD/CD...", 2 cores,
 `compare -metric AE` = 0 entre frames, só o cursor pisca):
@@ -361,7 +361,7 @@ documentado — não mais suposições.
 
 ### Células Q/R/S — a mídia EFI oficial é reconhecida; ela falha uma etapa depois
 
-O `agents/qoder/build-efi-dvd-iso.sh` constrói o layout que um DVD real do Windows usa, com as
+O `build-efi-dvd-iso.sh` constrói o layout que um DVD real do Windows usa, com as
 próprias peças da Microsoft tiradas do WIM em vez de um ESP feito à mão:
 
 ```text
@@ -457,7 +457,7 @@ a pena inicializar.
 ### Célula U — GPT híbrido com o GUID de ESP real: `No mapping` inalterado
 
 ```sh
-OUT=qemu/work/winre-efidvd-u.iso HYBRID=1 sh agents/qoder/build-efi-dvd-iso.sh
+OUT=qemu/work/winre-efidvd-u.iso HYBRID=1 sh build-efi-dvd-iso.sh
 → 273,022,976 bytes  sha256 2ca259ce89063afa31f78feb2a161b1b1089615c8710337d89ac453ec7026fcc
 ```
 
@@ -483,7 +483,7 @@ não na mídia.) A partição 1 cobre exatamente o ESP `efisys.bin` de 1.474.560
 a camada que a hipótese pedia está realmente presente, e a mídia não híbrida das células Q/R/S
 não tem tabela de partição nenhuma.
 
-Rodada: `MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=8 bash agents/qoder/e1-run.sh U
+Rodada: `MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=8 bash e1-run.sh U
 qemu/work/winre-efidvd-u.iso pc qemu64 500 5`.
 
 Resultado (frame-25, 1024x768, 2 cores, texto real): o aviso é aceito e depois
@@ -524,12 +524,12 @@ laço `KEY_AT`/`KEY_TIMES` enviou, não saída.
 ### Célula V — `\EFI\BOOT\BOOTX64.EFI` também exposto na árvore ISO9660/Joliet
 
 ```sh
-OUT=qemu/work/winre-efidvd-v.iso HYBRID=1 EFI_BOOT_COPY=1 sh agents/qoder/build-efi-dvd-iso.sh
+OUT=qemu/work/winre-efidvd-v.iso HYBRID=1 EFI_BOOT_COPY=1 sh build-efi-dvd-iso.sh
 → 274,530,304 bytes  sha256 16a5e4efbdc00399d7b581e0c7ec9eddb9560b726f6afc0e51befb1418ba7f54
 ```
 
 Mesma forma de GPT da U (partição ESP 1 agora 500 … 3379, ou seja, o mesmo `efisys.bin`,
-deslocado porque a árvore cresceu). Rodada: `MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=8 bash agents/qoder/e1-run.sh V
+deslocado porque a árvore cresceu). Rodada: `MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=8 bash e1-run.sh V
 qemu/work/winre-efidvd-v.iso pc qemu64 400 5`.
 
 Medido: o resultado do BdsDxe está inalterado, e as telas finais são a mesma tela —
@@ -547,16 +547,16 @@ a próxima alavanca testável, em vez de um teste da opção de boot em si.
 Duas peças foram adicionadas para isso, ambas só de teclado, de modo que o `qemu/audit.sh`
 continua passando inalterado:
 
-- `agents/qoder/keys.py` — traduz uma string literal em nomes de `sendkey` do QEMU (uma
+- `keys.py` — traduz uma string literal em nomes de `sendkey` do QEMU (uma
   chamada por caractere) e opcionalmente aperta Enter. Descoberto ao construí-la: dois-pontos é
   `shift-semicolon`, não `shift-2`; uma sonda ao vivo digitou `fs0:` e o console do guest
   ecoou `fs0@`, que é o tipo de bug de mapeamento que de outro modo teria sido lido como
   "o shell não tem FS0:".
-- Alavancas `TYPE_AT` / `TYPE_FILE` / `TYPE_GAP` no `agents/qoder/e1-run.sh` — em
+- Alavancas `TYPE_AT` / `TYPE_FILE` / `TYPE_GAP` no `e1-run.sh` — em
   `TYPE_AT` segundos, digita cada linha do `TYPE_FILE` e aperta Enter, `TYPE_GAP` segundos
   de distância (o TCG é lento e a linha precisa ser registrada antes da próxima).
 
-O `agents/qoder/e1-w-shell.txt` é a sequência: `fs0:`, `ls efi\boot`, `ls efi\microsoft\boot`,
+O `e1-w-shell.txt` é a sequência: `fs0:`, `ls efi\boot`, `ls efi\microsoft\boot`,
 e então `\efi\boot\bootx64.efi`. A última linha é o experimento de fato: se o boot manager EFI
 da Microsoft carrega a partir da visão ISO9660, então o `No mapping` é uma propriedade do device
 path da opção Boot0001 e não do arquivo, e a matriz ganha uma forma controlada de alcançar o
@@ -566,7 +566,7 @@ path da opção Boot0001 e não do arquivo, e a matriz ganha uma forma controlad
 
 A primeira tentativa foi abortada por um defeito do harness que vale registrar: o laço
 `TYPE_FILE` digitou o próprio cabeçalho de comentário `#` do arquivo no console do guest, de
-modo que o shell recebeu prosa como comandos. Corrigido no `agents/qoder/e1-run.sh` (linhas
+modo que o shell recebeu prosa como comandos. Corrigido no `e1-run.sh` (linhas
 vazias e linhas `#` são puladas); a rodada abortada não é evidência.
 
 A segunda tentativa (`MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=8 TYPE_AT=70 TYPE_GAP=8`, orçamento
@@ -583,8 +583,8 @@ digitada** (`cmd-<n>.png`) antes de tirar qualquer conclusão.
 ### Célula X — o console é real: frames por comando a partir da mesma mídia
 
 ```sh
-MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=8 TYPE_AT=75 TYPE_FILE=agents/qoder/e1-w-shell.txt TYPE_GAP=15 \
-  bash agents/qoder/e1-run.sh X qemu/work/winre-efidvd-v.iso pc qemu64 700 15
+MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=8 TYPE_AT=75 TYPE_FILE=e1-w-shell.txt TYPE_GAP=15 \
+  bash e1-run.sh X qemu/work/winre-efidvd-v.iso pc qemu64 700 15
 ```
 
 Observado, um frame por comando (`qemu/work/e1-X/cmd-<n>.png`, não commitado):
@@ -626,8 +626,8 @@ listagem da raiz com apenas `EFI` significa que o `FS0:` é o ESP; uma listagem 
 ### Célula Y — decisiva: o `FS0:` é o ESP de El Torito, e o volume ISO9660 nunca é montado
 
 ```sh
-MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=8 TYPE_AT=75 TYPE_FILE=agents/qoder/e1-y-diag.txt TYPE_GAP=10 \
-  bash agents/qoder/e1-run.sh Y qemu/work/winre-efidvd-v.iso pc qemu64 500 20
+MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=8 TYPE_AT=75 TYPE_FILE=e1-y-diag.txt TYPE_GAP=10 \
+  bash e1-run.sh Y qemu/work/winre-efidvd-v.iso pc qemu64 500 20
 ```
 
 Dois comandos resolvem (`qemu/work/e1-Y/cmd-1.png`, `cmd-3.png`):
@@ -687,7 +687,7 @@ Duas correções candidatas se seguem de (2), e elas são experimentos diferente
 ### Célula Z — o BCD agora é visível para o shell, mas a rajada de teclas chegou tarde demais
 
 ```sh
-OUT=qemu/work/winre-efidvd-z.iso HYBRID=1 ESPBCD=1 EFI_BOOT_COPY=1 sh agents/qoder/build-efi-dvd-iso.sh
+OUT=qemu/work/winre-efidvd-z.iso HYBRID=1 ESPBCD=1 EFI_BOOT_COPY=1 sh build-efi-dvd-iso.sh
 → 274,530,304 bytes  sha256 cd59d84bfdc679f391596510d237c529c0c667ffd6606a77b4477c8da1cf3359
 ```
 
@@ -695,7 +695,7 @@ Verificado no host antes de inicializar, puxando a imagem de boot de volta da IS
 (`xorriso -osirrox on -dev … -extract /boot/efisys.bin`, depois `mdir`): o ESP de
 1.474.560 bytes agora guarda `\EFI\BOOT\BOOTX64.EFI` *e* `\EFI\MICROSOFT\BOOT\BCD`
 (16.384 B), com 317.440 B ainda livres. Rodada: `MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=40
-TYPE_AT=90 TYPE_FILE=agents/qoder/e1-z-boot.txt TYPE_GAP=6`, orçamento 900 s, intervalo 20 s.
+TYPE_AT=90 TYPE_FILE=e1-z-boot.txt TYPE_GAP=6`, orçamento 900 s, intervalo 20 s.
 
 Frames por comando:
 
@@ -720,8 +720,8 @@ ou screendump. A célula AB re-roda a mesma mídia com a mesma sequência sob a 
 ### Célula AB — a ordem corrigida ainda perde a corrida, e o motivo é mensurável
 
 ```sh
-MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=4 TYPE_AT=100 TYPE_FILE=agents/qoder/e1-ab-boot.txt TYPE_GAP=6 \
-  bash agents/qoder/e1-run.sh AB qemu/work/winre-efidvd-z.iso pc qemu64 900 20
+MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=4 TYPE_AT=100 TYPE_FILE=e1-ab-boot.txt TYPE_GAP=6 \
+  bash e1-run.sh AB qemu/work/winre-efidvd-z.iso pc qemu64 900 20
 ```
 
 Com a rajada agora disparada logo depois do Enter de `\efi\boot\bootx64.efi`, o `cmd-3`
@@ -739,7 +739,7 @@ qemu/mon.py` abrindo um socket novo enquanto o laço principal do QEMU está ocu
 de cada vez, de modo que o spam não pode simplesmente ser colocado em segundo plano enquanto o
 runner continua despejando frames.
 
-Correção (de ferramenta, não de mídia): o `agents/qoder/keyspam-dump.py` mantém **uma**
+Correção (de ferramenta, não de mídia): o `keyspam-dump.py` mantém **uma**
 conexão de monitor e intercala teclas densas com `screendump` nessa mesma conexão —
 `!spam <tecla> <s> <ms> <dump_s>` no runner. A célula AC roda `!spam spc 900 150 30`: uma
 tecla a cada 150 ms por 900 s com um frame a cada 30 s, o que cobre o tempo de carga e a janela
@@ -754,8 +754,8 @@ política de press-any-key do próprio BCD.
 ### Célula AC — spam denso: a leitura (a) é falsificada, e o portão não é um problema de tempo
 
 ```sh
-MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=4 TYPE_AT=100 TYPE_FILE=agents/qoder/e1-ac-spam.txt TYPE_GAP=6 \
-  bash agents/qoder/e1-run.sh AC qemu/work/winre-efidvd-z.iso pc qemu64 1500 30
+MEM=4096 SMP=2 KEY_AT=5 KEY_TIMES=4 TYPE_AT=100 TYPE_FILE=e1-ac-spam.txt TYPE_GAP=6 \
+  bash e1-run.sh AC qemu/work/winre-efidvd-z.iso pc qemu64 1500 30
 ```
 
 O `keyspam-dump.py` consumiu o próprio orçamento primeiro: `total: 902s teclas=5117 frames=29`,
@@ -817,7 +817,7 @@ de fato é. É a célula AD.
 
 ```sh
 MEM=4096 SMP=2 VGA_DEV=bochs-display NOREBOOT=0 \
-  bash agents/qoder/e1-run.sh AD qemu/work/winre.img pc qemu64 600 20
+  bash e1-run.sh AD qemu/work/winre.img pc qemu64 600 20
 ```
 
 `-vga ramfb` não existe neste QEMU (medido com `-vga help`: `none std cirrus vmware xenfb qxl
@@ -862,9 +862,9 @@ dar um console de texto no mesmo ramdisk. A célula AE constrói exatamente essa
 ### Célula AE — o shell do WinPE nunca é alcançado, de modo que o azul está a montante dele
 
 ```sh
-bash agents/qoder/build-cmd-media.sh   # mídia: qemu/work/winre-cmd.img
+bash build-cmd-media.sh   # mídia: qemu/work/winre-cmd.img
 MEM=4096 SMP=2 VGA_DEV=bochs-display NOREBOOT=0 \
-  bash agents/qoder/e1-run.sh AE qemu/work/winre-cmd.img pc qemu64 900 20
+  bash e1-run.sh AE qemu/work/winre-cmd.img pc qemu64 900 20
 ```
 
 O `build-cmd-media.sh` copia `winre1809.wim` → `winre-cmd.wim`, substitui
@@ -905,7 +905,7 @@ cp qemu/work/winre-cmd.img qemu/work/winre-nobwim.img
 mmove -i "qemu/work/winre-nobwim.img@@1048576" ::/sources/boot.wim ::/sources/bootx.wim
 mdir -i "qemu/work/winre-nobwim.img@@1048576" ::/sources   # confirma que só bootx.wim resta
 MEM=4096 SMP=2 VGA_DEV=bochs-display NOREBOOT=0 \
-  bash agents/qoder/e1-run.sh AF qemu/work/winre-nobwim.img pc qemu64 400 15
+  bash e1-run.sh AF qemu/work/winre-nobwim.img pc qemu64 400 15
 ```
 
 Com a imagem de ramdisk renomeada de modo que `\sources\boot.wim` não exista mais, a mesma
@@ -953,7 +953,7 @@ Windows num estado que tenha produzido um console utilizável.
 
 ```sh
 MEM=4096 SMP=2 VGA_DEV=bochs-display NOREBOOT=0 \
-  bash agents/qoder/e1-run.sh AG qemu/work/winre-cmd.img q35 max 600 15
+  bash e1-run.sh AG qemu/work/winre-cmd.img q35 max 600 15
 ```
 
 | t | frame | cores | conteúdo |
@@ -978,9 +978,9 @@ caminho renderiza), e se ele *consegue* encontrá-la, o azul nos diz que o preen
 ### Célula AH — apagar o `winload.efi` de dentro do ramdisk não muda nada
 
 ```sh
-bash agents/qoder/build-nowl-media.sh    # mídia: qemu/work/winre-nowl.img d53f813a…
+bash build-nowl-media.sh    # mídia: qemu/work/winre-nowl.img d53f813a…
 MEM=4096 SMP=2 VGA_DEV=bochs-display NOREBOOT=0 \
-  bash agents/qoder/e1-run.sh AH qemu/work/winre-nowl.img pc qemu64 400 15
+  bash e1-run.sh AH qemu/work/winre-nowl.img pc qemu64 400 15
 ```
 
 O `wimlib-imagex update` apagou as duas cópias que a imagem traz
@@ -999,9 +999,9 @@ de boot estão bons" e "há algo para entregar".
 ### Célula AJ — a aritmética do tamanho do ramdisk também está eliminada
 
 ```sh
-bash agents/qoder/build-small-media.sh   # mídia: qemu/work/winre-small.img 564b7061…
+bash build-small-media.sh   # mídia: qemu/work/winre-small.img 564b7061…
 MEM=4096 SMP=2 VGA_DEV=bochs-display NOREBOOT=0 \
-  bash agents/qoder/e1-run.sh AJ qemu/work/winre-small.img pc qemu64 900 20
+  bash e1-run.sh AJ qemu/work/winre-small.img pc qemu64 900 20
 ```
 
 O `build-small-media.sh` apaga `/Windows/WinSxS` e `/Windows/System32/DriverStore` de uma

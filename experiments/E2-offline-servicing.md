@@ -32,7 +32,7 @@ Segunda pergunta respondida no caminho: qual é a menor carga que plausivelmente
 
 ## Comandos
 
-Driver, roteirizado, idempotente, opera só sobre cópias: `agents/qoder/e2-servicing.sh`.
+Driver, roteirizado, idempotente, opera só sobre cópias: `e2-servicing.sh`.
 
 ```sh
 # 0. inventário de baseline da origem intocada
@@ -213,4 +213,4 @@ O script rodou duas vezes de ponta a ponta (22:49 e 22:53 UTC) e os digests acim
 - `GOAL.md` (H1 e as restrições rígidas de canal), `docs/05-offline-servicing.md`, `docs/06-auditoria-imagem-1809.md`, `docs/04-fidelidade-mimetizacao.md`
 - `drivers/README.md`, `drivers/estado-dispositivo/README.md`, `drivers/nvram-delta/`
 - `experiments/E1-winre-boot-tcg.md` (por que nenhuma evidência de boot ainda), `experiments/README.md` (quadro)
-- Script: `agents/qoder/e2-servicing.sh`
+- Script: `e2-servicing.sh`

@@ -176,7 +176,7 @@ Consequência: F2 é um estado funcional sintético, não uma reprodução da pa
 ## 16/11/2026 — E2 servicing offline + causa-raiz da mídia PCAT (qoder)
 
 - Mecânica do E2 PASS (lado do host, em cópias): ambas as cargas construídas em ~4 s e relidas
-  byte a byte por SHA-256; `wimlib-imagex verify` OK. `agents/qoder/e2-servicing.sh`.
+  byte a byte por SHA-256; `wimlib-imagex verify` OK. `e2-servicing.sh`.
 - O caminho de busca da nvram agora está provado a partir dos binários, não dos nomes de arquivo: AMBOS os builds de `bcmpciedhd63.sys`
   contêm `\SystemRoot\system32\drivers\%04Xr%dnvram.txt` (+ o template de firmware e a
   string `dongle nvram file download failed`). Para o chip 0x4356 rev 2 → `System32\drivers\4356r2nvram.txt`.
@@ -203,7 +203,7 @@ Consequência: F2 é um estado funcional sintético, não uma reprodução da pa
   ausência de `boot\pcatboot.wim`, nomes minúsculos no descritor primário, LZX vs none, layout
   interno do pcatboot.wim. Suspeita restante: formato/offset da boot info table que o xorriso escreve
   vs. o que `etfsboot.com` espera. Não é caminho promissor sem uma mídia de referência do oscdimg.
-- UEFI com a mídia oficial (`agents/qoder/build-efi-dvd-iso.sh`, `-e boot/efisys.bin`): é a primeira
+- UEFI com a mídia oficial (`build-efi-dvd-iso.sh`, `-e boot/efisys.bin`): é a primeira
   mídia desta matriz que faz o stub da Microsoft rodar e imprimir "Press any key to boot from CD or
   DVD……". Com tecla injetada pelo monitor (`KEY_AT`/`KEY_TIMES` no `e1-run.sh`) o erro muda de
   `Time out` para `BdsDxe: failed to start Boot0001 … No mapping` (células S e T). Injetar o BCD
@@ -256,19 +256,19 @@ Consequência: F2 é um estado funcional sintético, não uma reprodução da pa
   (`compare -metric AE -fuzz 5%` = 0), como esperado: a opção Boot0001 aponta para a ESP, então a
   cópia não muda o que o BdsDxe resolve. O que muda é o que o **shell** consegue alcançar, porque
   `FS0:` é o volume ISO9660 e a ESP dentro de `efisys.bin` não é montada por ele.
-- **Ferramenta nova para o console.** `agents/qoder/keys.py` traduz texto literal em `sendkey`
+- **Ferramenta nova para o console.** `keys.py` traduz texto literal em `sendkey`
   (um por caractere) e os knobs `TYPE_AT`/`TYPE_FILE`/`TYPE_GAP` no `e1-run.sh` digitam cada linha
   de um arquivo no prompt. Canal: teclado apenas — `qemu/audit.sh` continua PASS. Detalhe medido:
   dois-pontos é `shift-semicolon`, não `shift-2`; na sonda ao vivo o convidado ecoou `fs0@`, que
   é exatamente o tipo de bug de mapeamento que se leria como "o shell não tem FS0:".
-- **Célula W (em execução).** mesma mídia V, sequência `agents/qoder/e1-w-shell.txt`:
+- **Célula W (em execução).** mesma mídia V, sequência `e1-w-shell.txt`:
   `fs0:` → `ls efi\boot` → `ls efi\microsoft\boot` → `\efi\boot\bootx64.efi`. O que se testa é se o
   bootmgr da Microsoft carrega quando o caminho vem do FS0: em vez da opção de boot do firmware.
 - Nada aqui é evidência de hardware: nenhum convidado chegou ao kernel do Windows.
 
 ## 2026-11-17 — E1b: o console interativo existe e o `FS0:` não é o que se pensava (qoder)
 
-- **Console de texto interativo confirmado sob TCG.** Com `agents/qoder/keys.py` (texto literal →
+- **Console de texto interativo confirmado sob TCG.** Com `keys.py` (texto literal →
   `sendkey`) e os knobs `TYPE_AT`/`TYPE_FILE`/`TYPE_GAP` do `e1-run.sh`, o UEFI Interactive Shell
   aceita comandos digitados, ecoa e mostra a saída. Células W e X: `fs0:` muda o prompt para
   `FS0:\>`; `ls efi\boot` lista; `\efi\boot\bootx64.efi` executa e volta ao shell (provado pelo
@@ -311,7 +311,7 @@ Consequência: F2 é um estado funcional sintético, não uma reprodução da pa
   t=40 s e t=60 s **uma única cor** `srgb(32,103,178)` cobrindo os 786.432 px, e o QEMU saiu com
   **código 0** (desligamento pedido pelo convidado) mesmo com `NOREBOOT=0`. O mesmo dispositivo
   mostra texto e modo gráfico: a captura acompanha o convidado. O azul não é quadro velho.
-- **Célula AE — o shell do WinPE nunca é alcançado.** `agents/qoder/build-cmd-media.sh` troca,
+- **Célula AE — o shell do WinPE nunca é alcançado.** `build-cmd-media.sh` troca,
   dentro do `boot.wim`, o `winpeshl.ini` que aponta para `X:\sources\recovery\recenv.exe` por
   `AppPath=X:\Windows\System32\cmd.exe`. Resultado idêntico ao AD. Logo o azul é pintado **antes**
   do `winpeshl.exe` — por `winload` ou pelo kernel, não pela interface de recuperação. (Também
@@ -334,7 +334,7 @@ Consequência: F2 é um estado funcional sintético, não uma reprodução da pa
 
 ## 2026-11-17 — E1b: células AH e AJ fecham o que dá para testar sem canal de debug (qoder)
 
-- **AH — tirar o `winload.efi` de dentro do ramdisk não muda nada.** `agents/qoder/build-nowl-media.sh`
+- **AH — tirar o `winload.efi` de dentro do ramdisk não muda nada.** `build-nowl-media.sh`
   apagou os dois caminhos que a imagem traz (`\Windows\System32\Boot\winload.efi` e
   `\Windows\System32\winload.efi`); a mídia `winre-nowl.img` (`d53f813a…`) deu o mesmo azul
   `srgb(32,103,178)` em t=30 s e t=45 s e `exit code 0` aos 60 s. Lido com cuidado, isso não prova
