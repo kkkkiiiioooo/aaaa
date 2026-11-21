@@ -2004,7 +2004,7 @@ derivadas com o digest oficial ao lado).
 > **Procedência:** os dois WIMs foram remontados a partir das partes versionadas em `/tmp` (nunca na
 > árvore de trabalho) e verificados: fábrica 10586 SHA-256 `152addc4…`, 1809 oficial SHA-256
 > `232199c5…` (conferem com `scripts/verify-repo.sh`). Listagens produzidas com `wimlib-imagex dir`.
-> O material bruto está em `inventory/` (listagens completas de caminhos + deltas binários). Este documento é o
+> O material bruto está em `inventory/names-only/` (só nomes de arquivo, divididos por tipo, + deltas binários). Este documento é o
 > resumo curado para que os agentes raciocinem sobre soluções sem repetir a listagem das imagens.
 
 ## Por que isto existe
@@ -2107,17 +2107,15 @@ está disponível. As duas imagens versionadas a delimitam, mas nenhuma é idên
   de tamanho sugere extras (bibliotecas/drivers/programas) que nenhuma das imagens versionadas reproduz por completo.
 
 Delta de binários ativos (sem WinSxS): só-fábrica = 265, só-1809 = 492. Veja
-`inventory/delta-fabrica-only-active.txt` e `inventory/delta-1809-only-active.txt`. Saber
+`inventory/names-only/delta-fabrica-only-active.names.txt` e `inventory/names-only/delta-1809-only-active.names.txt`. Saber
 o delta é necessário, mas pode não ser suficiente: uma biblioteca extra presente só no dispositivo
 poderia importar. Aproximar a imagem atualizada do dispositivo (instalar fábrica, atualizar, depois listar
 programas / construir um ISO) é um TODO aberto — veja `TODO.md`.
 
 ## Arquivos brutos de inventário
 
-- `inventory/winre-1809-files.txt` — listagem completa de caminhos (21230).
-- `inventory/winre-fabrica-10586-files.txt` — listagem completa de caminhos (26461).
-- `inventory/delta-fabrica-only-active.txt` / `delta-1809-only-active.txt` — delta de binários ativos.
-- `inventory/delta-fabrica-only-binaries.txt` / `delta-1809-only-binaries.txt` — delta completo (com WinSxS).
+- `inventory/names-only/winre-1809/<tipo>.txt` e `inventory/names-only/winre-fabrica-10586/<tipo>.txt` — só nomes, únicos, por tipo (executaveis, bibliotecas, drivers, inf, catalogos, manifestos, idiomas, scripts, config, fontes, outros).
+- `inventory/names-only/delta-*.names.txt` — delta de binários (ativos e completo com WinSxS), só nomes.
 
 ## Regra de relato
 
@@ -4076,21 +4074,39 @@ Atualize o Status ao trabalhar (um agente por vez, sem claims). Prioridade suger
 
 # Inventário
 
-Material bruto extraído das duas imagens WIM verificadas (remontadas em `/tmp`, nunca na árvore de trabalho).
-Resumo curado e as descobertas decisivas: `docs/07-inventario-imagens.md`.
+Nomes de arquivo (sem caminho) das duas imagens WIM verificadas: WinRE 1809 oficial e firmware de fábrica 10586.
+Resumo curado e descobertas decisivas: `docs/07-inventario-imagens.md`.
 
-| Arquivo | Conteúdo |
-|---|---|
-| `winre-1809-files.txt` | Listagem completa de caminhos do WinRE 1809 oficial (21230 caminhos). |
-| `winre-fabrica-10586-files.txt` | Listagem completa de caminhos do firmware de fábrica 10586 (26461 caminhos). |
-| `delta-fabrica-only-active.txt` | Binários ativos (exe/dll/sys, sem WinSxS) apenas na imagem de fábrica. |
-| `delta-1809-only-active.txt` | Binários ativos (sem WinSxS) apenas na 1809. |
-| `delta-fabrica-only-binaries.txt` | Delta binário completo apenas na fábrica (inclui WinSxS). |
-| `delta-1809-only-binaries.txt` | Delta binário completo apenas na 1809 (inclui WinSxS). |
+As listagens com caminho completo foram removidas (eram grandes, ~7 MB); continuam no histórico do git
+(commit anterior a este) se for preciso consultar um caminho.
 
-Para regenerar: remonte as partes, rode `wimlib-imagex dir <wim> 1` e compare os conjuntos de caminhos.
-Estas são listagens de texto derivadas das imagens versionadas (não são imagens geradas); ficam versionadas para
-que os agentes possam buscar qualquer ferramenta/arquivo com grep sem refazer a listagem.
+## Estrutura
+
+```
+names-only/
+  winre-1809/<tipo>.txt            nomes únicos, ordenados, um por linha
+  winre-fabrica-10586/<tipo>.txt
+  delta-*.names.txt                binários só numa das imagens (ativos = sem WinSxS; binaries = com WinSxS)
+```
+
+Tipos: `executaveis` (.exe .com .scr .efi), `bibliotecas` (.dll .ocx .cpl .drv .ax .tlb), `drivers` (.sys),
+`inf` (.inf .inf_loc .pnf), `catalogos` (.cat), `manifestos` (.manifest .mum), `idiomas` (.mui .nls),
+`scripts` (.js .vbs .cmd .bat .ps1 ...), `config` (.ini .xml .xsd .reg .mof .mfl .cdxml .dat .cdf-ms),
+`fontes` (.fon .ttf .otf), `outros` (resto, inclui arquivos sem extensão).
+
+Exemplo de busca: `grep -ri cscript inventory/names-only/winre-1809/executaveis.txt`
+Busca em tudo: `grep -rix 'expand.exe' inventory/names-only`
+
+## Para regerar (scripts)
+
+```sh
+wimlib-imagex dir <wim> 1 > /tmp/lista.txt                       # caminhos completos (só em /tmp)
+scripts/extract-basenames.py /tmp/lista.txt -o /tmp/nomes         # tira o caminho
+scripts/dividir-inventario.py /tmp/nomes/lista.names.txt -o inventory/names-only/<imagem>
+```
+
+Limite: sem caminho, não dá para saber se um `.exe`/`.dll` está em `System32` (utilizável pelo `cmd`) ou só em
+`WinSxS`. Existir como nome não prova que roda no WinRE.
 
 ---
 
