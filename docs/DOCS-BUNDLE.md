@@ -188,12 +188,13 @@ Regra prática: **se o trabalho valeria ser feito duas vezes, envie-o agora.**
 
 ## Regras de evidência
 
-- **Testes simulados/simulados são INADMISSÍVEIS como prova.** Um teste que substitui o ambiente
-  real por um mock, stub, fake ou algoritmo só-do-host NÃO é evidência de que a capacidade funciona.
-  Pode ser usado apenas para desenvolver uma implementação, nunca para reivindicar um pass. O teste
-  REAL deve ser executado no ambiente alvo (WinRE inicializado para as ferramentas no convidado;
-  dispositivo físico para reivindicações de Wi-Fi/hardware). Rotule as verificações só-do-host
-  explicitamente como `host-only / não é prova` e não marque um experimento como `passou` por causa delas.
+- **Só vale teste executado DIRETAMENTE no ambiente de recuperação (WinRE inicializado), no QEMU ou no
+  dispositivo físico (decisão do dono, 21/11/2026).** Não crie nem mantenha testes simulados: mock, stub,
+  algoritmo rodado só no host (python/node), convidado Linux no lugar do WinRE, edição de WIM no host
+  apresentada como teste. Rotular como `host-only` não basta: não faça. Ferramentas e scripts que serão
+  digitados/executados dentro do WinRE (`cscript`, `.js`, `.cmd`) são permitidos, mas só contam como
+  funcionando depois de rodar no WinRE real, com a saída da tela registrada. Fatos lidos nos arquivos das
+  imagens (inventário, `strings`) são observação, não teste, e podem ser registrados como tal.
 - Registre comandos, saídas, hashes e carimbos de tempo.
 - Use `experiments/templates/experimento.md`.
 - Separe fatos observados de hipóteses.
