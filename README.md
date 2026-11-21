@@ -43,6 +43,7 @@ O repositório não contém uma imagem completa de instalação do Windows. Ele 
 
 | Caminho | Propósito |
 |---|---|
+| `PROMPT.md` | Painel operacional vivo do agente: missão, foco atual e próxima ação. |
 | `GOAL.md` | Missão, restrições, marcos e critérios de aceitação. |
 | `ANOTACOES-IMPORTANTES.md` | Fatos e evidências canônicos para os agentes. |
 | `AGENTS.md` | Regras de operação para os agentes. |
@@ -56,8 +57,9 @@ O repositório não contém uma imagem completa de instalação do Windows. Ele 
 
 ## Ordem de leitura
 
-1. `GOAL.md`
-2. `ANOTACOES-IMPORTANTES.md`
+1. `PROMPT.md` (painel operacional vivo: missão, foco atual e próxima ação)
+2. `GOAL.md`
+3. `ANOTACOES-IMPORTANTES.md`
 3. `AGENTS.md`
 4. `docs/00-visao-geral.md`
 5. `docs/01-restricoes.md`
