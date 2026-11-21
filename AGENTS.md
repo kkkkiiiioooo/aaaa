@@ -43,6 +43,10 @@ Vários agentes compartilham a `desafio`. Mantenha-se atualizado e nunca sobresc
 
 Só um agente trabalha por vez: não há reivindicação de tarefas nem pasta por agente. Registre o estado em `TODO.md` e `experiments/README.md` e deixe tudo enviado antes de parar; o próximo agente começa pelo repositório.
 
+## Autorização: depuração do QEMU (dono, 21/11/2026)
+
+O dono autorizou ler o código de parada (STOP code) do WinRE **dentro do QEMU**, só para diagnóstico: `-d` (logs do QEMU), `pmemsave`/`dump-guest-memory` pelo monitor, `-debugcon` e serial do kernel do convidado para um destino que o host lê. Isso não é canal de transferência: nada entra nem sai do dispositivo real. Continua proibido `-serial file:` como transferência (`qemu/audit.sh`). Todo resultado assim é `QEMU / não é prova de hardware`.
+
 ## Regra de canais (obrigatória)
 
 O dispositivo **não tem conexão de rede funcional**: sua única NIC, o Wi-Fi BCM4356,

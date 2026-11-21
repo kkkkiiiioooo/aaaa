@@ -92,6 +92,7 @@ arquivo acompanha o plano mais amplo e as ideias do dono. Status: [ ] a fazer, [
   a atualização num caminho inexistente). Os próximos movimentos precisam da decisão do dono: ou autorizar um
   canal de debug para ler o código de parada real, ou encerrar a matriz TCG e tratar o E1b como
   `bloqueado — nenhum console alcançável sem instrumentação`.
+- **E1b — canal de debug AUTORIZADO pelo dono em 21/11/2026** (opção 1; regra em `AGENTS.md`). Próximo: ler o STOP code com `pmemsave`/`-d`/`-debugcon` na mídia `winre-cmd.img`.
 - E3 concluído; veja Feito.
 
 ## Próximo — viável agora, sem KVM
