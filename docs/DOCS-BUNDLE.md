@@ -1,6 +1,6 @@
 # Project documentation bundle
 
-Generated from 36 markdown files (excluding .git, node_modules, symlinks).
+Generated from 32 markdown files (excluding .git, node_modules, symlinks).
 
 ---
 
@@ -412,10 +412,8 @@ Consequência: F2 é um estado funcional sintético, não uma reprodução da pa
 - Nenhum experimento do QEMU foi executado como parte da base.
 - Persistência: o dono deu autorização permanente para commit e push imediatos na `desafio` (veja a regra de persistência do `AGENTS.md`). A antiga regra de "sem commit sem pedido" foi substituída.
 
-## 16/11/2026 — E2 servicing offline + causa-raiz da mídia PCAT (qoder)
+## 16/11/2026 — Fatos dos binários + causa-raiz da mídia PCAT (qoder)
 
-- Mecânica do E2 PASS (lado do host, em cópias): ambas as cargas construídas em ~4 s e relidas
-  byte a byte por SHA-256; `wimlib-imagex verify` OK. `e2-servicing.sh`.
 - O caminho de busca da nvram agora está provado a partir dos binários, não dos nomes de arquivo: AMBOS os builds de `bcmpciedhd63.sys`
   contêm `\SystemRoot\system32\drivers\%04Xr%dnvram.txt` (+ o template de firmware e a
   string `dongle nvram file download failed`). Para o chip 0x4356 rev 2 → `System32\drivers\4356r2nvram.txt`.
@@ -472,7 +470,6 @@ Consequência: F2 é um estado funcional sintético, não uma reprodução da pa
 ## 16/11/2026 — E7 sumidouro de escrita binária (stackai)
 
 - Sem sumidouro binário clássico em nenhuma imagem do WinRE (`certutil` / PowerShell / .NET / ADODB / CDO / WIA / makecab / tar / zipfldr ausentes).
-- Concatenação do alfabeto no host (`scripts/alphabet-decode.py --selftest`) PASS. O método no convidado (`fsutil` NUL + FSO + `copy /b`) é uma hipótese até o E1 inicializar; sondagem: `scripts/winre-fso-probe.js`.
 - Não é prova de hardware. Nvram-primeiro (texto) ainda evita a transferência binária.
 ## 2026-11-17 — E1b células U e V: hipótese do GPT eliminada e o console que já estava ali (qoder)
 
@@ -522,7 +519,7 @@ Consequência: F2 é um estado funcional sintético, não uma reprodução da pa
   `\sources\boot.wim` e o `\EFI\MICROSOFT\BOOT\BCD` da nossa árvore — nunca é montado.
 - **O que isso derruba:** (a) `EFI_BOOT_COPY=1` da célula V nunca teve efeito, pois copia para um
   volume que ninguém lê; (b) o `No mapping` das células S/U/T não era o único obstáculo — mesmo um
-  boot option bem-sucedido cairia num filesystem sem `boot.wim`; (c) E2/E3b continuam dependendo
+  boot option bem-sucedido cairia num filesystem sem `boot.wim`; (c) o E3b continua dependendo
   de resolver isto, porque sem `boot.wim` acessível não há `cmd`.
 - **Duas células isolando as variáveis restantes:** AA = mesma árvore com BCD dentro do ESP
   (`ESPBCD=1`) e SEM tabela de partições (conferido: sem `EFI PART` em LBA 1, MBR@0 `0000`), para
@@ -850,20 +847,6 @@ arquivo acompanha o plano mais amplo e as ideias do dono. Status: [ ] a fazer, [
 - [x] Inventariar as duas imagens: executáveis, DLLs, drivers, ferramentas de reconstrução, ferramentas de canal
   e o delta fábrica-vs-1809. (docs/07-inventario-imagens.md, inventory/)
 - [x] Adicionar orientação de pensamento de solução para que os agentes proponham abordagens proativamente. (AGENTS.md)
-- [x] E2 - mecânica de servicing offline (lado do host, em cópias do WIM WinRE 1809 oficial). Resultado:
-  `host-only / não é prova` — re-rotulado em 17/11/2026 para seguir a regra de evidência adicionada ao `AGENTS.md`; o
-  servicing em si rodou de verdade e é reproduzível, mas nenhum WinRE inicializado e nenhum dispositivo foi exercitado.
-  As duas cargas (H1 só nvram, H2 troca de pacote) constroem em segundos, relê-se byte-idêntico por SHA-256 e passam
-  `wimlib-imagex verify`. Novos fatos medidos: os binários `.sys` embutem
-  \`SystemRoot\system32\drivers\%04Xr%dnvram.txt` (=> `4356r2nvram.txt`) e o template de firmware correspondente; na
-  imagem de fábrica nem `bcmpciedhd63.sys` nem o firmware renomeado ficam implantados em `System32\drivers`, então a
-  carga mínima de runtime é provavelmente dois arquivos (firmware 0,64 MB + nvram 5,4 KB), não um; `devcon.exe` está
-  ausente do WinRE enquanto `pnputil.exe`, `dism.exe`, `drvload.exe` e `cmd.exe` estão presentes. Os hashes de contêiner
-  não se reproduzem entre builds (o wimlib carimba Last Modification Time). Owner: qoder.
-  (experiments/E2-offline-servicing.md, docs/03)
-- [x] E3 - prova do canal de texto digitado: nvram (5361 B, TEXTO) digitada por teclado touch simulado num convidado
-  sem rede, reconstruída byte a byte, hash conferido (PASS). O controle de fluxo com ACK corrigiu as
-  quedas de teclas. Owner: aaaa2. (experiments/E3-typed-text-channel.md)
 
 ## Em andamento
 
@@ -930,7 +913,6 @@ arquivo acompanha o plano mais amplo e as ideias do dono. Status: [ ] a fazer, [
   canal de debug para ler o código de parada real, ou encerrar a matriz TCG e tratar o E1b como
   `bloqueado — nenhum console alcançável sem instrumentação`.
 - **E1b — canal de debug AUTORIZADO pelo dono em 21/11/2026** (opção 1; regra em `AGENTS.md`). Próximo: ler o STOP code com `pmemsave`/`-d`/`-debugcon` na mídia `winre-cmd.img`.
-- E3 concluído; veja Feito.
 
 ## Próximo — viável agora, sem KVM
 
@@ -938,12 +920,12 @@ arquivo acompanha o plano mais amplo e as ideias do dono. Status: [ ] a fazer, [
   `echo >>` / `notepad`), depois hash. Precisa que o WinRE inicialize (ver diagnóstico de BSOD abaixo). A nvram
   é texto, então nenhum decodificador binário é necessário.
 - [ ] Teste de carga mínima (ideia do dono): determinar se só a nvram (H1) basta, evitando qualquer
-  transferência binária. O E2 restringiu: a observação decisiva é uma única listagem de diretório no dispositivo
+  transferência binária. A observação decisiva é uma única listagem de diretório no dispositivo
   vivo, `dir C:\Windows\System32\drivers\4356*` — se `4356r2rtecdc.bin` está lá e
   `4356r2nvram.txt` não está, nvram-only é o patch inteiro; se nenhum dos dois está, a carga é também o
   firmware (binário de 0,64 MB, que precisa do sumidouro binário do E7) e possivelmente o `.sys`. Bloqueado em
   conseguir um console (E1b).
-- [~] Método de reconstrução binária (PROBLEMA ABERTO) — Owner: stackai (E7, inventário+algoritmo no host; teste no WinRE
+- [~] Método de reconstrução binária (PROBLEMA ABERTO) — Owner: stackai (E7; teste só no WinRE real,
   bloqueado no E1): certutil, PowerShell, .NET e ADODB.Stream
   estão todos AUSENTES. MSXML decodifica base64, mas escrever bytes brutos não tem sumidouro óbvio. Investigar
   um método texto->binário funcional com as ferramentas existentes (docs/07). Não reivindique que funciona até
@@ -1325,9 +1307,9 @@ O INF do inbox não. Este é o delta de nvram.
 
 O H2 é primário: o driver de 2017 é a regressão. O H1 é secundário: se a instalação do pacote OEM não copiar a nvram, a nvram precisa ser colocada separadamente em `System32\drivers`.
 
-## Confirmado offline (E2, 16/11/2026)
+## Confirmado nos arquivos (análise estática)
 
-`experiments/E2-offline-servicing.md` transformou três pontos acima de inferência em medição. Nenhum deles é evidência de hardware.
+Três pontos acima foram verificados lendo os arquivos das imagens (análise estática, sem executar nada). Nenhum deles é evidência de hardware.
 
 1. Os caminhos de busca estão embutidos nos binários, não só implícitos pelo INF. `strings` sobre **ambos** os builds de `bcmpciedhd63.sys` (inbox 1.558.53.25 e OEM 1.558.14.0) devolve os mesmos templates e o mesmo caminho de falha:
 
@@ -1345,10 +1327,9 @@ O H2 é primário: o driver de 2017 é a regressão. O H1 é secundário: se a i
 2. Na imagem WinRE da fábrica o driver está **preparado, não implantado**. `System32\drivers` contém 295 arquivos `.sys` e este não é um deles; `bcmpciedhd63.sys` e `4356a2rtecdc.bin` existem só em `DriverStore\FileRepository` e no componente `WinSxS`. Então as cópias de runtime *tanto do firmware quanto da nvram* dependem do estágio PnP `CopyFiles` ter rodado. A carga mínima é, portanto, dois arquivos (firmware OEM de 641.951 bytes mais nvram de 5.361 bytes) e não um, e possivelmente três — isso só se resolve listando o diretório vivo no dispositivo.
 3. `devcon.exe` **não** está presente na imagem do WinRE. A opção 2 acima ("forçar o pacote OEM com `devcon update`") exige trazer a ferramenta. `pnputil.exe`, `dism.exe`, `cmd.exe`, `drvload.exe`, `setupapi.dll` e `newdev.dll` estão presentes, e o hive SYSTEM está dentro do WIM, então `pnputil /add-driver` e o trabalho com o registro offline são alcançáveis do console de recuperação.
 
-Duas armadilhas operacionais descobertas ao fazer isso:
+Armadilha operacional:
 
 - O INF do inbox é UTF-16LE (BOM `ff fe`); o INF do OEM é ASCII. Buscar `nvram` no INF do inbox com grep sem decodificar devolve 0 ocorrências pelo motivo errado. Use `iconv -f UTF-16LE -t UTF-8` antes.
-- `wimlib-imagex update` carimba o `Last Modification Time` da imagem com o relógio do host, então dois builds com conteúdo idêntico produzem hashes de contêiner diferentes. Fixe os digests no build final, após a última reconstrução.
 
 ## Comportamento do servicing offline
 
@@ -1419,7 +1400,7 @@ Ambas precisam de um Windows completo inicializável com PnP (o repositório ver
 por velocidade, não estritamente necessário - o TCG consegue inicializar o Windows devagar; este sandbox não tem
 `/dev/kvm` e um boot anterior do WinRE deu BSOD sob TCG (não diagnosticado). Um agente com KVM deve executá-los.
 São hipóteses, não resultados. Uma reprodução sintética do sintoma nunca é prova de hardware.
-A transferência de texto digitado da nvram pequena (E3) é viável agora sem KVM - veja `docs/04`.
+A digitação da nvram no WinRE real é o E3b (bloqueado no E1b).
 
 ## Referências
 
@@ -1428,7 +1409,6 @@ A transferência de texto digitado da nvram pequena (E3) é viável agora sem KV
 - `docs/05-offline-servicing.md`
 - `docs/08-checklist-hardware.md`
 - `experiments/E1-baseline-winre.md`
-- `experiments/E2-offline-servicing.md`
 
 ---
 
@@ -1956,7 +1936,6 @@ Consequências:
 | `winre-1809-254MB/` (partes + `SHA256SUMS`) | a própria imagem derivada, ainda versionada | **distribuição** |
 | `experiments/E0.1-base-provenance.md` | registra os metadados do WIM e diz que não há hash oficial de referência | qualificado |
 | `experiments/E0.2-repo-verification.md` | contagem de partes e hashes de remontagem | só-mecânica |
-| `experiments/E2-offline-servicing-wimlib.md` | remove/adiciona drivers numa cópia do WIM | só-mecânica |
 | `docs/03-*`, `docs/04-*`, `docs/05-*` | mesmo texto da `desafio` antes desta auditoria | condicional |
 | `drivers/README*`, `drivers/estado-dispositivo/README.md`, `drivers/nvram-delta/README.md` | mesmas afirmações de extração | condicional |
 | `scripts/verify-repo.sh` | espera as partes derivadas | só-mecânica |
@@ -2144,122 +2123,6 @@ programas / construir um ISO) é um TODO aberto — veja `TODO.md`.
 Este inventário é fato observado (presença de arquivos nas imagens verificadas). Reivindicações de
 *capacidade* de ferramenta (ex. "MSXML consegue escrever binário aqui") são hipóteses até testadas num WinRE inicializado.
 Nenhum resultado do QEMU é prova de hardware.
-
----
-
-## FILE: docs/08-data-transfer.md
-
-# 08 — Transferência de dados (texto digitado → arquivo no WinRE)
-
-Documento de referência: **o que está provado, o que não está, e o método exato** para levar dados ao aparelho.
-Regra de evidência de `AGENTS.md`: QEMU/host nunca é prova de hardware; mock nunca é prova.
-
-## 1. Resposta direta: existe registro de base64 funcionando?
-
-**Não.** Busca em todo o repositório (`grep -ri base64`, histórico de commits, `experiments/`, `docs/`, `prompts/`):
-
-- `base64` aparece só como **opção citada** (`GOAL.md`, `README.md`, `qemu/README.md`, `ANOTACOES-IMPORTANTES.md`: "hex/base64") e em `experiments/E7-binary-write-sink.md` ("MSXML decodifica base64 num array de bytes", **não provado**).
-- Nenhum experimento registra base64 digitado e reconstruído, nem no WinRE real nem em convidado.
-- Se um agente fez isso numa conversa antiga, **não foi registrado no repo**. Para registrar: informe qual agente/conversa (ou cole o método) e eu documento aqui como "relato do dono, não verificado" até haver experimento.
-
-O que **está registrado e provado**:
-
-| Item | Resultado | Onde | Limite |
-|---|---|---|---|
-| Hex digitado → arquivo, nvram 5.361 B, SHA-256 confere | PASS | `experiments/E3-typed-text-channel.md` | Convidado **Linux busybox**, não WinRE. Usou ACK pela serial, que **não existe no aparelho** |
-| Mesmo canal sem ACK, ritmo fixo | FALHOU (5317/5361 B) | E3 (nota de método) | Teclas perdidas quando o convidado atrasa |
-| Reconstrução no WinRE (E3b) | **Bloqueado** | `experiments/E3b-ascii-hash-prep.md` | Depende do E1/E1b alcançar o `cmd` |
-| Sumidouro binário (E7) | **Não provado** | `experiments/E7-binary-write-sink.md` | Depende do E1/E1b |
-
-## 2. Fatos medidos agora (host-only, NÃO é prova de WinRE)
-
-Comando: `python3 scripts/compare-hex-b64.py <arquivos>` (decodificadores ES3 em `scripts/hex-b64-es3.js`, sem `atob`/`Buffer`, estilo JScript; linhas de 120 caracteres; round-trip com SHA-256).
-
-| Arquivo | Bytes | Chars hex | Chars base64 | b64/hex | Especiais do `cmd` (hex/b64) | Round-trip hex | Round-trip b64 |
-|---|---|---|---|---|---|---|---|
-| `4356r2nvram.txt` | 5.361 | 10.722 | 7.148 | 0,667 | 0/0 | PASS | PASS |
-| `4356a2rtecdc.bin` (firmware) | 641.951 | 1.283.902 | 855.936 | 0,667 | 0/0 | PASS | PASS |
-| `bcmpciedhd63.sys` | 1.037.824 | 2.075.648 | 1.383.768 | 0,667 | 0/0 | PASS | PASS |
-
-Leitura:
-
-- **Algoritmo** de hex e de base64 reconstrói byte a byte (host). Isso só prova a matemática, não o WinRE.
-- Base64 tem **33% menos caracteres** que hex.
-- Base64 exige **muito mais maiúsculas e símbolos**: na nvram, 3.656 dos 7.148 caracteres não são minúscula nem dígito. No teclado touch isso significa trocar de modo (shift/símbolos) com frequência, mais toques por caractere e mais risco de autocorreção/auto-capitalização. Hex usa só `0-9a-f` (um modo do teclado, sem maiúscula) — **hipótese** H-B6/H-B7, não medida no TabTip.
-- Nenhum dos dois contém caracteres especiais do `cmd` (`^ & | < > % ! " ( )`). `=` (padding), `+` e `/` do base64 não foram testados no `cmd` do WinRE.
-
-Fatos da nvram (`drivers/nvram-delta/4356r2nvram.txt`):
-
-- 5.361 B, 222 linhas, **terminadores LF (sem CRLF)**, último byte `0x0A`, 100% ASCII imprimível.
-- Só **1** caractere especial do `cmd`: um `&`. Isso importa para quem pensar em digitar o texto direto com `echo`.
-- SHA-256 `a7a0a8fb9abfa877675dc7126ae2bde54c4695088543ddbaaa0a49140d9b4667`.
-- Cuidado conhecido: o FSO no Windows pode converter LF em CRLF; só um teste no WinRE responde se o último byte e os LF saem idênticos (E3b "ainda não observado").
-
-## 3. Ponto crítico: a escolha hex vs base64 não resolve o problema binário
-
-- **nvram (texto ASCII):** não é problema binário. Hex ou base64 funcionam em tese; o que decide é o teclado e o decodificador disponível no WinRE.
-- **firmware (641.951 B) e `.sys` (1.037.824 B):** são binários. Os dois encodings precisam de um **sumidouro binário** (escrever bytes 0x00–0xFF). Sem `certutil`, PowerShell, .NET e ADODB (ausentes, E7), o FSO escreve só texto. Proposta do E7: 256 arquivos de 1 byte + `copy /b` (**não provada**).
-- **Volume digitado:** firmware em hex = 1.283.902 caracteres; em base64 = 855.936. Digitar isso à mão no touch é, na prática, inviável. Por isso a hipótese **H-B13** (o firmware já existe localmente e só precisa ser copiado/renomeado, sem digitar) é a mais valiosa a verificar antes de qualquer transferência binária.
-- **MSXML + base64** (`dataType="bin.base64"`): decodifica para array de bytes, mas ainda falta como gravar esses bytes em arquivo. Só serve se existir um gravador binário.
-
-## 4. Método exato conhecido (E3b) — texto ASCII, ainda não provado no WinRE
-
-Fonte: `experiments/E3b-ascii-hash-prep.md`, `scripts/winre-ascii.js`, `scripts/prepare-ascii-transfer.py`.
-
-1. Gerar a folha no host: `python3 scripts/prepare-ascii-transfer.py --chunk-size 128 > /tmp/e3b-sheet.md` (42 pedaços de 128 B, um comando por pedaço com SHA-256).
-2. No `cmd` do WinRE: `md "%TEMP%\mipad-e3b"`, `cd /d "%TEMP%\mipad-e3b"`, `notepad ascii.js`.
-3. Digitar o `ascii.js` no Notepad (salvar como **ANSI**, nome `ascii.js` e não `ascii.js.txt`).
-4. `cscript //nologo ascii.js selftest`.
-5. Digitar um pedaço por vez; conferir o ACK **na tela** (não há serial).
-6. Verificar: `cscript //nologo ascii.js verify 4356r2nvram.txt 5361 a7a0a8fb9abfa877675dc7126ae2bde54c4695088543ddbaaa0a49140d9b4667`
-7. Antes da nvram completa: sonda curta de CRLF/espaços finais/metacaracteres (`scripts/winre-fso-probe.js`).
-
-Diferença chave em relação ao E3: no E3 o ACK vinha pela porta serial; no aparelho o único retorno é a **tela**. O controle de fluxo real é humano: digitar, ler o resultado, seguir.
-
-## 5. O que falta para fechar (testes necessários)
-
-Ordem recomendada, cada item com o que refuta:
-
-1. **Alcançar o `cmd` no WinRE** (E1b, dono: qoder) — desbloqueia tudo. Sem isso, nada abaixo é prova.
-2. H-B3: `cscript` + JScript + FSO executam? (`where cscript`, `cscript //nologo` com `.js` mínimo)
-3. H-B1/H-B2: TabTip digita no `cmd`; limite de linha.
-4. **Hex no WinRE** (E3b): nvram completa, hash confere. Refutação: bytes perdidos, LF virando CRLF, hash divergente.
-5. **Base64 no WinRE:** repetir a mesma nvram em base64 com `scripts/hex-b64-es3.js` adaptado a `WScript`/FSO; comparar taxa de erro de digitação e tempo com o hex.
-6. Sumidouro binário (E7): `fsutil file createnew` + FSO + `copy /b`; só então fazer sentido o firmware.
-7. H-B13: procurar o firmware já local antes de qualquer digitação.
-
-Decisão provisória (marcada como hipótese): **hex para a nvram primeiro**, porque é o único caminho com PASS registrado (E3), usa um único modo de teclado e não tem caracteres especiais; **base64 como segunda rodada** para comparar, pois reduz 33% o volume.
-
-## 6. Artefatos desta rodada
-
-- `scripts/hex-b64-es3.js` — decodificadores ES3 hex/base64 (teste de host).
-- `scripts/compare-hex-b64.py` — comparação e round-trip (teste de host).
-- Status: **host-only / não é prova**. Nenhuma execução em WinRE ou hardware.
-
----
-
-## FILE: docs/09-compressao-antes-de-digitar.md
-
-# H-B12 - Compressao antes de digitar (host-only, NAO e prova)
-
-Medido em 21/11/2026 no sandbox (python3 zlib/bz2/lzma). Nada foi testado no WinRE.
-
-| Arquivo | Bytes | Melhor compressor | Comprimido | Hex digitado | Base64 digitado |
-|---|---|---|---|---|---|
-| 4356r2nvram.txt | 5.361 | lzma (0,321) | 1.720 | 3.440 (era 10.722) | 2.296 (era 7.148) |
-| 4356r2nvram.txt | 5.361 | zlib-9 (0,338) | 1.810 | 3.620 | 2.416 |
-| 4356a2rtecdc.bin | 641.951 | lzma (0,540) | 346.952 | 693.904 (era 1.283.902) | 462.604 (era 855.936) |
-| 4356a2rtecdc.bin | 641.951 | zlib-9 (0,637) | 408.635 | 817.270 | 544.848 |
-
-## Leitura
-- Hipotese H-B12 sustentada **so no host**: a nvram cai ~68% (10.722 -> 3.440 chars em hex). O firmware cai 46% no melhor caso, mas ainda sao ~700 mil caracteres: inviavel digitar.
-- Custo escondido: o dispositivo precisa de um **descompressor ja presente** no WinRE. Compressao so vale se existir `expand.exe`/`makecab`/`extrac32` (CAB MSZIP/LZX) na imagem. Inventario (`inventory/winre-1809-files.txt`) lista `/Windows/System32/expand.exe` no WinRE 1809 (existencia em arquivo, nao execucao). `makecab` nao confirmado. Falta `where expand` + teste no WinRE real.
-- Para a nvram (5,4 KB) o ganho absoluto e pequeno (~7 mil caracteres) e adiciona um passo binario (o CAB e binario, cai no problema do sumidouro E7). Recomendacao provisoria (hipotese): **nao comprimir a nvram**; digitar ASCII direto.
-- RLE simples quase nao ajuda (5.361 -> 5.328).
-
-## Refuta / proximo
-- Refutaria utilidade: se `expand.exe` nao existir no WinRE real.
-- Proximo: H-B13 (firmware ja local) segue sendo o ganho maior; evita digitar os 641.951 B.
 
 ---
 
@@ -2568,7 +2431,6 @@ O QEMU não pode confirmar o resultado do rádio. Pode confirmar que o arquivo e
 - `drivers/README.md`
 - `docs/03-driver-wifi-erro-10.md`
 - `docs/05-offline-servicing.md`
-- `experiments/E2-offline-servicing.md`
 
 ---
 
@@ -3728,318 +3590,6 @@ _(pendente)_
 
 - `qemu/README.md` (estado do boot do WinRE, BSOD antes não diagnosticado)
 - `docs/04-fidelidade-mimetizacao.md` (definição de F1), `docs/01-restricoes.md`
-- `experiments/E3-typed-text-channel.md` (a prova de canal de que a E3b depende deste)
-
----
-
-## FILE: experiments/E2-offline-servicing.md
-
-# Experimento E2 — Mecânica de servicing offline (cirurgia de WIM no lado do host) e o caminho exato de busca da nvram
-
-## Objetivo
-
-Pergunta única: a carga de que H1 e H2 precisam (colocar a nvram da placa em `System32\drivers`, e/ou substituir o pacote Wi-Fi inbox 2017 pelo pacote OEM 2015) pode ser produzida offline, de forma reproduzível, com verificação a nível de bytes — e onde exatamente o driver procura esses arquivos em runtime?
-
-Segunda pergunta respondida no caminho: qual é a menor carga que plausivelmente corrigiria o dispositivo, porque o tamanho da carga é a restrição vinculante do canal de entrada de texto digitado.
-
-## Nível de fidelidade
-
-`somente metadados` para a reivindicação de hardware, bytes reais no lado do host para a reivindicação de mecânica.
-
-- Exato: o WIM real do WinRE 1809 oficial é usado, nunca modificado no lugar; cada arquivo inserido é comparado por SHA-256 com a cópia no repositório; o round-trip LZMS é verificado com `wimlib-imagex verify`.
-- Aproximado: nada foi inicializado, nada rodou no Mi Pad 2, o nome da pasta do DriverStore é um placeholder, e o índice de drivers do registro não foi tocado. Portanto este experimento não diz nada sobre se a correção funciona.
-
-## Pré-condições
-
-- Imagem de origem: `qemu/work/winre1809.wim` (cópia do `WinRE.wim` do WinRE 1809 oficial, LZMS, chunk 131072, 21.230 caminhos, índice de imagem 1, "Microsoft Windows Recovery Environment (x64)").
-- Carga: `drivers/mipad2-oficial/wifi/` (17 arquivos, OEM `oem25.inf` 1.558.14.0) e `drivers/nvram-delta/4356r2nvram.txt` (5.361 bytes).
-- Estado de baseline para comparação: `drivers/estado-dispositivo/` (inbox `bcmwdidhdpcie.inf` 1.558.53.25, 4 arquivos, sem nvram).
-- Ferramentas: `wimlib 1.13.5`, `coreutils`, `grep`, `strings`, `iconv`.
-- Espaço livre: ~1,1 GB para duas cópias extra do WIM. `/data` tinha > 40 GB livres.
-- Nada no dispositivo é tocado, então nenhum backup do dispositivo é exigido para este experimento.
-
-## Ambiente
-
-- Data: 16/11/2026 (UTC)
-- Host: sandbox na nuvem, Linux `5.10.134-013.10.1.kangaroo.al8.x86_64` (x86-64)
-- Virtualização: não usada neste experimento (só trabalho com arquivos no host)
-- Versões das ferramentas: `wimlib-imagex 1.13.5 (using wimlib 1.13.5)`
-- Hashes das imagens (SHA-256, 12 primeiros): WIM de origem `232199c58511`; nvram `a7a0a8fb9abf`; OEM `oem25.inf` `e09bef8b9ded`; OEM `.sys` `ddbac3436533`; inbox `.inf` `2162ce513cca`
-
-## Comandos
-
-Driver, roteirizado, idempotente, opera só sobre cópias: `e2-servicing.sh`.
-
-```sh
-# 0. inventário de baseline da origem intocada
-wimlib-imagex dir qemu/work/winre1809.wim 1 > baseline.txt
-
-# 1. H1 (rótulo do repositório): colocar só a nvram onde o .sys diz que procura
-cp qemu/work/winre1809.wim e2/WinRE-h1.wim
-wimlib-imagex update e2/WinRE-lite.wim 1 \
-  --command="add drivers/nvram-delta/4356r2nvram.txt /Windows/System32/drivers/4356r2nvram.txt"
-
-# 2. H2 (rótulo do repositório): remover o pacote inbox, inserir o pacote OEM, inserir a nvram,
-#    e adicionalmente preparar o pacote OEM inteiro para um pnputil no lado do dispositivo
-cp qemu/work/winre1809.wim e2/WinRE-serviced.wim
-wimlib-imagex update e2/WinRE-serviced.wim 1 <<EOF
-delete --recursive /Windows/System32/DriverStore/FileRepository/bcmwdidhdpcie.inf_amd64_977dcc915465b0e9
-add drivers/mipad2-oficial/wifi /Windows/System32/DriverStore/FileRepository/oem25.inf_amd64_0000000000000000
-add drivers/nvram-delta/4356r2nvram.txt /Windows/System32/DriverStore/FileRepository/oem25.inf_amd64_0000000000000000/4356r2nvram.txt
-add drivers/nvram-delta/4356r2nvram.txt /Windows/System32/drivers/4356r2nvram.txt
-add drivers/mipad2-oficial/wifi /Windows/Temp/mipad2-wifi
-add drivers/nvram-delta/4356r2nvram.txt /Windows/Temp/mipad2-wifi/4356r2nvram.txt
-EOF
-
-# 3. re-leitura a nível de bytes
-wimlib-imagex extract e2/WinRE-serviced.wim 1 \
-  /Windows/System32/DriverStore/FileRepository/oem25.inf_amd64_0000000000000000/oem25.inf --dest=verify
-wimlib-imagex verify e2/WinRE-h1.wim
-wimlib-imagex verify e2/WinRE-serviced.wim
-
-# 4. a evidência de INF/caminho que guiou o design (os arquivos INF são UTF-16LE, então iconv antes)
-iconv -f UTF-16LE -t UTF-8 \
-  drivers/estado-dispositivo/bcmwdidhdpcie.inf_amd64_977dcc915465b0e9/bcmwdidhdpcie.inf > inbox-inf.txt
-grep -c nvram inbox-inf.txt
-strings drivers/estado-dispositivo/bcmwdidhdpcie.inf_amd64_977dcc915465b0e9/bcmpciedhd63.sys | grep nvram
-```
-
-Nota sobre a sintaxe do wimlib descoberta ao executar isto: `wimlib-imagex dir` não recebe `--iter` para um WIM de arquivo único (com `--iter=1` ele não imprime nada, o que silenciosamente produziu resultados "0 caminhos" numa execução anterior); o `delete` de um diretório exige a opção `--recursive` (`delete --recursive <caminho>`); um glob (`<caminho>/*`) é rejeitado como caminho inexistente; e `--command` pode ser passado só uma vez, então scripts de várias etapas devem ir pelo stdin.
-
-## Saída observada
-
-```text
-[22:49:36] === 0. linha de base (source nunca é modificada) ===
-[22:49:36] src = /data/aaaa/qemu/work/winre1809.wim (266283224 bytes)
-[22:49:36] paths na imagem: 21230
-[22:49:36] pacote inbox no FileRepository: 5 paths
-[22:49:36] cópias do componente no WinSxS: 6 paths
-[22:49:36] INF inbox em /Windows/INF: 1
-[22:49:36] nvram já presente na imagem: 0
-[22:49:36] arquivos *.bin em /Windows/System32/drivers: 0
-
-[22:49:37]   /Windows/System32/drivers/4356r2nvram.txt: IGUAL (5361 bytes, sha256 a7a0a8fb9abf)
-[22:49:37]   WIM antes/depois: 266283224 / 267640004 bytes (delta 1356780)
-
-[22:49:42] update completo: 4339 ms
-[22:49:42] paths inbox no FileRepository após delete: 0
-[22:49:42] paths inbox ainda no WinSxS: 6
-[22:49:42] paths OEM no FileRepository: 19
-[22:49:42] WIM antes/depois: 266283224 / 270616246 bytes (delta 4333022)
-
-[22:49:43]   .../oem25.inf: IGUAL
-[22:49:43]   .../bcmpciedhd63.sys: IGUAL
-[22:49:43]   .../bcmpciedhd63.cat: IGUAL
-[22:49:43]   .../4356a2rtecdc.bin: IGUAL
-[22:49:43]   .../bcm94356wlpagbl_P3_150828M.txt: IGUAL
-[22:49:44]   /Windows/System32/drivers/4356r2nvram.txt: IGUAL
-
-[22:49:50]   WinRE-lite.wim (H1): "... was successfully verified."
-[22:49:56]   WinRE-serviced.wim (H2): "... was successfully verified."
-
-[22:49:56]   pnputil.exe: /Windows/System32/pnputil.exe
-[22:49:56]   dism.exe: /Windows/System32/Dism.exe
-[22:49:56]   cmd.exe: /Windows/System32/cmd.exe
-[22:49:56]   drvload.exe: /Windows/System32/drvload.exe
-[22:49:56]   devcon.exe: AUSENTE
-[22:49:56]   setupapi.dll: /Windows/System32/setupapi.dll
-[22:49:56]   newdev.dll: /Windows/System32/newdev.dll
-[22:49:56]   hive SYSTEM na imagem: 1
-```
-
-A evidência de INF/binários coletada na mesma sessão:
-
-```text
-# inbox INF (UTF-16LE, v1.558.53.25), decodificado com iconv
-grep -c nvram inbox-inf.txt          -> 0
-[BCM43XAC_NT62_4356.files]           (linha 99)
-	4356r2rtecdc.bin,4356a2rtecdc.bin,,6      <- firmware renomeado, SIM
-                                                <- linha de nvram: NÃO EXISTE
-[DestinationDirs]
-	BCM43XAC_NT62_4356.files = 12
-
-# OEM INF (ASCII, v1.558.14.0)
-[BCM43XAC_NT62_4356.files]           (linha 239)
-	4356r2rtecdc.bin,4356a2rtecdc.bin,,6
-	4356r2nvram.txt,bcm94356wlpagbl_P3_150828M.txt,,6   <- a única diferença
-[DestinationDirs]
-	BCM43XAC_NT62_4356.files = 12
-
-# strings idênticas nos dois bcmpciedhd63.sys (inbox 1.558.53.25 e OEM 1.558.14.0)
-\SystemRoot\system32\drivers\%dr%drtecdc.bin
-\SystemRoot\system32\drivers\%04Xr%drtecdc.bin
-\SystemRoot\system32\drivers\%dr%dnvram.txt
-\SystemRoot\system32\drivers\%04Xr%dnvram.txt
-nvram path set to %s
-dhdpcie_download_nvram
-%s: dongle nvram file download failed
-
-# onde o .sys e o firmware realmente ficam na imagem factory (baseline.txt)
-bcmpciedhd63.sys: apenas 2 ocorrências
-  /Windows/System32/DriverStore/FileRepository/bcmwdidhdpcie.inf_amd64_977dcc915465b0e9/bcmpciedhd63.sys
-  /Windows/WinSxS/amd64_dual_bcmwdidhdpcie.inf_.../bcmpciedhd63.sys
-4356a2rtecdc.bin: apenas as mesmas 2 regiões (FileRepository e WinSxS)
-/Windows/System32/drivers/*.sys: 295 arquivos, bcmpciedhd63.sys NÃO está entre eles
-```
-
-## Artefatos e hashes
-
-| Caminho | SHA-256 | Tamanho |
-|---|---|---|
-| `qemu/work/winre1809.wim` (origem, intocada) | `232199c585111bfae71ff00dbdcabe5c75195fc9b431eb4d1711b8a7e471eb6c` | 266.283.224 |
-| `qemu/work/e2/WinRE-lite.wim` (H1, só nvram) | `253ad2301c592a402e9a722195694f87e002347709fb447a07ee7ab7320d59fa` | 267.640.004 |
-| `qemu/work/e2/WinRE-serviced.wim` (H2, troca de pacote) | `3bf63522b45d1705d8fda0f333f26de627fafd9f889398d7273217977fa5f158` | 270.616.246 |
-| `drivers/nvram-delta/4356r2nvram.txt` (carga) | `a7a0a8fb9abfa877675dc7126ae2bde54c4695088543ddbaaa0a49140d9b4667` | 5.361 |
-| `drivers/mipad2-oficial/wifi/oem25.inf` | `e09bef8b9deded6637f8ac64285b8b6625a6da51a4c3693ad96848bed1ce3ba9` | 279 |
-| `drivers/mipad2-oficial/wifi/bcmpciedhd63.sys` | `ddbac343653389cf1e1817f8590427fe2a610107dc8a6872d96c209183d330e2` | 1.041.320 |
-| `drivers/estado-dispositivo/.../bcmwdidhdpcie.inf` (inbox) | `2162ce513ccaef946ff34e22ac43340c6afd59168bb2ae9e3d3f349acecc0731` | — |
-
-Os WIMs são ignorados pelo `.gitignore` (`*.wim`, `qemu/work/`); eles ficam no sandbox como saídas reproduzíveis do script, não como conteúdo do repositório.
-
-O script rodou duas vezes de ponta a ponta (22:49 e 22:53 UTC) e os digests acima são da primeira execução. Tamanhos e o digest de cada arquivo inserido se reproduziram exatamente. Os digests dos contêineres **não** se reproduziram: `wimlib-imagex update` carimba o `Last Modification Time` da imagem com o relógio do host (verificado — as imagens serviced reportam `Mon Nov 16 22:53:16 2026 UTC` enquanto a origem ainda reporta `Sat Sep 15 10:02:34 2018 UTC`), então um WIM reconstruído não é bit-idêntico a um build anterior mesmo quando o seu conteúdo é idêntico. A reprodutibilidade aqui é, portanto, a nível de conteúdo (SHA-256 por arquivo), não de contêiner; qualquer hash fixado num manifesto de transferência deve ser retirado do build final, não prometido antecipadamente.
-
-## Interpretação
-
-### Fatos observados
-
-1. As duas variantes de servicing executam limpas sobre uma cópia da imagem oficial real, em segundos (4,3 s para o script completo de seis comandos), e cada arquivo inserido é relido idêntico byte a byte por SHA-256. Ambos os WIMs resultantes passam `wimlib-imagex verify`.
-2. O caminho de busca da nvram não é mais uma inferência a partir dos nomes de arquivo. Ambos os binários do driver — o inbox de 2017 atualmente instalado e o OEM de 2015 — contêm os mesmos templates literais `\SystemRoot\system32\drivers\%04Xr%dnvram.txt` e `\SystemRoot\system32\drivers\%dr%dnvram.txt`, mais a string de falha `dongle nvram file download failed`. Para o chip 0x4356 rev 2 isso resolve para `C:\Windows\System32\drivers\4356r2nvram.txt`, que é exatamente como o arquivo da placa é nomeado em `drivers/nvram-delta/`.
-3. A única diferença funcional entre as duas seções `[BCM43XAC_NT62_4356.files]` é a linha de cópia da nvram. O INF do inbox renomeia o firmware (`4356r2rtecdc.bin,4356a2rtecdc.bin,,6`) mas nunca copia uma nvram; o INF do OEM renomeia o txt da placa para `4356r2nvram.txt` no mesmo dirid 12 (`%SystemRoot%\System32\drivers`). Os dois INFs apontam para o mesmo diretório de busca que os binários embutem.
-4. Na imagem WinRE de fábrica, nem `bcmpciedhd63.sys` nem `4356a2rtecdc.bin` existem sob `System32\drivers` — eles existem só no DriverStore FileRepository e no componente WinSxS. Então o driver está preparado, não implantado: as cópias de runtime são criadas pelo setup/PnP no momento da instalação, que é onde a linha da nvram importa.
-5. `pnputil.exe`, `dism.exe`, `cmd.exe`, `drvload.exe`, `setupapi.dll` e `newdev.dll` estão todos presentes na imagem do WinRE, e o hive SYSTEM está dentro do WIM. Injeção de driver no lado do dispositivo e trabalho com o registro offline são ambos possíveis do console de recuperação; `devcon.exe` não está disponível.
-6. Custo: adicionar o único arquivo de nvram cresce o WIM LZMS em 1.356.780 bytes; a troca completa do pacote o cresce em 4.333.022 bytes (os dois números são inflados pelo wimlib recomprimindo com uma thread e não são uma estimativa de transferência).
-
-### Hipóteses (não provadas aqui)
-
-- H1 como o repositório o define (posicionamento da nvram) é agora a opção mais barata e mais precisamente direcionada: colocar só `4356r2nvram.txt` em `System32\drivers` pode bastar para o *inbox* driver iniciar o dispositivo, porque o binário do driver embute esse caminho de busca e o INF do inbox nunca cria o arquivo.
-- Nova sub-questão levantada pelo fato 4: na imagem de fábrica, o firmware renomeado `4356r2rtecdc.bin` também não está em `System32\drivers`. Se o dispositivo ainda está em estado de fábrica, a carga mínima são dois arquivos, não um — firmware (641.951 bytes OEM / 651.235 bytes inbox) mais nvram (5.361 bytes) — e possivelmente `bcmpciedhd63.sys` como terceiro. Isso deve ser medido no dispositivo, não assumido.
-- H2 (o driver 2017 ser a regressão, primário no repositório) pode ser desnecessário se o H1 sozinho funcionar; se o H1 sozinho não funcionar, o H2 acrescenta o `.sys`/`.cat`/DLLs IHV do OEM. Nenhum dos dois desdobramentos é provado por este experimento.
-- Se o PlugPlay de fato rodou o estágio CopyFiles no dispositivo, e se o driver trata uma nvram ausente como fatal ou recorre à calibração nVMRAM/OTP de bordo, são ambos desconhecidos. Os fatos 2 e 3 dizem que o arquivo está ausente por design; não dizem que o driver falha por causa dele.
-- O índice de registro do DriverStore (`SYSTEM\DriverDatabase`) continua apontando para o pacote inbox depois da troca a nível de arquivos na variante 2, então o SO pode continuar escolhendo o driver inbox de qualquer jeito. Editar esse hive offline foi deliberadamente não tentado (sem `chntpw` no sandbox, e edições às cegas no hive são exatamente o tipo de mudança não verificada que as regras do repositório proíbem).
-
-## Decisão
-
-- Resultado: **`host-only / não é prova`** — re-rotulado em 17/11/2026 para seguir a regra de evidência
-  adicionada ao `AGENTS.md` (commit `33d4bd4`): o que passou aqui é real (o wimlib rodou sobre a
-  imagem oficial real, numa cópia, e as saídas foram re-hashadas), mas o ambiente alvo de qualquer
-  reivindicação que importe é um WinRE inicializado e depois o dispositivo físico, e nenhum dos dois foi exercitado.
-  Pelas regras, uma verificação no lado do host não pode carregar um `pass`, então a redação anterior
-  ("pass para a reivindicação de mecânica") foi substituída em vez de mantida como caso especial.
-- Motivo: a carga pode ser construída de forma reproduzível e verificada offline, e o caminho exato de inserção agora está provado a partir dos binários em vez de assumido. Nenhuma evidência de dispositivo existe ainda, e o E1 (conseguir um console WinRE) continua sendo o bloqueador de qualquer reivindicação de dispositivo.
-- Próximos experimentos:
-  1. E1b/E1c — conseguir um console, então rodar a verificação só-de-leitura no lado do dispositivo `dir C:\Windows\System32\drivers\4356*` e `driverquery`/`pnputil /enum-drivers` para ver quais de `.sys`, firmware e nvram estão de fato implantados. Essa única listagem decide o tamanho da carga mínima e, portanto, se o canal de texto digitado basta.
-  2. E8 — construir a mídia H1 com só a nvram (e opcionalmente o firmware) inseridos: 5,4 KB mais 0,64 MB de carga contra um pacote de 13,97 MB, que é a diferença entre uma transferência de texto digitado plausível e uma impossível.
-  3. Decidir com o dono se o posicionamento às cegas de `System32\drivers\4356r2nvram.txt` ou uma execução consciente do registro com `pnputil /add-driver` é o caminho autorizado no lado do dispositivo.
-
-## Limitações
-
-- Sem boot no QEMU dos WIMs serviced: o caminho do console WinRE continua bloqueado pelos problemas do E1 (`experiments/E1-winre-boot-tcg.md`), então "a imagem serviced ainda inicializa" não está verificado.
-- Só lado do host. Nada aqui exercita o setup do Windows, o ranking do PnP, a política de assinatura de catálogo (`bcmpciedhd63.cat` é assinado pelo pacote OEM; a política de test-signing é uma restrição conhecida) nem o índice real do DriverStore.
-- O nome de pasta `oem25.inf_amd64_0000000000000000` do DriverStore é um placeholder explícito; o sufixo real é um hash calculado pelo PnUtil no momento da instalação.
-- Os deltas de bytes são artefatos de reescrita LZMS com 1 thread do wimlib, não custos de transferência.
-- Sandbox, não a máquina do dono: `/dev/kvm` está ausente, então todos os desdobramentos do QEMU continuam TCG.
-
-## Reversão
-
-- O WIM de origem nunca foi aberto para escrita (o `update` rodou só sobre cópias); verificado depois: `qemu/work/winre1809.wim` ainda gera o hash `232199c58511…` e `wimlib-imagex dir` ainda reporta 21.230 caminhos.
-- Arquivos de rascunho criados: `qemu/work/e2/{WinRE-lite.wim,WinRE-serviced.wim,logs/,verify/}` — todos sob o `qemu/work/` ignorado; a exclusão é opcional e não destrutiva.
-
-## Referências
-
-- `GOAL.md` (H1 e as restrições rígidas de canal), `docs/05-offline-servicing.md`, `docs/06-auditoria-imagem-1809.md`, `docs/04-fidelidade-mimetizacao.md`
-- `drivers/README.md`, `drivers/estado-dispositivo/README.md`, `drivers/nvram-delta/`
-- `experiments/E1-winre-boot-tcg.md` (por que nenhuma evidência de boot ainda), `experiments/README.md` (quadro)
-- Script: `e2-servicing.sh`
-
----
-
-## FILE: experiments/E3-typed-text-channel.md
-
-# Experimento E3 — Canal de entrada de texto digitado (nvram primeiro)
-
-## Objetivo
-
-Uma carga real consegue cruzar o único canal de entrada consistente com as restrições — texto digitado no
-teclado virtual da tela touch — sem NENHUMA rede, e ser reconstruída byte a byte no convidado?
-Teste com a menor carga significativa: a nvram da placa (5361 bytes, TEXTO).
-
-## Nível de fidelidade
-
-`mecânica de canal` (não F1/F2/F3). Um convidado Linux busybox mínimo substitui o caminho de entrada do
-dispositivo. Isto NÃO é o WinRE e NÃO é o rádio BCM4356. Prova apenas o canal de texto digitado e a
-reconstrução no convidado. A reconstrução com ferramentas do WinRE é o E3b; o efeito no rádio é o E4
-(hardware). Nenhum resultado do QEMU é prova de hardware.
-
-## Pré-condições
-
-- Carga: `drivers/nvram-delta/4356r2nvram.txt` (5361 bytes, ASCII 100% imprimível).
-- Convidado só-com-teclado construído por `qemu/make-guest-kbd.sh` (sem rede configurada).
-- Kernel do host `/boot/vmlinuz-5.15.0-203-generic`; QEMU 6.2; busybox; python3.
-
-## Ambiente
-
-- Data: 15/11/2026
-- Host: sandbox Linux na nuvem, 4 vCPU, ~8 GB
-- Kernel (convidado): 5.15.0-203-generic
-- Virtualização: QEMU 6.2.0 TCG (sem `/dev/kvm`)
-- Versões das ferramentas: qemu-system-x86_64 6.2.0; busybox (host); python3
-- Hashes da imagem: não usados (convidado Linux, não um WIM)
-
-## Comandos
-
-```sh
-sh qemu/make-guest-kbd.sh           # constrói o convidado só-com-teclado (sem rede)
-bash qemu/run-keyboard-transfer.sh  # padrão: a carga da nvram
-```
-
-`run-keyboard-transfer.sh` codifica a carga em hex, inicializa o convidado SEM `-netdev`/dispositivo de
-rede, roda `qemu/audit.sh` (antitrapaça), espera `KEYBOARD-TRANSFER-READY`, digita o hex via
-`qemu/sendhex.py` (`sendkey` do monitor do QEMU = teclado touch simulado), e compara o
-SHA-256 do convidado com o da origem no host.
-
-## Saída observada
-
-```text
-== audit: PASS (no host sharing, hostfwd, serial file, clipboard, or proxy)
-sendhex: typed 10722 hex chars in 42 lines + end via simulated keyboard (ACK flow control)
-KEYBOARD-TRANSFER-READY
-guest-reconstructed-bytes=5361
-guest-reconstructed-sha256=a7a0a8fb9abfa877675dc7126ae2bde54c4695088543ddbaaa0a49140d9b4667  /tmp/payload.bin
-KEYBOARD-TRANSFER-DONE
-== host source sha256:
-a7a0a8fb9abfa877675dc7126ae2bde54c4695088543ddbaaa0a49140d9b4667  drivers/nvram-delta/4356r2nvram.txt
-== RESULT: PASS - payload reconstructed in-guest from typed text, hash matches (no network used)
-```
-
-## Artefatos e hashes
-
-- Origem da carga: `drivers/nvram-delta/4356r2nvram.txt`, 5361 bytes,
-  SHA-256 `a7a0a8fb9abfa877675dc7126ae2bde54c4695088543ddbaaa0a49140d9b4667`.
-- Binário reconstruído no convidado: 5361 bytes, mesmo SHA-256 (confere).
-- Gerados `qemu/work/payload.hex`, `qemu/guest-kbd/initrd.img`, log de serial: não versionados
-  (gitignored); o hash conferido acima é a evidência.
-
-## Nota de método — quedas de teclas e a correção
-
-Uma primeira tentativa com ritmo fixo (0,015 s/tecla, linhas enviadas seguidas) reconstruiu apenas
-5317/5361 bytes (106 caracteres hex perdidos): o convidado ficou para trás sob TCG. Correção: **controle
-de fluxo ACK por linha** — o convidado imprime `ACK <n>` na porta serial depois de decodificar cada linha, e
-o `sendhex.py` espera esse ACK antes de digitar a próxima linha (passo travado). Com isso, os 5361
-bytes chegam todos e o hash confere. Ritmo fixo sozinho não é confiável; o controle de fluxo é necessário.
-
-## Conclusão
-
-PASS para o canal: a nvram cruza como texto digitado sem rede e é reconstruída
-byte a byte. Isso valida a abordagem do dono de "enviar a nvram pequena primeiro".
-
-## Limites / próximo
-
-- Convidado Linux, não WinRE: a reconstrução usou `printf`+`sed` do busybox, não ferramentas do WinRE. O E3b deve
-  reconstruir dentro do WinRE com ferramentas da imagem (`cmd`/`notepad`; a nvram é texto, nenhum
-  decodificador binário é necessário). Precisa que o WinRE inicialize (diagnóstico de BSOD pendente).
-- O efeito funcional da nvram sobre o erro 10 NÃO é testado aqui — isso é o E4 (hardware).
-- O driver binário de ~1 MB ainda precisa de um método texto->binário (certutil/ADODB/PowerShell ausentes;
-  veja docs/07). A nvram ser texto é o que a torna a primeira carga viável.
 
 ---
 
@@ -4148,8 +3698,7 @@ Nenhum artefato de teste simulado está incluído; veja as regras de evidência 
   para este experimento.
 - Os comportamentos de `WScript.Arguments`, `CreateTextFile` e `OpenTextFile` precisam ser confirmados
   no WinRE real antes de qualquer transferência completa.
-- A evidência na tela é o único canal de saída válido no dispositivo; ACKs de serial foram usados só
-  pelo convidado Linux do E3 anterior e não são reutilizados aqui.
+- A evidência na tela é o único canal de saída válido no dispositivo; não há ACK por serial no dispositivo.
 
 ## Reversão
 
@@ -4218,7 +3767,7 @@ byte NUL como texto digitado. **Não provado neste WinRE até o E1.**
 
 Alfabeto + `copy /b`:
 
-1. Digitar a carga como hex (o canal já provado para *texto* no E3, convidado Linux).
+1. Digitar a carga como hex pelo teclado touch (não provado no WinRE).
 2. Digitar um pequeno JScript (`scripts/winre-alphabet-decode.js`).
 3. Construir 256 arquivos de um byte: `fsutil` para `0x00`; `Write(String.fromCharCode(i))` do FSO
    para `1..255`.
@@ -4229,44 +3778,23 @@ Se `0x0A` virar tamanho 2 (CRLF) ou `0x00` tamanho 0, esses bytes precisam ser
 obtidos de outro jeito; `0x00` está coberto pelo fsutil *se* o comando funcionar.
 
 Plano B se o FSO corromper muitos bytes: ainda viável só para o alfabeto sobrevivente;
-caso contrário só-a-nvram (texto, E3) continua a única classe de carga provada.
-
-## Comandos
-
-```sh
-python3 scripts/alphabet-decode.py --selftest
-```
-
-## Saída observada
-
-```text
-selftest PASS
-bytes 274
-sha256 26925aa383aec0b40a2d1589fff0a9bb944b1833f1c5ec6ce0c9da3e1fee7eeb
-```
-
-A concatenação no host de 256 arquivos de um byte fez o round-trip de `bytes(range(256))` mais
-`00 0A 0D 1A FF` mais `bcmwdidhdpcie`. Isso prova o *algoritmo*, não o FSO,
-não o fsutil no WinRE, não o rádio.
+caso contrário só-a-nvram (texto) continua a única classe de carga viável.
 
 ## Artefatos e hashes
 
-- `scripts/alphabet-decode.py` — selftest no host
 - `scripts/winre-fso-probe.js` — sondagem de liberação no convidado (não executada)
 - `scripts/winre-alphabet-decode.js` — decodificador no convidado (não executado)
 
 ## Resultado
 
 - **Fato:** nenhum sumidouro binário clássico em nenhuma das imagens.
-- **Fato:** a concatenação do alfabeto no host reconstrói bytes arbitrários.
 - **Hipótese:** o WinRE consegue construir esse alfabeto com fsutil + FSO + `copy /b`.
 - **Bloqueado:** a sondagem no convidado precisa do `cmd` interativo do E1.
 - Não digite o driver de ~1 MB até a sondagem dar PASS.
 
 ## Limites da conclusão
 
-QEMU/host não é prova de hardware. O E3 provou um canal de *texto* num convidado Linux,
-não o WinRE e não um sumidouro binário. O caminho de carga mínima (só o texto da nvram) ainda
+QEMU/host não é prova de hardware. Nada aqui foi executado no WinRE; não há sumidouro binário provado. O caminho de carga mínima (só o texto da nvram) ainda
 evita este problema por completo (hardware, E4).
 
 ---
@@ -4286,17 +3814,14 @@ Este é o único quadro compartilhado. Um agente trabalha por vez, então não h
 | E0.1 | Procedência da imagem base | — | Feito — ESD oficial verificado, WinRE re-extraído (`winre-1809-oficial-intacta/`) |
 | E1 | Linha de base WinRE no QEMU | qoder | Em andamento — só TCG (sem `/dev/kvm`); veja `E1-winre-boot-tcg.md` |
 | E1b | Matriz de causa-raiz do boot do WinRE sob TCG (CPU, máquina, memória, layout da mídia) | qoder | Em andamento — a linha EFI-ISO está fechada como beco sem saída: o firmware monta apenas o ESP `efisys.bin` de 1.474.560 bytes como `FS0:` e nunca monta o volume ISO9660 que contém `\sources\boot.wim` (célula Y), e o bootmgr da Microsoft lançado do UEFI Interactive Shell para na cancela press-any-key do DVD, que 5.117 teclas injetadas não conseguiram abrir porque o shell — e não o bootmgr — as consumiu (células X, Z, AB, AC). A matriz agora se volta para a mídia em disco FAT32: a célula AD provou com `-device bochs-display` que o quadro chapado `#2067B2` é real (modo texto, o logo gráfico do TianoCore e o preenchimento de cor única vêm da mesma fonte de quadros) e que o convidado então pede desligamento por conta própria. Célula AE em andamento (reivindicada agora): mesmo disco com `winpeshl.ini` apontando `cmd.exe` em vez de `X:\sources\recovery\recenv.exe` — resultado: idêntico ao AD, então o shell do WinPE nunca é alcançado. AG (`q35`/AHCI + `-cpu max`) também terminou na mesma cor única, fechando o eixo da controladora. **O AF é o pivô**: com `\sources\boot.wim` renomeado para fora, a mesma mídia renderiza a tela de erro em texto do bootmgr (`Status: 0xc000000f`, `A required device isn't connected or can't be accessed`), então o azul é pintado só depois que o bootmgr entrega ao winload. Próxima célula em fila: AH (apagar `winload.efi` dentro do ramdisk). AH e AJ voltaram: apagar `winload.efi` do ramdisk dá o azul idêntico, e encolher o WIM para 0,89 GiB — dentro do volume de 1,51 GiB que o SDI declara — também dá o azul idêntico, então a aritmética do ramdisk também está eliminada. Toda variável do lado da mídia e da máquina alcançável sem um canal de debug termina na mesma cor única. Veja `E1-winre-boot-tcg.md` |
-| E2 | Servicing offline (linhas de base de mecânica no lado do host, não a transferência do dispositivo) | qoder | Feito como linha de base `host-only / não é prova` (re-rotulado em 17/11/2026 seguindo a nova regra de evidência do `AGENTS.md`) — ambas as cargas construíveis e verificadas byte a byte em cópias; caminho de busca da nvram/firmware provado a partir dos binários. Nenhuma reivindicação no convidado nem no hardware. Veja `E2-offline-servicing.md` |
-| E3 | Canal de entrada de texto digitado (teclado touch) - nvram (5361 B) digitada, reconstruída, verificada por hash | aaaa2 | Feito - PASS, sem rede; controle de fluxo com ACK. Veja `E3-typed-text-channel.md` |
 | E3b | Reconstrução da nvram em ASCII e SHA-256 dentro do WinRE | gpt | Ferramentas preparadas; NÃO é um pass — bloqueado no E1/E1b. Exige execução real no WinRE; testes simulados são inadmissíveis. Veja `E3b-ascii-hash-prep.md`. |
 | E4 | Validação no hardware | user | Planejada; guiada pelo usuário |
 | E5 | Reprodução do sintoma do erro 10: dispositivo PCI falso (`VEN_14E4&DEV_43EC`) + driver real | agente com KVM | Proposto; precisa de Windows completo inicializável; KVM recomendado. Veja `docs/04` |
-| E7 | Sumidouro de escrita binária: hex/base64 digitado -> bytes brutos com ferramentas da imagem apenas | stackai | Em andamento — inventário+algoritmo no host; sondagem no WinRE bloqueada no E1 |
+| E7 | Sumidouro de escrita binária: hex/base64 digitado -> bytes brutos com ferramentas da imagem apenas | stackai | Planejado — só vale no WinRE real; bloqueado no E1 |
 | E6 | Demo da correção de seleção de driver numa substituta e1000 funcional (driver errado -> erro 10, driver correto -> inicia) | agente com KVM | Proposto; fidelidade menor; precisa de Windows completo inicializável. Veja `docs/04` |
 
-Atribua por capacidade: E3 (canal de texto digitado da nvram) não precisa de KVM e pode rodar agora num convidado
-mínimo; E5/E6 (erro-10 de Windows) precisam de um Windows completo inicializável e são melhor executados por um
-agente com KVM. O efeito funcional da nvram sobre o rádio é o E4 (hardware), não o E3.
+Atribua por capacidade: E5/E6 (erro-10 de Windows) precisam de um Windows completo inicializável e são melhor executados por
+um agente com KVM. O efeito funcional da nvram sobre o rádio é o E4 (hardware).
 
 ## Regras
 
@@ -4432,13 +3957,13 @@ Regras de uso:
 | H-B3 | `cscript`/`wscript` (JScript + `FileSystemObject`) existe e roda no WinRE real | `where cscript`, executar um `.js` mínimo | Ausente ou bloqueado |
 | H-B4 | `mshta`/HTA existe como alternativa de execução de script | `where mshta` e teste | Ausente |
 | H-B5 | Reconstrução em `cmd` puro (`for`, `set /a`, `echo`) é viável sem script | Reconstruir 1 KB só com `cmd` | Lento demais ou perde bytes (CR/LF, `%`, `^`, `!`) |
-| H-B6 | Hex é mais seguro que base64 (alfabeto sem caracteres especiais do `cmd`) | Comparar taxa de erro/tempo de digitação | Base64 não tem erro e é mais curto |
+| H-B6 | Hex vs base64: documentar o método exato e medir | — | [ ] (só vale medir no WinRE real) |
 | H-B7 | Alfabeto reduzido (só letras minúsculas/dígitos) evita autocorreção e maiúsculas do teclado | Digitar alfabeto completo e comparar | Teclado altera algo mesmo assim |
 | H-B8 | Dá para verificar integridade sem `certutil` (hash em JScript ou `fc /b`/`comp`) | Rodar hash JS no WinRE e comparar com host | Sem mecanismo de checagem possível |
 | H-B9 | `copy con arquivo` ou `echo ... > arquivo` grava bytes ASCII fielmente (inclui CR/LF final) | Gravar e comparar bytes | Acrescenta ou altera bytes |
 | H-B10 | O Wi-Fi/Bluetooth/OBEX podem ser outro canal de entrada (fora do texto) | Verificar no aparelho; revisar restrições | Restrições proíbem ou não há pilha |
-| H-B11 | A taxa de digitação manual (tempo humano) é viável: nvram 5,4 KB entra em tempo razoável | Cronometrar E3 simulado e estimar | Tempo inviável (horas) |
-| H-B12 | Compressão antes de digitar (RLE/dicionário) reduz a digitação de forma útil | Medir tamanho comprimido da nvram/firmware | Ganho desprezível |
+| H-B11 | A taxa de digitação manual (tempo humano) é viável: nvram 5,4 KB entra em tempo razoável | Cronometrar a digitação no touch real e estimar | Tempo inviável (horas) |
+| H-B12 | Compressão antes de digitar | — | [ ] (testar `where expand` no WinRE real) |
 | H-B13 | O firmware (0,64 MB) não precisa ser digitado: já existe em alguma pasta do aparelho e basta copiar/renomear | Procurar no `C:` e na imagem do WinRE | Não existe localmente |
 | H-B14 | A tela como canal de saída basta para conferir (hash curto/QR textual) | Mostrar hash e conferir à mão | Tela corta/rola a saída |
 
@@ -4474,7 +3999,7 @@ Regras de uso:
 | H-D8 | Renomear/mover o INF inbox de 2017 deixa o OEM vencer a seleção | Testar em cópia offline | Seleção continua errada |
 | H-D9 | O pacote OEM completo é grande demais; versão reduzida (só 4 arquivos) é suficiente | Montar pacote mínimo e testar | Assinatura/catálogo exige o completo |
 | H-D10 | Basta trocar só o `.sys` (sem INF) | Teste em cópia | Exige INF/catálogo |
-| H-D11 | Editar o WIM do WinRE (servicing offline) embute os arquivos e persiste após reiniciar | E2 já provou a mecânica no host; falta o aparelho | WinRE no aparelho é recriado/restaurado |
+| H-D11 | Editar o WIM do WinRE (servicing offline) embute os arquivos e persiste após reiniciar | Falta testar no aparelho | WinRE no aparelho é recriado/restaurado |
 | H-D12 | Os arquivos devem ir para a partição de recuperação do aparelho e não para `X:` (RAM) | Verificar persistência após reboot | `X:` persiste |
 
 ## Grupo E — Pilha WLAN utilizável no WinRE
@@ -4508,7 +4033,7 @@ Regras de uso:
 | H-G2 | O E4 (hardware) é o único teste definitivo; o QEMU só valida mecânica | Plano E4 guiado pelo usuário | QEMU reproduz o erro (E5) |
 | H-G3 | Um dispositivo PCI falso (E5) reproduz o erro 10 num Windows completo | Montar `VEN_14E4&DEV_43EC` falso + driver real | Não reproduz |
 | H-G4 | Substituta e1000 (E6) mostra "driver errado dá 10, correto inicia" | Rodar E6 | Sem diferença |
-| H-G6 | Dividir por capacidade (KVM vs TCG) acelera: E5/E6 para agente com KVM, E3/E7 para os demais | Atribuir e medir | Gargalo é outro |
+| H-G6 | Dividir por capacidade (KVM vs TCG) acelera: E5/E6 para agente com KVM, E3b/E7 para os demais | Atribuir e medir | Gargalo é outro |
 | H-G7 | Documentar cada experimento com o modelo de `experiments/templates/experimento.md` evita refazer testes | Auditoria dos logs | Refaz mesmo assim |
 
 ## Tabela de tarefas
@@ -4521,9 +4046,9 @@ Atualize o Status ao trabalhar (um agente por vez, sem claims). Prioridade suger
 | H-B2 | Limite de linha do `cmd` no WinRE | — | [ ] |
 | H-B3 | `cscript`/JScript/FSO no WinRE | — | [?] bloqueada no E1b |
 | H-B8 | Hash sem `certutil` | — | [ ] |
-| H-B6 | Hex vs base64: documentar o método exato e medir (docs/08-data-transfer.md) | claude | [~] doc + teste de host feitos; falta WinRE (bloqueado no E1b) |
+| H-B6 | Hex vs base64: documentar o método exato e medir | — | [ ] (só vale medir no WinRE real) |
 | H-B11 | Tempo de digitação da nvram | — | [ ] |
-| H-B12 | Compressão antes de digitar | claude | [~] medido no host (docs/09-compressao-antes-de-digitar.md); falta `where expand` no WinRE |
+| H-B12 | Compressão antes de digitar | — | [ ] (testar `where expand` no WinRE real) |
 | H-B13 | Firmware já local (sem digitar) | — | [ ] |
 | H-A2 | Só nvram resolve? | — | [ ] |
 | H-A3 | nvram + firmware resolve? | — | [ ] |
@@ -5356,15 +4881,6 @@ o método de transferência do dispositivo. Veja a seção Realidade dos canais 
 Scripts montados. Não há reivindicação de resultado do erro 10 no dispositivo aqui. O QEMU não emula
 o rádio BCM4356; nenhum resultado do QEMU é prova de hardware.
 
-- **Canal de texto digitado (o método consistente com as restrições):** prototipado num convidado
-  Linux mínimo (busybox). A carga é codificada em hex no host, digitada via
-  `sendkey` do QEMU (teclado touch simulado), reconstruída no convidado com `printf`+`sed`,
-  e verificada por SHA-256. Demonstrado para uma carga pequena; isso é mecânica de canal,
-  não WinRE e não o rádio. A transferência em tamanho real precisa de ritmo confiável (o modo
-  canônico do Linux limita uma linha a 4096 caracteres; envie em linhas curtas).
-- **Canal HTTP (`run-channel.sh`) e servicing no lado do host (`service.sh`):
-  linhas de base de mecânica SUPERADAS.** Elas não modelam o dispositivo isolado e
-  não são a solução. Mantidas apenas como referências históricas de mecânica.
 - **Boot do WinRE (`run-winre*.sh`):** o "BSOD antes do `cmd` interativo,
   sem diagnóstico" registrado **não era um BSOD**. `experiments/E1-winre-boot-tcg.md` reproduziu a parada
   em dois modelos de CPU (`qemu64` e `max`) como um erro do **Windows Boot Manager** —
@@ -5387,29 +4903,22 @@ o rádio BCM4356; nenhum resultado do QEMU é prova de hardware.
   sintoma do erro 10, mas um stub sem resposta não pode depois ser corrigido. Abordagem B: uma
   substituta e1000 funcional mais a seleção de driver demonstra a correção ponta a ponta (fidelidade menor).
   Ambas precisam de um Windows completo inicializável (o repositório tem só o WinRE); KVM recomendado (TCG possível, mas
-  lento). Não demonstrado aqui. Nenhum script para isso existe ainda. A transferência de
-  texto digitado da nvram pequena (E3) é viável agora sem KVM.
+  lento). Não demonstrado aqui. Nenhum script para isso existe ainda. 
 
 ## Scripts
 
 | Caminho | Papel |
 |---|---|
 | `audit.sh` | Porta antitrapaça no argv do QEMU. Deve passar antes de uma execução. |
-| `make-guest-kbd.sh` | Constrói o convidado Linux só-com-teclado (sem rede) para o canal de texto digitado. |
-| `sendhex.py` | Digita uma carga hex no convidado via `sendkey` do QEMU (teclado touch simulado). |
-| `run-keyboard-transfer.sh` | Canal de texto digitado: inicializa o convidado só-com-teclado, digita a carga, reconstrói + verifica o hash no convidado. |
 | `mon.py` | Envia um comando HMP ao soquete de monitor do QEMU (screendump/status). |
 | `build-media.sh` | Remonta as partes versionadas do WIM numa cópia sob `qemu/work/`. |
 | `build-iso.sh` | Constrói um ISO UEFI WinRE (El Torito) a partir de uma cópia do WIM. |
 | `build-disk.sh` | Constrói um disco de boot UEFI FAT32 a partir de uma cópia do WIM. |
 | `run-winre.sh` | Inicializa o ISO WinRE sob OVMF; screendumps periódicos. |
 | `run-winre-disk.sh` | Inicializa o disco UEFI WinRE sob OVMF; screendumps periódicos. |
-| `make-guest.sh` | Constrói um convidado Linux busybox+e1000 (usado pela linha de base HTTP superada). |
-| `run-channel.sh` | SUPERADO: linha de base HTTP em modo usuário. Não é o canal do dispositivo. |
-| `service.sh` | SUPERADO: linha de base de servicing com wimlib no lado do host. Não é a transferência do dispositivo. |
 | `wwii/` | O ambiente mínimo de 3 arquivos da branch `wwii` (`audit.sh`, `build-iso.sh`, `run.sh`), preservado por referência. |
 
-`run-keyboard-transfer.sh`, `run-channel.sh` e `run-winre-disk.sh` são bash
+`run-winre-disk.sh` é bash
 (arrays); o resto é POSIX sh.
 
 ## Restrições antitrapaça (de `docs/01-restricoes.md`)

@@ -89,4 +89,3 @@ O QEMU não pode confirmar o resultado do rádio. Pode confirmar que o arquivo e
 - `drivers/README.md`
 - `docs/03-driver-wifi-erro-10.md`
 - `docs/05-offline-servicing.md`
-- `experiments/E2-offline-servicing.md`

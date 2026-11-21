@@ -13,20 +13,6 @@ arquivo acompanha o plano mais amplo e as ideias do dono. Status: [ ] a fazer, [
 - [x] Inventariar as duas imagens: executáveis, DLLs, drivers, ferramentas de reconstrução, ferramentas de canal
   e o delta fábrica-vs-1809. (docs/07-inventario-imagens.md, inventory/)
 - [x] Adicionar orientação de pensamento de solução para que os agentes proponham abordagens proativamente. (AGENTS.md)
-- [x] E2 - mecânica de servicing offline (lado do host, em cópias do WIM WinRE 1809 oficial). Resultado:
-  `host-only / não é prova` — re-rotulado em 17/11/2026 para seguir a regra de evidência adicionada ao `AGENTS.md`; o
-  servicing em si rodou de verdade e é reproduzível, mas nenhum WinRE inicializado e nenhum dispositivo foi exercitado.
-  As duas cargas (H1 só nvram, H2 troca de pacote) constroem em segundos, relê-se byte-idêntico por SHA-256 e passam
-  `wimlib-imagex verify`. Novos fatos medidos: os binários `.sys` embutem
-  \`SystemRoot\system32\drivers\%04Xr%dnvram.txt` (=> `4356r2nvram.txt`) e o template de firmware correspondente; na
-  imagem de fábrica nem `bcmpciedhd63.sys` nem o firmware renomeado ficam implantados em `System32\drivers`, então a
-  carga mínima de runtime é provavelmente dois arquivos (firmware 0,64 MB + nvram 5,4 KB), não um; `devcon.exe` está
-  ausente do WinRE enquanto `pnputil.exe`, `dism.exe`, `drvload.exe` e `cmd.exe` estão presentes. Os hashes de contêiner
-  não se reproduzem entre builds (o wimlib carimba Last Modification Time). Owner: qoder.
-  (experiments/E2-offline-servicing.md, docs/03)
-- [x] E3 - prova do canal de texto digitado: nvram (5361 B, TEXTO) digitada por teclado touch simulado num convidado
-  sem rede, reconstruída byte a byte, hash conferido (PASS). O controle de fluxo com ACK corrigiu as
-  quedas de teclas. Owner: aaaa2. (experiments/E3-typed-text-channel.md)
 
 ## Em andamento
 
@@ -93,7 +79,6 @@ arquivo acompanha o plano mais amplo e as ideias do dono. Status: [ ] a fazer, [
   canal de debug para ler o código de parada real, ou encerrar a matriz TCG e tratar o E1b como
   `bloqueado — nenhum console alcançável sem instrumentação`.
 - **E1b — canal de debug AUTORIZADO pelo dono em 21/11/2026** (opção 1; regra em `AGENTS.md`). Próximo: ler o STOP code com `pmemsave`/`-d`/`-debugcon` na mídia `winre-cmd.img`.
-- E3 concluído; veja Feito.
 
 ## Próximo — viável agora, sem KVM
 
@@ -101,12 +86,12 @@ arquivo acompanha o plano mais amplo e as ideias do dono. Status: [ ] a fazer, [
   `echo >>` / `notepad`), depois hash. Precisa que o WinRE inicialize (ver diagnóstico de BSOD abaixo). A nvram
   é texto, então nenhum decodificador binário é necessário.
 - [ ] Teste de carga mínima (ideia do dono): determinar se só a nvram (H1) basta, evitando qualquer
-  transferência binária. O E2 restringiu: a observação decisiva é uma única listagem de diretório no dispositivo
+  transferência binária. A observação decisiva é uma única listagem de diretório no dispositivo
   vivo, `dir C:\Windows\System32\drivers\4356*` — se `4356r2rtecdc.bin` está lá e
   `4356r2nvram.txt` não está, nvram-only é o patch inteiro; se nenhum dos dois está, a carga é também o
   firmware (binário de 0,64 MB, que precisa do sumidouro binário do E7) e possivelmente o `.sys`. Bloqueado em
   conseguir um console (E1b).
-- [~] Método de reconstrução binária (PROBLEMA ABERTO) — Owner: stackai (E7, inventário+algoritmo no host; teste no WinRE
+- [~] Método de reconstrução binária (PROBLEMA ABERTO) — Owner: stackai (E7; teste só no WinRE real,
   bloqueado no E1): certutil, PowerShell, .NET e ADODB.Stream
   estão todos AUSENTES. MSXML decodifica base64, mas escrever bytes brutos não tem sumidouro óbvio. Investigar
   um método texto->binário funcional com as ferramentas existentes (docs/07). Não reivindique que funciona até

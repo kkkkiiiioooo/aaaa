@@ -83,7 +83,6 @@ Consequências:
 | `winre-1809-254MB/` (partes + `SHA256SUMS`) | a própria imagem derivada, ainda versionada | **distribuição** |
 | `experiments/E0.1-base-provenance.md` | registra os metadados do WIM e diz que não há hash oficial de referência | qualificado |
 | `experiments/E0.2-repo-verification.md` | contagem de partes e hashes de remontagem | só-mecânica |
-| `experiments/E2-offline-servicing-wimlib.md` | remove/adiciona drivers numa cópia do WIM | só-mecânica |
 | `docs/03-*`, `docs/04-*`, `docs/05-*` | mesmo texto da `desafio` antes desta auditoria | condicional |
 | `drivers/README*`, `drivers/estado-dispositivo/README.md`, `drivers/nvram-delta/README.md` | mesmas afirmações de extração | condicional |
 | `scripts/verify-repo.sh` | espera as partes derivadas | só-mecânica |

@@ -101,8 +101,7 @@ Nenhum artefato de teste simulado está incluído; veja as regras de evidência 
   para este experimento.
 - Os comportamentos de `WScript.Arguments`, `CreateTextFile` e `OpenTextFile` precisam ser confirmados
   no WinRE real antes de qualquer transferência completa.
-- A evidência na tela é o único canal de saída válido no dispositivo; ACKs de serial foram usados só
-  pelo convidado Linux do E3 anterior e não são reutilizados aqui.
+- A evidência na tela é o único canal de saída válido no dispositivo; não há ACK por serial no dispositivo.
 
 ## Reversão
 

@@ -1091,4 +1091,3 @@ _(pendente)_
 
 - `qemu/README.md` (estado do boot do WinRE, BSOD antes não diagnosticado)
 - `docs/04-fidelidade-mimetizacao.md` (definição de F1), `docs/01-restricoes.md`
-- `experiments/E3-typed-text-channel.md` (a prova de canal de que a E3b depende deste)

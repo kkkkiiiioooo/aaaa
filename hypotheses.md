@@ -33,13 +33,13 @@ Regras de uso:
 | H-B3 | `cscript`/`wscript` (JScript + `FileSystemObject`) existe e roda no WinRE real | `where cscript`, executar um `.js` mínimo | Ausente ou bloqueado |
 | H-B4 | `mshta`/HTA existe como alternativa de execução de script | `where mshta` e teste | Ausente |
 | H-B5 | Reconstrução em `cmd` puro (`for`, `set /a`, `echo`) é viável sem script | Reconstruir 1 KB só com `cmd` | Lento demais ou perde bytes (CR/LF, `%`, `^`, `!`) |
-| H-B6 | Hex é mais seguro que base64 (alfabeto sem caracteres especiais do `cmd`) | Comparar taxa de erro/tempo de digitação | Base64 não tem erro e é mais curto |
+| H-B6 | Hex vs base64: documentar o método exato e medir | — | [ ] (só vale medir no WinRE real) |
 | H-B7 | Alfabeto reduzido (só letras minúsculas/dígitos) evita autocorreção e maiúsculas do teclado | Digitar alfabeto completo e comparar | Teclado altera algo mesmo assim |
 | H-B8 | Dá para verificar integridade sem `certutil` (hash em JScript ou `fc /b`/`comp`) | Rodar hash JS no WinRE e comparar com host | Sem mecanismo de checagem possível |
 | H-B9 | `copy con arquivo` ou `echo ... > arquivo` grava bytes ASCII fielmente (inclui CR/LF final) | Gravar e comparar bytes | Acrescenta ou altera bytes |
 | H-B10 | O Wi-Fi/Bluetooth/OBEX podem ser outro canal de entrada (fora do texto) | Verificar no aparelho; revisar restrições | Restrições proíbem ou não há pilha |
-| H-B11 | A taxa de digitação manual (tempo humano) é viável: nvram 5,4 KB entra em tempo razoável | Cronometrar E3 simulado e estimar | Tempo inviável (horas) |
-| H-B12 | Compressão antes de digitar (RLE/dicionário) reduz a digitação de forma útil | Medir tamanho comprimido da nvram/firmware | Ganho desprezível |
+| H-B11 | A taxa de digitação manual (tempo humano) é viável: nvram 5,4 KB entra em tempo razoável | Cronometrar a digitação no touch real e estimar | Tempo inviável (horas) |
+| H-B12 | Compressão antes de digitar | — | [ ] (testar `where expand` no WinRE real) |
 | H-B13 | O firmware (0,64 MB) não precisa ser digitado: já existe em alguma pasta do aparelho e basta copiar/renomear | Procurar no `C:` e na imagem do WinRE | Não existe localmente |
 | H-B14 | A tela como canal de saída basta para conferir (hash curto/QR textual) | Mostrar hash e conferir à mão | Tela corta/rola a saída |
 
@@ -75,7 +75,7 @@ Regras de uso:
 | H-D8 | Renomear/mover o INF inbox de 2017 deixa o OEM vencer a seleção | Testar em cópia offline | Seleção continua errada |
 | H-D9 | O pacote OEM completo é grande demais; versão reduzida (só 4 arquivos) é suficiente | Montar pacote mínimo e testar | Assinatura/catálogo exige o completo |
 | H-D10 | Basta trocar só o `.sys` (sem INF) | Teste em cópia | Exige INF/catálogo |
-| H-D11 | Editar o WIM do WinRE (servicing offline) embute os arquivos e persiste após reiniciar | E2 já provou a mecânica no host; falta o aparelho | WinRE no aparelho é recriado/restaurado |
+| H-D11 | Editar o WIM do WinRE (servicing offline) embute os arquivos e persiste após reiniciar | Falta testar no aparelho | WinRE no aparelho é recriado/restaurado |
 | H-D12 | Os arquivos devem ir para a partição de recuperação do aparelho e não para `X:` (RAM) | Verificar persistência após reboot | `X:` persiste |
 
 ## Grupo E — Pilha WLAN utilizável no WinRE
@@ -109,7 +109,7 @@ Regras de uso:
 | H-G2 | O E4 (hardware) é o único teste definitivo; o QEMU só valida mecânica | Plano E4 guiado pelo usuário | QEMU reproduz o erro (E5) |
 | H-G3 | Um dispositivo PCI falso (E5) reproduz o erro 10 num Windows completo | Montar `VEN_14E4&DEV_43EC` falso + driver real | Não reproduz |
 | H-G4 | Substituta e1000 (E6) mostra "driver errado dá 10, correto inicia" | Rodar E6 | Sem diferença |
-| H-G6 | Dividir por capacidade (KVM vs TCG) acelera: E5/E6 para agente com KVM, E3/E7 para os demais | Atribuir e medir | Gargalo é outro |
+| H-G6 | Dividir por capacidade (KVM vs TCG) acelera: E5/E6 para agente com KVM, E3b/E7 para os demais | Atribuir e medir | Gargalo é outro |
 | H-G7 | Documentar cada experimento com o modelo de `experiments/templates/experimento.md` evita refazer testes | Auditoria dos logs | Refaz mesmo assim |
 
 ## Tabela de tarefas
@@ -122,9 +122,9 @@ Atualize o Status ao trabalhar (um agente por vez, sem claims). Prioridade suger
 | H-B2 | Limite de linha do `cmd` no WinRE | — | [ ] |
 | H-B3 | `cscript`/JScript/FSO no WinRE | — | [?] bloqueada no E1b |
 | H-B8 | Hash sem `certutil` | — | [ ] |
-| H-B6 | Hex vs base64: documentar o método exato e medir (docs/08-data-transfer.md) | claude | [~] doc + teste de host feitos; falta WinRE (bloqueado no E1b) |
+| H-B6 | Hex vs base64: documentar o método exato e medir | — | [ ] (só vale medir no WinRE real) |
 | H-B11 | Tempo de digitação da nvram | — | [ ] |
-| H-B12 | Compressão antes de digitar | claude | [~] medido no host (docs/09-compressao-antes-de-digitar.md); falta `where expand` no WinRE |
+| H-B12 | Compressão antes de digitar | — | [ ] (testar `where expand` no WinRE real) |
 | H-B13 | Firmware já local (sem digitar) | — | [ ] |
 | H-A2 | Só nvram resolve? | — | [ ] |
 | H-A3 | nvram + firmware resolve? | — | [ ] |

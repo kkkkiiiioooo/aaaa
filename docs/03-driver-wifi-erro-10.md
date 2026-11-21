@@ -74,9 +74,9 @@ O INF do inbox não. Este é o delta de nvram.
 
 O H2 é primário: o driver de 2017 é a regressão. O H1 é secundário: se a instalação do pacote OEM não copiar a nvram, a nvram precisa ser colocada separadamente em `System32\drivers`.
 
-## Confirmado offline (E2, 16/11/2026)
+## Confirmado nos arquivos (análise estática)
 
-`experiments/E2-offline-servicing.md` transformou três pontos acima de inferência em medição. Nenhum deles é evidência de hardware.
+Três pontos acima foram verificados lendo os arquivos das imagens (análise estática, sem executar nada). Nenhum deles é evidência de hardware.
 
 1. Os caminhos de busca estão embutidos nos binários, não só implícitos pelo INF. `strings` sobre **ambos** os builds de `bcmpciedhd63.sys` (inbox 1.558.53.25 e OEM 1.558.14.0) devolve os mesmos templates e o mesmo caminho de falha:
 
@@ -94,10 +94,9 @@ O H2 é primário: o driver de 2017 é a regressão. O H1 é secundário: se a i
 2. Na imagem WinRE da fábrica o driver está **preparado, não implantado**. `System32\drivers` contém 295 arquivos `.sys` e este não é um deles; `bcmpciedhd63.sys` e `4356a2rtecdc.bin` existem só em `DriverStore\FileRepository` e no componente `WinSxS`. Então as cópias de runtime *tanto do firmware quanto da nvram* dependem do estágio PnP `CopyFiles` ter rodado. A carga mínima é, portanto, dois arquivos (firmware OEM de 641.951 bytes mais nvram de 5.361 bytes) e não um, e possivelmente três — isso só se resolve listando o diretório vivo no dispositivo.
 3. `devcon.exe` **não** está presente na imagem do WinRE. A opção 2 acima ("forçar o pacote OEM com `devcon update`") exige trazer a ferramenta. `pnputil.exe`, `dism.exe`, `cmd.exe`, `drvload.exe`, `setupapi.dll` e `newdev.dll` estão presentes, e o hive SYSTEM está dentro do WIM, então `pnputil /add-driver` e o trabalho com o registro offline são alcançáveis do console de recuperação.
 
-Duas armadilhas operacionais descobertas ao fazer isso:
+Armadilha operacional:
 
 - O INF do inbox é UTF-16LE (BOM `ff fe`); o INF do OEM é ASCII. Buscar `nvram` no INF do inbox com grep sem decodificar devolve 0 ocorrências pelo motivo errado. Use `iconv -f UTF-16LE -t UTF-8` antes.
-- `wimlib-imagex update` carimba o `Last Modification Time` da imagem com o relógio do host, então dois builds com conteúdo idêntico produzem hashes de contêiner diferentes. Fixe os digests no build final, após a última reconstrução.
 
 ## Comportamento do servicing offline
 
@@ -168,7 +167,7 @@ Ambas precisam de um Windows completo inicializável com PnP (o repositório ver
 por velocidade, não estritamente necessário - o TCG consegue inicializar o Windows devagar; este sandbox não tem
 `/dev/kvm` e um boot anterior do WinRE deu BSOD sob TCG (não diagnosticado). Um agente com KVM deve executá-los.
 São hipóteses, não resultados. Uma reprodução sintética do sintoma nunca é prova de hardware.
-A transferência de texto digitado da nvram pequena (E3) é viável agora sem KVM - veja `docs/04`.
+A digitação da nvram no WinRE real é o E3b (bloqueado no E1b).
 
 ## Referências
 
@@ -177,4 +176,3 @@ A transferência de texto digitado da nvram pequena (E3) é viável agora sem KV
 - `docs/05-offline-servicing.md`
 - `docs/08-checklist-hardware.md`
 - `experiments/E1-baseline-winre.md`
-- `experiments/E2-offline-servicing.md`

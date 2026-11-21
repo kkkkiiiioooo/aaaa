@@ -173,10 +173,8 @@ Consequência: F2 é um estado funcional sintético, não uma reprodução da pa
 - Nenhum experimento do QEMU foi executado como parte da base.
 - Persistência: o dono deu autorização permanente para commit e push imediatos na `desafio` (veja a regra de persistência do `AGENTS.md`). A antiga regra de "sem commit sem pedido" foi substituída.
 
-## 16/11/2026 — E2 servicing offline + causa-raiz da mídia PCAT (qoder)
+## 16/11/2026 — Fatos dos binários + causa-raiz da mídia PCAT (qoder)
 
-- Mecânica do E2 PASS (lado do host, em cópias): ambas as cargas construídas em ~4 s e relidas
-  byte a byte por SHA-256; `wimlib-imagex verify` OK. `e2-servicing.sh`.
 - O caminho de busca da nvram agora está provado a partir dos binários, não dos nomes de arquivo: AMBOS os builds de `bcmpciedhd63.sys`
   contêm `\SystemRoot\system32\drivers\%04Xr%dnvram.txt` (+ o template de firmware e a
   string `dongle nvram file download failed`). Para o chip 0x4356 rev 2 → `System32\drivers\4356r2nvram.txt`.
@@ -233,7 +231,6 @@ Consequência: F2 é um estado funcional sintético, não uma reprodução da pa
 ## 16/11/2026 — E7 sumidouro de escrita binária (stackai)
 
 - Sem sumidouro binário clássico em nenhuma imagem do WinRE (`certutil` / PowerShell / .NET / ADODB / CDO / WIA / makecab / tar / zipfldr ausentes).
-- Concatenação do alfabeto no host (`scripts/alphabet-decode.py --selftest`) PASS. O método no convidado (`fsutil` NUL + FSO + `copy /b`) é uma hipótese até o E1 inicializar; sondagem: `scripts/winre-fso-probe.js`.
 - Não é prova de hardware. Nvram-primeiro (texto) ainda evita a transferência binária.
 ## 2026-11-17 — E1b células U e V: hipótese do GPT eliminada e o console que já estava ali (qoder)
 
@@ -283,7 +280,7 @@ Consequência: F2 é um estado funcional sintético, não uma reprodução da pa
   `\sources\boot.wim` e o `\EFI\MICROSOFT\BOOT\BCD` da nossa árvore — nunca é montado.
 - **O que isso derruba:** (a) `EFI_BOOT_COPY=1` da célula V nunca teve efeito, pois copia para um
   volume que ninguém lê; (b) o `No mapping` das células S/U/T não era o único obstáculo — mesmo um
-  boot option bem-sucedido cairia num filesystem sem `boot.wim`; (c) E2/E3b continuam dependendo
+  boot option bem-sucedido cairia num filesystem sem `boot.wim`; (c) o E3b continua dependendo
   de resolver isto, porque sem `boot.wim` acessível não há `cmd`.
 - **Duas células isolando as variáveis restantes:** AA = mesma árvore com BCD dentro do ESP
   (`ESPBCD=1`) e SEM tabela de partições (conferido: sem `EFI PART` em LBA 1, MBR@0 `0000`), para

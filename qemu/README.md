@@ -19,15 +19,6 @@ o método de transferência do dispositivo. Veja a seção Realidade dos canais 
 Scripts montados. Não há reivindicação de resultado do erro 10 no dispositivo aqui. O QEMU não emula
 o rádio BCM4356; nenhum resultado do QEMU é prova de hardware.
 
-- **Canal de texto digitado (o método consistente com as restrições):** prototipado num convidado
-  Linux mínimo (busybox). A carga é codificada em hex no host, digitada via
-  `sendkey` do QEMU (teclado touch simulado), reconstruída no convidado com `printf`+`sed`,
-  e verificada por SHA-256. Demonstrado para uma carga pequena; isso é mecânica de canal,
-  não WinRE e não o rádio. A transferência em tamanho real precisa de ritmo confiável (o modo
-  canônico do Linux limita uma linha a 4096 caracteres; envie em linhas curtas).
-- **Canal HTTP (`run-channel.sh`) e servicing no lado do host (`service.sh`):
-  linhas de base de mecânica SUPERADAS.** Elas não modelam o dispositivo isolado e
-  não são a solução. Mantidas apenas como referências históricas de mecânica.
 - **Boot do WinRE (`run-winre*.sh`):** o "BSOD antes do `cmd` interativo,
   sem diagnóstico" registrado **não era um BSOD**. `experiments/E1-winre-boot-tcg.md` reproduziu a parada
   em dois modelos de CPU (`qemu64` e `max`) como um erro do **Windows Boot Manager** —
@@ -50,29 +41,22 @@ o rádio BCM4356; nenhum resultado do QEMU é prova de hardware.
   sintoma do erro 10, mas um stub sem resposta não pode depois ser corrigido. Abordagem B: uma
   substituta e1000 funcional mais a seleção de driver demonstra a correção ponta a ponta (fidelidade menor).
   Ambas precisam de um Windows completo inicializável (o repositório tem só o WinRE); KVM recomendado (TCG possível, mas
-  lento). Não demonstrado aqui. Nenhum script para isso existe ainda. A transferência de
-  texto digitado da nvram pequena (E3) é viável agora sem KVM.
+  lento). Não demonstrado aqui. Nenhum script para isso existe ainda. 
 
 ## Scripts
 
 | Caminho | Papel |
 |---|---|
 | `audit.sh` | Porta antitrapaça no argv do QEMU. Deve passar antes de uma execução. |
-| `make-guest-kbd.sh` | Constrói o convidado Linux só-com-teclado (sem rede) para o canal de texto digitado. |
-| `sendhex.py` | Digita uma carga hex no convidado via `sendkey` do QEMU (teclado touch simulado). |
-| `run-keyboard-transfer.sh` | Canal de texto digitado: inicializa o convidado só-com-teclado, digita a carga, reconstrói + verifica o hash no convidado. |
 | `mon.py` | Envia um comando HMP ao soquete de monitor do QEMU (screendump/status). |
 | `build-media.sh` | Remonta as partes versionadas do WIM numa cópia sob `qemu/work/`. |
 | `build-iso.sh` | Constrói um ISO UEFI WinRE (El Torito) a partir de uma cópia do WIM. |
 | `build-disk.sh` | Constrói um disco de boot UEFI FAT32 a partir de uma cópia do WIM. |
 | `run-winre.sh` | Inicializa o ISO WinRE sob OVMF; screendumps periódicos. |
 | `run-winre-disk.sh` | Inicializa o disco UEFI WinRE sob OVMF; screendumps periódicos. |
-| `make-guest.sh` | Constrói um convidado Linux busybox+e1000 (usado pela linha de base HTTP superada). |
-| `run-channel.sh` | SUPERADO: linha de base HTTP em modo usuário. Não é o canal do dispositivo. |
-| `service.sh` | SUPERADO: linha de base de servicing com wimlib no lado do host. Não é a transferência do dispositivo. |
 | `wwii/` | O ambiente mínimo de 3 arquivos da branch `wwii` (`audit.sh`, `build-iso.sh`, `run.sh`), preservado por referência. |
 
-`run-keyboard-transfer.sh`, `run-channel.sh` e `run-winre-disk.sh` são bash
+`run-winre-disk.sh` é bash
 (arrays); o resto é POSIX sh.
 
 ## Restrições antitrapaça (de `docs/01-restricoes.md`)
