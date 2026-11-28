@@ -1,7 +1,7 @@
 <input id="u" placeholder="https://..." style="width:70%"><button onclick="go()">Ir</button><br>
 <img id="s" style="width:100%;max-width:800px;border:1px solid #888">
 <script>
-const ws = new WebSocket('ws://' + location.host);
+const ws = new WebSocket('ws://' + location.host + '/ws');
 const img = document.getElementById('s');
 ws.onmessage = (e) => img.src = 'data:image/jpeg;base64,' + e.data;
 function go(){ ws.send(JSON.stringify({t:'url', url: document.getElementById('u').value})); }

@@ -1,7 +1,6 @@
 #!/bin/sh
-apk add chromium nodejs npm
+apk add chromium py3-aiohttp
 cd "$(dirname "$0")"
-npm install
 chromium --headless --no-sandbox --disable-gpu --remote-debugging-port=9222 about:blank &
 sleep 3
-exec node server.js
+exec python3 server.py
