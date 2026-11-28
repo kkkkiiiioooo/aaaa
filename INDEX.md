@@ -36,6 +36,7 @@ Branch única: `desafio`. Um agente por vez. Detalhes ficam nos arquivos abaixo:
 | `prompts/` | `advisor.md` (briefing), `advisor-resposta.md` (orientação recente), histórico e anexos | Só para estratégia de recuperação |
 | `winre-1809-oficial-intacta/` | WIM 1809 oficial em partes + SHA256SUMS | Nunca editar; trabalhar em cópias |
 | `winre-fabrica-10586-424MB/` | WIM de fábrica 10586 em partes + SHA256SUMS | Nunca editar; trabalhar em cópias |
+| `ffff/` | Projeto separado: scripts de navegador remoto (VNC, Xpra, Browsh, CDP, proxy) | Só se a tarefa pedir |
 
 ## Comandos curtos
 

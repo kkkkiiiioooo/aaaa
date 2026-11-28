@@ -1,0 +1,10 @@
+<user-mapping>
+  <authorize username="admin" password="SENHA">
+    <connection name="firefox">
+      <protocol>vnc</protocol>
+      <param name="hostname">localhost</param>
+      <param name="port">5900</param>
+      <param name="password">SENHA</param>
+    </connection>
+  </authorize>
+</user-mapping>

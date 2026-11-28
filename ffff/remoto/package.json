@@ -1,0 +1,7 @@
+{
+  "name": "remoto-connect",
+  "private": true,
+  "dependencies": {
+    "playwright": "^1.40.0"
+  }
+}
