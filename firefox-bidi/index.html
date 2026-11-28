@@ -1,14 +1,28 @@
-<input id="u" placeholder="https://..." style="width:70%"><button onclick="go()">Ir</button><br>
-<img id="s" style="width:100%;max-width:800px;border:1px solid #888">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<input id="u" placeholder="https://..." style="width:70%;font-size:16px"><button onclick="go()" style="font-size:16px">Ir</button><br>
+<img id="s" draggable="false" style="width:100%;touch-action:none;user-select:none;-webkit-user-select:none;border:1px solid #888">
+<script src="/gestos.js"></script>
 <script>
 const ws = new WebSocket('ws://' + location.host + '/ws');
 const img = document.getElementById('s');
-ws.onmessage = (e) => { const f = JSON.parse(e.data); img.src = 'data:' + f.m + ';base64,' + f.d; };
-function go(){ ws.send(JSON.stringify({t:'url', url: document.getElementById('u').value})); }
-function pos(ev){ const r = img.getBoundingClientRect();
-  return { x: (ev.clientX - r.left) * img.naturalWidth / r.width, y: (ev.clientY - r.top) * img.naturalHeight / r.height }; }
-img.onmousedown = (ev) => ws.send(JSON.stringify({t:'mouse', type:'mousePressed', ...pos(ev)}));
-img.onmouseup   = (ev) => ws.send(JSON.stringify({t:'mouse', type:'mouseReleased', ...pos(ev)}));
-document.onkeydown = (ev) => ev.target.id === 'u' ? (ev.key === 'Enter' && go()) : ws.send(JSON.stringify({t:'key', type:'keyDown', key: ev.key}));
-document.onkeyup   = (ev) => ev.target.id === 'u' || ws.send(JSON.stringify({t:'key', type:'keyUp', key: ev.key}));
+let vw = 0;
+ws.onmessage = (e) => {
+  const f = JSON.parse(e.data);
+  img.src = 'data:' + f.m + ';base64,' + f.d;
+  if (f.w) vw = f.w;
+};
+function enviar(m) { ws.send(JSON.stringify(m)); }
+function go() { enviar({ t: 'url', url: document.getElementById('u').value }); }
+function mapear(t) {
+  const r = img.getBoundingClientRect();
+  const k = (vw || img.naturalWidth) / r.width;
+  return { x: (t.clientX - r.left) * k, y: (t.clientY - r.top) * k, k: k };
+}
+instalarGestos(img, enviar, mapear);
+img.onmousedown = (ev) => { const p = mapear(ev); enviar({ t: 'mouse', type: 'mousePressed', x: p.x, y: p.y }); };
+img.onmouseup = (ev) => { const p = mapear(ev); enviar({ t: 'mouse', type: 'mouseReleased', x: p.x, y: p.y }); };
+img.onwheel = (ev) => { ev.preventDefault(); const p = mapear(ev); enviar({ t: 'wheel', x: p.x, y: p.y, dx: ev.deltaX, dy: ev.deltaY }); };
+document.onkeydown = (ev) => ev.target.id === 'u' ? (ev.key === 'Enter' && go()) : enviar({ t: 'key', type: 'keyDown', key: ev.key });
+document.onkeyup = (ev) => ev.target.id === 'u' || enviar({ t: 'key', type: 'keyUp', key: ev.key });
 </script>

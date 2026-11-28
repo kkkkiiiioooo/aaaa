@@ -49,6 +49,10 @@ async def index(request):
     return web.FileResponse(os.path.join(HERE, 'index.html'))
 
 
+async def gestos(request):
+    return web.FileResponse(os.path.join(HERE, '..', 'comum', 'gestos.js'))
+
+
 async def frames(app):
     b, ctx = app['b'], app['ctx']
     mime = 'image/jpeg'
@@ -65,7 +69,7 @@ async def frames(app):
                         mime = 'image/png'
                         continue
                     raise
-                msg = json.dumps({'m': mime, 'd': r['data']})
+                msg = json.dumps({'m': mime, 'd': r['data'], 'w': W if app['vp'] else None, 'h': H if app['vp'] else None})
                 for c in list(app['clients']):
                     await c.send_str(msg)
             except Exception:
@@ -93,6 +97,17 @@ async def handle(app, e):
         if k:
             t = 'keyDown' if e['type'] == 'keyDown' else 'keyUp'
             await perform(app, [{'type': 'key', 'id': 'k', 'actions': [{'type': t, 'value': k}]}])
+    elif e['t'] == 'wheel':
+        acts = [{'type': 'scroll', 'x': int(e['x']), 'y': int(e['y']), 'deltaX': int(e['dx']), 'deltaY': int(e['dy'])}]
+        await perform(app, [{'type': 'wheel', 'id': 'w', 'actions': acts}])
+    elif e['t'] == 'click':
+        bt = 2 if e.get('button') == 'right' else 0
+        acts = [
+            {'type': 'pointerMove', 'x': int(e['x']), 'y': int(e['y'])},
+            {'type': 'pointerDown', 'button': bt},
+            {'type': 'pointerUp', 'button': bt},
+        ]
+        await perform(app, [{'type': 'pointer', 'id': 'm', 'parameters': {'pointerType': 'mouse'}, 'actions': acts}])
 
 
 async def ws_handler(request):
@@ -123,8 +138,10 @@ async def startup(app):
     await b.call('session.new', {'capabilities': {}})
     tree = await b.call('browsingContext.getTree', {})
     app['ctx'] = tree['contexts'][0]['context']
+    app['vp'] = False
     try:
         await b.call('browsingContext.setViewport', {'context': app['ctx'], 'viewport': {'width': W, 'height': H}})
+        app['vp'] = True
     except Exception:
         pass
     app['clients'] = set()
@@ -138,7 +155,7 @@ async def cleanup(app):
 
 
 app = web.Application()
-app.add_routes([web.get('/', index), web.get('/ws', ws_handler)])
+app.add_routes([web.get('/', index), web.get('/gestos.js', gestos), web.get('/ws', ws_handler)])
 app.on_startup.append(startup)
 app.on_cleanup.append(cleanup)
 
