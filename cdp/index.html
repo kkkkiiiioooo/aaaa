@@ -1,0 +1,14 @@
+<input id="u" placeholder="https://..." style="width:70%"><button onclick="go()">Ir</button><br>
+<img id="s" style="width:100%;max-width:800px;border:1px solid #888">
+<script>
+const ws = new WebSocket('ws://' + location.host + '/ws');
+const img = document.getElementById('s');
+ws.onmessage = (e) => img.src = 'data:image/jpeg;base64,' + e.data;
+function go(){ ws.send(JSON.stringify({t:'url', url: document.getElementById('u').value})); }
+function pos(ev){ const r = img.getBoundingClientRect();
+  return { x: (ev.clientX - r.left) * 800 / r.width, y: (ev.clientY - r.top) * 480 / r.height }; }
+img.onmousedown = (ev) => ws.send(JSON.stringify({t:'mouse', type:'mousePressed', ...pos(ev)}));
+img.onmouseup   = (ev) => ws.send(JSON.stringify({t:'mouse', type:'mouseReleased', ...pos(ev)}));
+document.onkeydown = (ev) => ev.target.id === 'u' ? (ev.key === 'Enter' && go()) : ws.send(JSON.stringify({t:'key', type:'keyDown', key: ev.key}));
+document.onkeyup   = (ev) => ev.target.id === 'u' || ws.send(JSON.stringify({t:'key', type:'keyUp', key: ev.key}));
+</script>
